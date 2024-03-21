@@ -1,118 +1,313 @@
 import Image from "next/image";
-import { Inter } from "next/font/google";
+import Link from "next/link";
+import About from "@/components/About/About";
+import ServiceList from "@/components/Services/ServiceList";
+import DoctorList from "@/components/Doctors/DoctorList";
 
-const inter = Inter({ subsets: ["latin"] });
+import { BsArrowRight } from "react-icons/bs";
+import heroImage01 from "../public/assets/images/hero-img01.png";
+import heroImage02 from "../public/assets/images/hero-img02.png";
+import heroImage03 from "../public/assets/images/hero-img03.png";
+import icon01 from "../public/assets/images/icon01.png";
+import icon02 from "../public/assets/images/icon02.png";
+import icon03 from "../public/assets/images/icon03.png";
+import featurImage from "../public/assets/images/feature-img.png";
+import videoIcon from "../public/assets/images/video-icon.png";
+import avatarImage from "../public/assets/images/avatar-icon.png";
+import faqImg from "../public/assets/images/faq-img.png";
+import FaqList from "@/components/Faq/FaqList";
+import Testimonial from "@/components/Testimonial/Testimonial";
 
 export default function Home() {
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
-    >
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">pages/index.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{" "}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
+    <>
+      {/* hero Section start */}
+
+      <section className="hero__section pt-[60px] 2xl:h-[800px]">
+        <div className="container">
+          <div className="flex flex-col lg:flex-row gap-[90px] items-center justify-between">
+            <div>
+              <div className="lg:w-[570px]">
+                <h1 className="text-[36px] leading-[46px] text-headingColor font-[800] md:text-[60px] md:leading-[70px]">
+                  we helppatients live a healthy, longer life
+                </h1>
+                <p className="text__para">
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                  Expedita adipisci consequatur error! Consequuntur, neque
+                  accusantium? Nulla labore quia tenetur adipisci expedita
+                  totam? Facere vel ab numquam iure inventore, fugit aut.
+                </p>
+
+                <button className="btn">Request an Appoitment</button>
+              </div>
+
+              {/* hero counter */}
+              <div className="mt-[30px] lg:mt-[70px] flex flex-col lg:flex-row lg:items-center gap-5 lg:gap-[30px]">
+                <div>
+                  <h2 className="text-[36px] leading-[56px] lg:text-[44px] lg:leading-[54px] font-[700] text-headingColor">
+                    30+
+                  </h2>
+                  <span className="w-[85px] h-2 bg-yellowColor  block mt-[-10px]"></span>
+                  <p className="text__para">Year of Experience</p>
+                </div>
+
+                <div>
+                  <h2 className="text-[36px] leading-[56px] lg:text-[44px] lg:leading-[54px] font-[700] text-headingColor">
+                    15+
+                  </h2>
+                  <span className="w-[80px] h-2 bg-purpleColor  block mt-[-10px]"></span>
+                  <p className="text__para">Clinic Locations</p>
+                </div>
+
+                <div>
+                  <h2 className="text-[36px] leading-[56px] lg:text-[44px] lg:leading-[54px] font-[700] text-headingColor">
+                    100%
+                  </h2>
+                  <span className="w-[120px] h-2 bg-irisBlueColor  block mt-[-10px]"></span>
+                  <p className="text__para">Patient Satisfaction</p>
+                </div>
+              </div>
+              {/* hero counter */}
+            </div>
+
+            <div className="flex gap-[30px] justify-end">
+              <div>
+                <Image src={heroImage01} alt="DoctorImage" />
+              </div>
+              <div className="mt-[30px]">
+                <Image
+                  src={heroImage02}
+                  alt="DoctorImage2"
+                  className="w-full mb-[30px]"
+                />
+                <Image
+                  src={heroImage03}
+                  alt="DoctorImage3"
+                  className="w-full"
+                />
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
+      </section>
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-full sm:before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-full sm:after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+      {/* hero Section end */}
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+      <section>
+        <div className="container">
+          <div className="lg:w-[470px] mx-auto ">
+            <h2 className="heading text-center">
+              Providing the best medical services
+            </h2>
+            <p className="text__para text-center">
+              Wolrd-class for everyone. Our health System offers unmatched
+              expert health care
+            </p>
+          </div>
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 lg:gap-[30px] mt-[30px] lg:mt-[55px]">
+            <div className="py-[30px] px-5">
+              <div className="flex items-center justify-center">
+                <Image src={icon01} alt="" />
+              </div>
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
+              <div className="mt-[30px]">
+                <h2 className="text-[26px] leading-9 text-headingColor font-[700] text-center">
+                  Find a Doctor
+                </h2>
+                <p className="text-[16px] leading-7 text-textColor font-[400] mt-4 text-center">
+                  Wolrd-class for everyone. Our health System offers unmatched
+                  expert health care
+                </p>
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{" "}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50 text-balance`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+                <Link
+                  href="/doctors"
+                  className="w-[44px] h-[44px] rounded-full border border-solid border-[#181A1E] mt-[30px]  mx-auto flex  items-center justify-center group hover:bg-primaryColor hover:border-none  "
+                >
+                  <BsArrowRight className="group-hover:text-white w-6 h-6" />
+                </Link>
+              </div>
+            </div>
+
+            <div className="py-[30px] px-5">
+              <div className="flex items-center justify-center">
+                <Image src={icon02} alt="" />
+              </div>
+
+              <div className="mt-[30px]">
+                <h2 className="text-[26px] leading-9 text-headingColor font-[700] text-center">
+                  Find a Location
+                </h2>
+                <p className="text-[16px] leading-7 text-textColor font-[400] mt-4 text-center">
+                  Wolrd-class for everyone. Our health System offers unmatched
+                  expert health care
+                </p>
+
+                <Link
+                  href="/doctors"
+                  className="w-[44px] h-[44px] rounded-full border border-solid border-[#181A1E] mt-[30px]  mx-auto flex  items-center justify-center group hover:bg-primaryColor hover:border-none  "
+                >
+                  <BsArrowRight className="group-hover:text-white w-6 h-6" />
+                </Link>
+              </div>
+            </div>
+
+            <div className="py-[30px] px-5">
+              <div className="flex items-center justify-center">
+                <Image src={icon03} alt="" />
+              </div>
+
+              <div className="mt-[30px]">
+                <h2 className="text-[26px] leading-9 text-headingColor font-[700] text-center">
+                  Book Appointment
+                </h2>
+                <p className="text-[16px] leading-7 text-textColor font-[400] mt-4 text-center">
+                  Wolrd-class for everyone. Our health System offers unmatched
+                  expert health care
+                </p>
+
+                <Link
+                  href="/doctors"
+                  className="w-[44px] h-[44px] rounded-full border border-solid border-[#181A1E] mt-[30px]  mx-auto flex  items-center justify-center group hover:bg-primaryColor hover:border-none  "
+                >
+                  <BsArrowRight className="group-hover:text-white w-6 h-6" />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <About />
+
+      {/* services section  */}
+      <section>
+        <div className="container">
+          <div className="xl:w-[470px] mx-auto ">
+            <h2 className="heading text-center">Our medical services</h2>
+            <p className="text__para text-center">
+              World-class care for everyone. Our health System offers unmatched,
+              expert health care
+            </p>
+          </div>
+          <ServiceList />
+        </div>
+      </section>
+      {/* services section end */}
+
+      {/* featur section */}
+      <section>
+        <div className="container">
+          <div className="flex   justify-between flex-col  lg:flex-row">
+            {/* featur content */}
+            <div className="xl:w-[670px]">
+              <h2 className="heading">
+                Get virtual tretment <br /> anytime
+              </h2>
+              <ul className="pl-4">
+                <li className="text__para">
+                  1. Schedule the appointment directly
+                </li>
+                <li className="text__para">
+                  2. Search for your physician here, and contact their office
+                </li>
+                <li className="text__para">
+                  3. View our physician who are accepting new patients, use the
+                  online scheduling tool to select an appointment time
+                </li>
+              </ul>
+
+              <Link href="/">
+                <button className="btn">Learn More</button>
+              </Link>
+            </div>
+
+            {/* featurs img */}
+            <div className="relative z-10 xl:w-[770px] flex justify-center lg:justify-end mt-[50px] lg:mt-0  ">
+              <Image src={featurImage} alt="" className="w-3/4" />
+
+              <div className="w-[150px] lg:w-[248px] bg-white absolute bottom-[50px] left-0 md:bottom-[100px] md:left-5 z-20 p-2 pb-3 lg:pt-4 lg:px-4 lg:pb-[26px] rounded-[10px]">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-[6px] lg:gap-3">
+                    <p className="text-[10px] leading-[10px] lg:text-[14px]  lg:leading-5 text-headingColor font-[600]">
+                      Tue, 24
+                    </p>
+
+                    <p className="text-[10px] leading-[10px] lg:text-[14px]  lg:leading-5 text-textColor font-[400]">
+                      10:00AM
+                    </p>
+                  </div>
+
+                  <span className="w-5 h-5 lg:w-[34px] lg:h-[34px] flex items-center justify-center bg-yellowColor rounded py-1 px-[6px] lg:py-3 lg:px-[9px]">
+                    <Image src={videoIcon} alt="" />
+                  </span>
+                </div>
+
+                <div className="w-[65px] lg:w-[96px] bg-[#CCF0F3] py-1 px-2 lg:py-[6px] lg:px-[10px] text-[8px] leading-[8px] lg:text-[12px]  lg:leading-4 text-irisBlueColor font-[500] mt-2 lg:mt-4  rounded-full">
+                  Consultation
+                </div>
+
+                <div className="flex items-center gap-[6px]  lg:gap-[10px] mt-2 lg:mt-[18px]">
+                  <Image src={avatarImage} alt="" />
+                  <h4 className="text-[10px] leading-3 lg:text-[16px] lg:leading-[22px] font-[700] text-headingColor">
+                    Jay Zadafiya
+                  </h4>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* featur section end */}
+
+      {/* get our Doctores */}
+      <section>
+        <div className="container">
+          <div className="lg:w-[470px] mx-auto ">
+            <h2 className="heading text-center">Our great Doctores</h2>
+            <p className="text__para text-center">
+              Wolrd-class for everyone. Our health System offers unmatched
+              expert health care
+            </p>
+          </div>
+          <DoctorList />
+        </div>
+      </section>
+
+      {/* get our Doctores end */}
+
+      {/* faq seaction */}
+      <section>
+        <div className="container">
+          <div className="flex justify-between gap-[50px] lg:gap-0">
+            <div className="w-1/2 hidden md:block">
+              <Image src={faqImg} alt="" />
+            </div>
+            <div className="w-full mt-[33px] md:w-1/2">
+              <h2 className="heading text-[34px]">
+                Most quations by our beloved patients
+              </h2>
+              <FaqList />
+            </div>
+          </div>
+        </div>
+      </section>
+      {/* faq seaction end */}
+
+      {/* testimonial start */}
+      <section>
+        <div className="container">
+          <div className="lg:w-[470px] mx-auto ">
+            <h2 className="heading text-center">What out patient say</h2>
+            <p className="text__para text-center">
+              Wolrd-class for everyone. Our health System offers unmatched
+              expert health care
+            </p>
+          </div>
+          <Testimonial />
+        </div>
+      </section>
+      {/* testimonial start end */}
+    </>
   );
 }
