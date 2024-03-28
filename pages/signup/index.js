@@ -1,13 +1,22 @@
 import { useState } from "react";
+import { toast } from "react-toastify";
+
 import Link from "next/link";
 import Image from "next/image";
+import axios from "axios";
+import HashLoader from "react-spinners/HashLoader";
 
+import { BASE_URL } from "@/utils/config";
+import { uploadImageToCloudinary } from "@/utils/uploadCloudinary";
 import signupImg from "../../public/assets/images/signup.gif";
-import avatar from "../../public/assets/images/avatar-icon.png";
+import { useRouter } from "next/router";
 
 export default function Signup() {
   const [selectFile, setSelectFile] = useState(null);
   const [previewURL, setPreviewURL] = useState("");
+  const [loading, setLoading] = useState(false);
+
+  const router = useRouter();
 
   const [formData, setFormDate] = useState({
     name: "",
@@ -16,6 +25,7 @@ export default function Signup() {
     photo: selectFile,
     gender: "",
     role: "patient",
+    passwordConfirm: "",
   });
 
   const handelInputChange = (e) => {
@@ -25,15 +35,31 @@ export default function Signup() {
     });
   };
 
-  const handleFileInputChange = (e) => {
+  const handleFileInputChange = async (e) => {
     const file = e.target.files[0];
-    console.log(file);
+
+    const { url } = await uploadImageToCloudinary(file);
+
+    setPreviewURL(url);
+    setSelectFile(url);
+    setFormDate({ ...formData, photo: url });
   };
 
   const submitHandler = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    console.log(e.target);
+    try {
+      const res = await axios.post(`${BASE_URL}/auth/signup`, formData);
+
+      router.push("/login");
+      console.log(res);
+      setLoading(false);
+    } catch (error) {
+      setLoading(false);
+      const err = error.response.data.message || error.message;
+      throw new Error(err);
+    }
   };
 
   return (
@@ -89,6 +115,17 @@ export default function Signup() {
               focus:border-b-primaryColor text-[16 px] leading-7 text-headingColor cursor-pointer "
                 />
               </div>
+              <div className="mb-5">
+                <input
+                  type="password"
+                  placeholder="Confirm Password"
+                  name="passwordConfirm"
+                  value={formData.passwordConfirm}
+                  onChange={handelInputChange}
+                  className="w-full  pr-4 py-3 border-b border-solid border-[#8066ff61] focus:outline-none
+              focus:border-b-primaryColor text-[16 px] leading-7 text-headingColor cursor-pointer "
+                />
+              </div>
 
               <div className="mb-5 flex items-center justify-between">
                 <label className="text-headingColor  font-bold text-[16px] leading-7">
@@ -121,9 +158,17 @@ export default function Signup() {
               </div>
 
               <div className="mb-5 flex items-center gap-3">
-                <figure className="w-[68px] h-[68px] rounded-full border-2 border-solid border-primaryColor flex items-center justify-center ">
-                  <Image src={avatar} alt="" className="w-full rounded-full" />
-                </figure>
+                {selectFile && (
+                  <figure className="w-[68px] h-[68px] rounded-full border-2 border-solid border-primaryColor flex items-center justify-center ">
+                    <Image
+                      src={previewURL}
+                      alt=""
+                      className="rounded-full w-[68px] h-[68px]"
+                      height={68}
+                      width={68}
+                    />
+                  </figure>
+                )}
 
                 <div className="relative w-[138px] h-[58px]">
                   <input
@@ -145,10 +190,15 @@ export default function Signup() {
 
               <div className="mt-7">
                 <button
+                  disabled={loading && true}
                   className="w-full bg-primaryColor text-white text-[18px] leading-[30px] px-4 py-3  rounded-lg "
                   type="submit"
                 >
-                  Sign Up
+                  {loading ? (
+                    <HashLoader size={35} color="#ffffff" />
+                  ) : (
+                    "Sign Up"
+                  )}
                 </button>
               </div>
 

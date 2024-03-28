@@ -3,8 +3,9 @@ import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
 import logo from "../../public/assets/images/logo.png";
-import userImg from "../../public/assets/images/avatar-icon.png";
 import { BiMenu } from "react-icons/bi";
+import { useDispatch, useSelector } from "react-redux";
+import { setUserState } from "@/store/slices/userSlice";
 
 const navLink = [
   {
@@ -29,13 +30,16 @@ export default function Header() {
   const router = useRouter();
   const headerRef = useRef(null);
   const menuRef = useRef(null);
+  const dispatch = useDispatch();
+
+  const { user, isLogging, accessToken } = useSelector((state) => state.user);
 
   const handleStickyheader = () => {
     window.addEventListener("scroll", () => {
-      if (
-        document.body.scrollTop > 80 ||
-        document.documentElement.scrollTop > 80
-      ) {
+      const scrollPosition =
+        document.body.scrollTop || document.documentElement.scrollTop;
+
+      if (scrollPosition > 80) {
         headerRef.current.classList.add("sticky_header");
       } else {
         headerRef.current.classList.remove("sticky_header");
@@ -48,7 +52,11 @@ export default function Header() {
 
     //unmount
     return () => window.removeEventListener("scroll", handleStickyheader);
-  });
+  }, []);
+
+  useEffect(() => {
+    dispatch(setUserState());
+  }, [dispatch]);
 
   const toggleMenu = () => menuRef.current.classList.toggle("show__menu");
 
@@ -84,20 +92,28 @@ export default function Header() {
 
           {/* Nav Right */}
           <div className="flex items-center gap-4 cursor-pointer">
-            <div className="hidden">
-              <Link href="/">
-                <figure className="w-[35px] h-[35px] rounded-full">
-                  <Image src={userImg} alt="" className="w-full rounded-full" />
-                </figure>
+            {accessToken && user ? (
+              <>
+                <h2>{user.name}</h2>
+                <Link href={`${user.role === "doctor" ? "/doctor" : "/user"}`}>
+                  <figure className="w-[35px] h-[35px] rounded-full">
+                    <Image
+                      src={user?.photo}
+                      alt=""
+                      className="w-full rounded-full h-[35px]"
+                      width={35}
+                      height={35}
+                    />
+                  </figure>
+                </Link>
+              </>
+            ) : (
+              <Link href="/login">
+                <button className="bg-primaryColor py-2 px-6 text-white font-[600] h-[44px] flex items-center justify-center rounded-[50px]">
+                  Login
+                </button>
               </Link>
-            </div>
-
-            <Link href="/login">
-              <button className="bg-primaryColor py-2 px-6 text-white font-[600] h-[44px] flex items-center justify-center rounded-[50px]">
-                Login
-              </button>
-            </Link>
-
+            )}
             <span className="md:hidden" onClick={toggleMenu}>
               <BiMenu className="w-6 h-6 cursor-pointer"></BiMenu>
             </span>
