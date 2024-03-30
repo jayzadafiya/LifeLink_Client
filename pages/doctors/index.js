@@ -46,3 +46,5 @@ export default function Doctors() {
     </>
   );
 }
+
+// export async function getStaticProps() {}

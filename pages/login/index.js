@@ -1,4 +1,5 @@
-import { login } from "@/store/slices/userSlice";
+import Error from "@/components/Error/Error";
+import { login, setUserState } from "@/store/slices/userSlice";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { useState } from "react";
@@ -31,7 +32,7 @@ export default function Login() {
         }
       });
     } catch (error) {
-      console.error(error); // Handle login errors
+      return <Error errMessgae={error} />;
     }
   };
 

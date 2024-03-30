@@ -1,6 +1,6 @@
 import Image from "next/image";
 import avater from "../../public/assets/images/avatar-icon.png";
-import { formateDate } from "@/utils/formateDate";
+import { formateDate } from "@/utils/heplerFunction";
 import { AiFillStar } from "react-icons/ai";
 import { useState } from "react";
 import FeedbackForm from "./FeedbackForm";

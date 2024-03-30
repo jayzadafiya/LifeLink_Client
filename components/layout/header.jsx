@@ -4,9 +4,8 @@ import Image from "next/image";
 import Link from "next/link";
 import logo from "../../public/assets/images/logo.png";
 import { BiMenu } from "react-icons/bi";
-import { useDispatch, useSelector } from "react-redux";
-import { setUserState } from "@/store/slices/userSlice";
-
+import { useSelector } from "react-redux";
+import avtarImg from "../../public/assets/images/avatar-icon.png";
 const navLink = [
   {
     path: "/",
@@ -30,9 +29,8 @@ export default function Header() {
   const router = useRouter();
   const headerRef = useRef(null);
   const menuRef = useRef(null);
-  const dispatch = useDispatch();
 
-  const { user, isLogging, accessToken } = useSelector((state) => state.user);
+  const { user, accessToken } = useSelector((state) => state.user);
 
   const handleStickyheader = () => {
     window.addEventListener("scroll", () => {
@@ -53,10 +51,6 @@ export default function Header() {
     //unmount
     return () => window.removeEventListener("scroll", handleStickyheader);
   }, []);
-
-  useEffect(() => {
-    dispatch(setUserState());
-  }, [dispatch]);
 
   const toggleMenu = () => menuRef.current.classList.toggle("show__menu");
 
@@ -91,11 +85,17 @@ export default function Header() {
           </div>
 
           {/* Nav Right */}
-          <div className="flex items-center gap-4 cursor-pointer">
+          <div>
             {accessToken && user ? (
-              <>
+              <Link
+                href={`${
+                  user.role === "doctor" ? "/doctors/profile" : "/users/profile"
+                }`}
+                className="flex items-center gap-4 cursor-pointer"
+              >
                 <h2>{user.name}</h2>
-                <Link href={`${user.role === "doctor" ? "/doctor" : "/user"}`}>
+
+                {user.photo && (
                   <figure className="w-[35px] h-[35px] rounded-full">
                     <Image
                       src={user?.photo}
@@ -105,8 +105,8 @@ export default function Header() {
                       height={35}
                     />
                   </figure>
-                </Link>
-              </>
+                )}
+              </Link>
             ) : (
               <Link href="/login">
                 <button className="bg-primaryColor py-2 px-6 text-white font-[600] h-[44px] flex items-center justify-center rounded-[50px]">

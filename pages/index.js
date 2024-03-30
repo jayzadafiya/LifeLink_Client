@@ -17,8 +17,13 @@ import avatarImage from "../public/assets/images/avatar-icon.png";
 import faqImg from "../public/assets/images/faq-img.png";
 import FaqList from "@/components/Faq/FaqList";
 import Testimonial from "@/components/Testimonial/Testimonial";
+import Cookies from "js-cookie";
+import jwt from "jsonwebtoken";
+import axios from "axios";
+import { BASE_URL } from "@/utils/config";
 
-export default function Home() {
+export default function Home({ userData }) {
+  console.log(userData);
   return (
     <>
       {/* hero Section start */}
@@ -311,3 +316,45 @@ export default function Home() {
     </>
   );
 }
+
+// export async function getServerSideProps(context) {
+//   // Fetch user data from the backend
+//   try {
+//     const token = context.req.cookies.token;
+//     console.log("token", token);
+
+//     const decodedToken = jwt.decode(token);
+
+//     console.log(decodedToken);
+//     let userData = null;
+
+//     if (token) {
+//       try {
+//         const response = await axios.get(
+//           `${BASE_URL}/users/${decodedToken.userId}/me`,
+//           {
+//             headers: {
+//               Authorization: `Bearer ${token}`,
+//             },
+//           }
+//         );
+//         userData = response.data;
+//       } catch (error) {
+//         console.log(error);
+//       }
+//     }
+
+//     return {
+//       props: {
+//         userData,
+//       },
+//     };
+//   } catch (error) {
+//     console.error("Error fetching user data:", error);
+//     return {
+//       props: {
+//         userData: null,
+//       },
+//     };
+//   }
+// }

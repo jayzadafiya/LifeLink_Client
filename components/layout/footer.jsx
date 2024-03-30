@@ -36,7 +36,7 @@ const quickLinks01 = [
   },
   {
     path: "/services",
-    display: "Searvices",
+    display: "Services",
   },
   {
     path: "/blog",
@@ -47,7 +47,7 @@ const quickLinks01 = [
 const quickLinks02 = [
   {
     path: "/doctor",
-    display: "find a DOctor",
+    display: "find a Doctor",
   },
   {
     path: "/about",

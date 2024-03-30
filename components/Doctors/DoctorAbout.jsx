@@ -1,4 +1,4 @@
-import { formateDate } from "@/utils/formateDate";
+import { formateDate } from "@/utils/heplerFunction";
 import React from "react";
 
 export default function DoctorAbout() {
