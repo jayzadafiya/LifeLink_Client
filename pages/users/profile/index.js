@@ -9,10 +9,12 @@ import { BASE_URL } from "@/utils/config";
 import { useState } from "react";
 import { logout } from "@/store/slices/userSlice";
 
-import avtarImg from "../../../public/assets/images/avatar-icon.png";
+import avtarImg from "../../../public/assets/images/patient-avatar.png";
+import { useRouter } from "next/router";
 
 export default function MyAccount({ user, doctors, error }) {
   const dispatch = useDispatch();
+  const router = useRouter();
   const [tab, setTab] = useState("bookings");
 
   if (!user || error) {
@@ -21,6 +23,7 @@ export default function MyAccount({ user, doctors, error }) {
 
   const handleLogout = () => {
     dispatch(logout());
+    router.replace("/");
   };
   return (
     <section>

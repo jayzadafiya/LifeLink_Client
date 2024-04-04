@@ -31,7 +31,6 @@ export default function Header() {
   const menuRef = useRef(null);
 
   const { user, accessToken } = useSelector((state) => state.user);
-
   const handleStickyheader = () => {
     window.addEventListener("scroll", () => {
       const scrollPosition =
@@ -85,7 +84,7 @@ export default function Header() {
           </div>
 
           {/* Nav Right */}
-          <div>
+          <div className="flex items-center justify-between gap-5">
             {accessToken && user ? (
               <Link
                 href={`${
@@ -96,7 +95,7 @@ export default function Header() {
                 <h2>{user.name}</h2>
 
                 {user.photo && (
-                  <figure className="w-[35px] h-[35px] rounded-full">
+                  <figure className="w-[35px] h-[35px] rounded-full hidden  md:block lg:block">
                     <Image
                       src={user?.photo}
                       alt=""

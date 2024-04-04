@@ -26,17 +26,17 @@ export const fetchUser = createAsyncThunk("user/fatchUser", async () => {
     const token = Cookies.get("token");
 
     const decodedToken = jwt.decode(token);
-
     let res = null;
 
     if (decodedToken.role === "patient") {
       res = await axios.get(`${BASE_URL}/users/profile`, {
         headers: {
+          "content-type": "application/josn",
           Authorization: `Bearer ${token}`,
         },
       });
     } else if (decodedToken.role === "doctor") {
-      res = await axios.get(`${BASE_URL}/doctors/${id}`, {
+      res = await axios.get(`${BASE_URL}/doctors/${decodedToken.userId}`, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -50,17 +50,35 @@ export const fetchUser = createAsyncThunk("user/fatchUser", async () => {
 
 export const updateUser = createAsyncThunk(
   "user/updateUser",
-  async ({ formData, userId }) => {
+  async (formData) => {
     try {
-      console.log(userId);
       const token = Cookies.get("token");
-      const res = await axios.put(`${BASE_URL}/users/${userId}`, formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
 
-      console.log(res);
+      const decodedToken = jwt.decode(token);
+      let res = null;
+
+      if (decodedToken.role === "patient") {
+        res = await axios.put(
+          `${BASE_URL}/users/${decodedToken.userId}`,
+          formData,
+          {
+            headers: {
+              "content-type": "application/josn",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      } else if (decodedToken.role === "doctor") {
+        res = await axios.put(
+          `${BASE_URL}/doctors/${decodedToken.userId}`,
+          formData,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+      }
 
       return { data: res.data };
     } catch (error) {
@@ -97,12 +115,22 @@ const userSlice = createSlice({
         state.isLogging = true;
         state.loading = false;
         state.error = null;
-        Cookies.set("token", state.accessToken);
+        Cookies.set("token", state.accessToken, {
+          expires: new Date(
+            Date.now() +
+              process.env.NEXT_PUBLIC_COOKIE_EXPIRESIN * 24 * 60 * 60 * 1000
+          ),
+          secure: true,
+        });
       })
       .addCase(login.rejected, (state, action) => {
         state.isLogging = false;
         state.loading = false;
         state.error = action.error.message;
+      })
+      .addCase(fetchUser.fulfilled, (state, action) => {
+        state.user = action.payload.data;
+        state.accessToken = action.payload.token;
       })
       .addCase(updateUser.pending, (state) => {
         state.loading = true;
@@ -116,11 +144,6 @@ const userSlice = createSlice({
         state.isLogging = false;
         state.loading = false;
         state.error = action.error.message;
-      })
-      .addCase(fetchUser.fulfilled, (state, action) => {
-        state.user = action.payload.data;
-        state.accessToken = action.payload.token;
-        console.log(state.user);
       });
   },
 });

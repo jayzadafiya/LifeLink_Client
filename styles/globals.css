@@ -63,7 +63,7 @@ body {
   top: 90% !important;
 }
 
-.form__lable {
+.form__label {
   @apply text-textColor font-semibold text-[16px] mb-2;
 }
 

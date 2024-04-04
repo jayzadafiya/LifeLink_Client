@@ -1,18 +1,15 @@
 import { useState } from "react";
 
 import Image from "next/image";
-import axios from "axios";
 import HashLoader from "react-spinners/HashLoader";
 
 import { useRouter } from "next/router";
 import { uploadImageToCloudinary } from "@/utils/uploadCloudinary";
-import { BASE_URL, token } from "@/utils/config";
 import { useDispatch, useSelector } from "react-redux";
 import { updateUser } from "@/store/slices/userSlice";
 import Error from "../Error/Error";
 
 export default function Profile({ user }) {
-  const [selectFile, setSelectFile] = useState(user?.photo);
   const dispatch = useDispatch();
   const router = useRouter();
   const { error, loading } = useSelector((state) => state.user);
@@ -47,7 +44,7 @@ export default function Profile({ user }) {
   const submitHandler = async (e) => {
     e.preventDefault();
     try {
-      dispatch(updateUser({ formData, userId: user._id })).then((result) => {
+      dispatch(updateUser(formData)).then((result) => {
         if (result.payload && result.payload.data) {
           router.push("/users/profile");
         }
@@ -77,9 +74,10 @@ export default function Profile({ user }) {
             placeholder="Enter Your Email"
             name="email"
             value={formData.email}
-            onChange={handelInputChange}
             className="w-full  pr-4 py-3 border-b border-solid border-[#8066ff61] focus:outline-none
               focus:border-b-primaryColor text-[16 px] leading-7 text-headingColor cursor-pointer "
+            aria-readonly
+            readOnly
           />
         </div>
         <div className="mb-5">

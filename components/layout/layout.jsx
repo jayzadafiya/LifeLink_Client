@@ -8,14 +8,13 @@ import Cookies from "js-cookie";
 
 export default function Layout({ children }) {
   const dispatch = useDispatch();
+  const token = Cookies.get("token");
 
   useEffect(() => {
-    const token = Cookies.get("token");
-
     if (token) {
       dispatch(fetchUser());
     }
-  }, [dispatch]);
+  }, [dispatch, token]);
   return (
     <>
       <Header />

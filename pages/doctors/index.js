@@ -4,6 +4,7 @@ import Testimonial from "@/components/Testimonial/Testimonial";
 
 export default function Doctors() {
   return (
+
     <>
       <section className="bg-[#fff9ea]">
         <div className="container text-center">
