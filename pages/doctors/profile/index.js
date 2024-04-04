@@ -10,6 +10,7 @@ import avtarImg from "../../../public/assets/images/doctor-img01.png";
 import star from "../../../public/assets/images/Star.png";
 import DoctorAbout from "@/components/Doctors/DoctorAbout";
 import Profile from "@/components/Doctors/Dashboard/Profile";
+import Appointments from "@/components/Doctors/Dashboard/Appointments";
 
 export default function Dashboard({ doctor, error, appointments }) {
   const [tab, setTab] = useState("overview");
@@ -80,7 +81,9 @@ export default function Dashboard({ doctor, error, appointments }) {
                   />
                 </div>
               )}
-              {tab === "appointments" && <div>appointments</div>}
+              {tab === "appointments" && (
+                <Appointments appointments={appointments} />
+              )}
               {tab === "settings" && <Profile doctor={doctor} />}
             </div>
           </div>
