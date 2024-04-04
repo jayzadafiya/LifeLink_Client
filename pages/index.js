@@ -23,7 +23,6 @@ import axios from "axios";
 import { BASE_URL } from "@/utils/config";
 
 export default function Home({ userData }) {
-  console.log(userData);
   return (
     <>
       {/* hero Section start */}
