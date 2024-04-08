@@ -5,7 +5,7 @@ import Link from "next/link";
 import logo from "../../public/assets/images/logo.png";
 import { BiMenu } from "react-icons/bi";
 import { useSelector } from "react-redux";
-import avtarImg from "../../public/assets/images/avatar-icon.png";
+
 const navLink = [
   {
     path: "/",
@@ -37,9 +37,9 @@ export default function Header() {
         document.body.scrollTop || document.documentElement.scrollTop;
 
       if (scrollPosition > 80) {
-        headerRef.current.classList.add("sticky_header");
+        headerRef?.current?.classList?.add("sticky_header");
       } else {
-        headerRef.current.classList.remove("sticky_header");
+        headerRef?.current?.classList?.remove("sticky_header");
       }
     });
   };
@@ -51,7 +51,7 @@ export default function Header() {
     return () => window.removeEventListener("scroll", handleStickyheader);
   }, []);
 
-  const toggleMenu = () => menuRef.current.classList.toggle("show__menu");
+  const toggleMenu = () => menuRef.current?.classList?.toggle("show__menu");
 
   return (
     <header className="header flex items-center" ref={headerRef}>
