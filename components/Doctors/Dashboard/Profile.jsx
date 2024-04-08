@@ -12,7 +12,7 @@ export default function Profile({ doctor }) {
   const router = useRouter();
   const { error, loading } = useSelector((state) => state.user);
 
-  const [formData, setFormDate] = useState({
+  const [formData, setFormData] = useState({
     bio: doctor?.bio || "",
     name: doctor?.name || "",
     email: doctor?.email || "",
@@ -31,25 +31,32 @@ export default function Profile({ doctor }) {
       { startingDate: "", endingDate: "", degree: "", university: "" },
     ],
     phone: doctor?.phone || "",
+    fees: doctor?.fees || "",
   });
 
   if (error) {
     console.log(error);
     return <Error errMessgae={error} />;
   }
+
   const handleInputChange = (e) => {
-    setFormDate({
+    const { name, value } = e.target;
+    const newValue =
+      name === "phone" || name === "fees" ? parseInt(value) : value;
+    setFormData({
       ...formData,
-      [e.target.name]: e.target.value,
+      [name]: newValue,
     });
   };
+
+  console.log(formData);
 
   const handleFileInputChange = async (e) => {
     const file = e.target.files[0];
 
     const { url } = await uploadImageToCloudinary(file);
 
-    setFormDate({ ...formData, photo: url });
+    setFormData({ ...formData, photo: url });
   };
 
   //reusable funcftion for adding  item
@@ -67,7 +74,7 @@ export default function Profile({ doctor }) {
       item = { day: "", startingTime: "", endingTime: "" };
     }
 
-    setFormDate((prevFormData) => ({
+    setFormData((prevFormData) => ({
       ...prevFormData,
       [key]: [...prevFormData[key], item],
     }));
@@ -78,7 +85,7 @@ export default function Profile({ doctor }) {
   const deleteItem = (e, key, index) => {
     e.preventDefault();
 
-    setFormDate((prevFormData) => ({
+    setFormData((prevFormData) => ({
       ...prevFormData,
       [key]: prevFormData[key].filter((_, i) => i !== index),
     }));
@@ -88,7 +95,7 @@ export default function Profile({ doctor }) {
   const handleReuableInputChange = (event, key, index) => {
     const { name, value } = event.target;
 
-    setFormDate((prevFormData) => {
+    setFormData((prevFormData) => {
       const updateItems = [...prevFormData[key]];
 
       updateItems[index][name] = value;
@@ -201,6 +208,7 @@ export default function Profile({ doctor }) {
               <input
                 type="number"
                 placeholder="100"
+                name="fees"
                 value={formData.fees}
                 onChange={handleInputChange}
                 className="form__input"

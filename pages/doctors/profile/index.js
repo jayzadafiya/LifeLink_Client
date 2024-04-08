@@ -18,6 +18,7 @@ export default function Dashboard({ doctor, error, appointments }) {
   if (error || !doctor) {
     return <Error Error errMessgae={error} />;
   }
+  
   return (
     <section>
       <div className="max-w-[1170px] px-5 mx-auto">

@@ -53,7 +53,6 @@ export default function Signup() {
       const res = await axios.post(`${BASE_URL}/auth/signup`, formData);
 
       router.push("/login");
-      console.log(res);
       setLoading(false);
     } catch (error) {
       setLoading(false);

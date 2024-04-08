@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken";
 
 const initialState = {
   user: null,
+  role: null,
   accessToken: null,
   isLogging: false,
   loading: false,
@@ -31,7 +32,7 @@ export const fetchUser = createAsyncThunk("user/fatchUser", async () => {
     if (decodedToken.role === "patient") {
       res = await axios.get(`${BASE_URL}/users/profile`, {
         headers: {
-          "content-type": "application/josn",
+          "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
@@ -63,7 +64,7 @@ export const updateUser = createAsyncThunk(
           formData,
           {
             headers: {
-              "content-type": "application/josn",
+              "Content-Type": "application/json",
               Authorization: `Bearer ${token}`,
             },
           }
@@ -131,6 +132,7 @@ const userSlice = createSlice({
       .addCase(fetchUser.fulfilled, (state, action) => {
         state.user = action.payload.data;
         state.accessToken = action.payload.token;
+        state.role = action.payload.data.role;
       })
       .addCase(updateUser.pending, (state) => {
         state.loading = true;

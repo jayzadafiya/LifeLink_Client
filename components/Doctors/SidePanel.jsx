@@ -1,10 +1,12 @@
-export default function SidePanel() {
+import { convertTime } from "@/utils/heplerFunction";
+
+export default function SidePanel({ docotrId, timeSlots, fees }) {
   return (
     <div className="shadow-panelShadow p-3 lg:p-5 rounded-md">
       <div className="flex items-center justify-between">
-        <p className="text__para mt-0 font-semibold">Ticket Price</p>
+        <p className="text__para mt-0 font-semibold">Fees</p>
         <span className="text-[16px] leading-7 lg:text-[22px] lg:leading-8 text-headingColor font-bold ">
-          500
+          {fees}₹
         </span>
       </div>
 
@@ -14,30 +16,17 @@ export default function SidePanel() {
         </p>
 
         <ul className="mt-3">
-          <li className="flex items-center justify-between mb-2">
-            <p className="text-[15px] leading-6 text-textColor font-semiboldr">
-              Sunday
-            </p>
-            <p className="text-[15px] leading-6 text-textColor font-semiboldr">
-              4:00 PM - 9:30 PM
-            </p>
-          </li>
-          <li className="flex items-center justify-between mb-2">
-            <p className="text-[15px] leading-6 text-textColor font-semiboldr">
-              Tuseday
-            </p>
-            <p className="text-[15px] leading-6 text-textColor font-semiboldr">
-              4:00 PM - 9:30 PM
-            </p>
-          </li>
-          <li className="flex items-center justify-between mb-2">
-            <p className="text-[15px] leading-6 text-textColor font-semiboldr">
-              Wedensday
-            </p>
-            <p className="text-[15px] leading-6 text-textColor font-semiboldr">
-              4:00 PM - 9:30 PM
-            </p>
-          </li>
+          {timeSlots.map((slot, index) => (
+            <li key={index} className="flex items-center justify-between mb-2">
+              <p className="text-[15px] leading-6 text-textColor font-semiboldr">
+                {slot.day.charAt(0).toUpperCase() + slot.day.slice(1)}
+              </p>
+              <p className="text-[15px] leading-6 text-textColor font-semiboldr">
+                {convertTime(slot.startingTime)} -{" "}
+                {convertTime(slot.endingTime)}
+              </p>
+            </li>
+          ))}
         </ul>
       </div>
 
