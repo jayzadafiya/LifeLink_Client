@@ -20,7 +20,7 @@ export default function Profile({ doctor }) {
     about: doctor?.about || "",
     gender: doctor?.gender || "",
     timeSlots: doctor?.timeSlots || [
-      { day: "", startingTime: "", endingTime: "" },
+      { appointments_number: "", startingTime: "", endingTime: "" },
     ],
     bloodType: doctor?.bloodType || "",
     experiences: doctor?.experiences || [
@@ -59,7 +59,7 @@ export default function Profile({ doctor }) {
     setFormData({ ...formData, photo: url });
   };
 
-  //reusable funcftion for adding  item
+  //reusable function for adding  item
 
   const addItem = (e, key) => {
     e.preventDefault();
@@ -80,7 +80,7 @@ export default function Profile({ doctor }) {
     }));
   };
 
-  //reusable funcftion for deleting  item
+  //reusable function for deleting  item
 
   const deleteItem = (e, key, index) => {
     e.preventDefault();
@@ -95,10 +95,15 @@ export default function Profile({ doctor }) {
   const handleReuableInputChange = (event, key, index) => {
     const { name, value } = event.target;
 
+    const newValue =
+      key === "timeSlots" && name === "appointments_number"
+        ? parseInt(value)
+        : value;
+
     setFormData((prevFormData) => {
       const updateItems = [...prevFormData[key]];
 
-      updateItems[index][name] = value;
+      updateItems[index][name] = newValue;
 
       return { ...prevFormData, [key]: updateItems };
     });
@@ -369,30 +374,23 @@ export default function Profile({ doctor }) {
           </button>
         </div>
         <div className="mb-5">
-          <p className="form__label ">Time SLots*</p>
+          <p className="form__label ">Time Slots*</p>
           {formData.timeSlots?.map((item, index) => (
             <div key={index}>
               <div>
                 <div className="grid grid-cols-2 gap-5 md:grid-cols-4 mb-[30px] ">
                   <div>
-                    <p className="form__label">Day*</p>
-                    <select
-                      name="day"
-                      className="py-3 form__input "
-                      value={item.day}
+                    <p className="form__label">Appointment num*</p>
+                    <input
+                      type="number"
+                      placeholder="10"
+                      name="appointments_number"
+                      value={item.appointments_number}
                       onChange={(e) =>
                         handleReuableInputChange(e, "timeSlots", index)
                       }
-                    >
-                      <option>Select</option>
-                      <option value="sunday">Sunday</option>
-                      <option value="monday">Monday</option>
-                      <option value="tuesday">Tuesday</option>
-                      <option value="wednesday">Wednesday</option>
-                      <option value="thursday">Thursday</option>
-                      <option value="friday">Friday</option>
-                      <option value="saturday">Saturday</option>
-                    </select>
+                      className="form__input"
+                    />
                   </div>
                   <div>
                     <p className="form__label">Starting Time*</p>
