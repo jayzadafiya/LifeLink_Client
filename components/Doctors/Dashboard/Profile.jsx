@@ -6,6 +6,8 @@ import { updateUser } from "../../../store/slices/userSlice";
 import { HashLoader } from "react-spinners";
 import { AiOutlineDelete } from "react-icons/ai";
 import { uploadImageToCloudinary } from "@/utils/uploadCloudinary";
+import { createTimeSlot } from "@/utils/heplerFunction";
+import Error from "@/components/Error/Error";
 
 export default function Profile({ doctor }) {
   const dispatch = useDispatch();
@@ -19,8 +21,9 @@ export default function Profile({ doctor }) {
     photo: doctor?.photo || "",
     about: doctor?.about || "",
     gender: doctor?.gender || "",
-    timeSlots: doctor?.timeSlots || [
-      { appointments_number: "", startingTime: "", endingTime: "" },
+    address: doctor?.address || "",
+    timeSlots_data: doctor?.timeSlots_data || [
+      { slot: "", appointments_time: "", startingTime: "", endingTime: "" },
     ],
     bloodType: doctor?.bloodType || "",
     experiences: doctor?.experiences || [
@@ -49,8 +52,6 @@ export default function Profile({ doctor }) {
     });
   };
 
-  console.log(formData);
-
   const handleFileInputChange = async (e) => {
     const file = e.target.files[0];
 
@@ -70,8 +71,13 @@ export default function Profile({ doctor }) {
       item = { startingDate: "", endingDate: "", degree: "", university: "" };
     } else if (key === "experiences") {
       item = { startingDate: "", endingDate: "", position: "", place: "" };
-    } else if (key === "timeSlots") {
-      item = { day: "", startingTime: "", endingTime: "" };
+    } else if (key === "timeSlots_data") {
+      item = {
+        slot: "",
+        appointments_time: "",
+        startingTime: "",
+        endingTime: "",
+      };
     }
 
     setFormData((prevFormData) => ({
@@ -96,7 +102,7 @@ export default function Profile({ doctor }) {
     const { name, value } = event.target;
 
     const newValue =
-      key === "timeSlots" && name === "appointments_number"
+      key === "timeSlots_data" && name === "appointments_time"
         ? parseInt(value)
         : value;
 
@@ -113,7 +119,11 @@ export default function Profile({ doctor }) {
     e.preventDefault();
 
     try {
-      dispatch(updateUser(formData)).then((result) => {
+      const data = {
+        formData,
+        timeSlots: createTimeSlot(formData.timeSlots_data),
+      };
+      dispatch(updateUser(data)).then((result) => {
         if (result.payload && result.payload.data) {
           router.push("/doctors/profile");
         }
@@ -174,6 +184,18 @@ export default function Profile({ doctor }) {
             placeholder="Bio"
             className="form__input"
             value={formData.bio}
+            onChange={handleInputChange}
+            maxLength={100}
+          />
+        </div>
+        <div className="mb-5">
+          <p className="form__label">Address*</p>
+          <input
+            type="text"
+            name="address"
+            placeholder="Address"
+            className="form__input"
+            value={formData.address}
             onChange={handleInputChange}
             maxLength={100}
           />
@@ -375,19 +397,35 @@ export default function Profile({ doctor }) {
         </div>
         <div className="mb-5">
           <p className="form__label ">Time Slots*</p>
-          {formData.timeSlots?.map((item, index) => (
+          {formData.timeSlots_data?.map((item, index) => (
             <div key={index}>
               <div>
-                <div className="grid grid-cols-2 gap-5 md:grid-cols-4 mb-[30px] ">
+                <div className="grid grid-cols-3 gap-5 md:grid-cols-5 mb-[30px] ">
                   <div>
-                    <p className="form__label">Appointment num*</p>
+                    <p className="form__label">Slot*</p>
+                    <select
+                      name="slot"
+                      className="form__input"
+                      onChange={(e) =>
+                        handleReuableInputChange(e, "timeSlots_data", index)
+                      }
+                      value={item.slot}
+                    >
+                      <option value="">Select</option>
+                      <option value="morning">Morning</option>
+                      <option value="afternoon">Afternoon</option>
+                      <option value="evening">Evening</option>
+                    </select>
+                  </div>
+                  <div>
+                    <p className="form__label">Number*</p>
                     <input
                       type="number"
                       placeholder="10"
-                      name="appointments_number"
-                      value={item.appointments_number}
+                      name="appointments_time"
+                      value={item.appointments_time}
                       onChange={(e) =>
-                        handleReuableInputChange(e, "timeSlots", index)
+                        handleReuableInputChange(e, "timeSlots_data", index)
                       }
                       className="form__input"
                     />
@@ -400,7 +438,7 @@ export default function Profile({ doctor }) {
                       className="form__input"
                       value={item.startingTime}
                       onChange={(e) =>
-                        handleReuableInputChange(e, "timeSlots", index)
+                        handleReuableInputChange(e, "timeSlots_data", index)
                       }
                     />
                   </div>
@@ -412,13 +450,13 @@ export default function Profile({ doctor }) {
                       className="form__input"
                       value={item.endingTime}
                       onChange={(e) =>
-                        handleReuableInputChange(e, "timeSlots", index)
+                        handleReuableInputChange(e, "timeSlots_data", index)
                       }
                     />
                   </div>
                   <div className="flex items-center ">
                     <button
-                      onClick={(e) => deleteItem(e, "timeSlots", index)}
+                      onClick={(e) => deleteItem(e, "timeSlots_data", index)}
                       className="bg-red-600 p-2 rounded-full text-white text-[18px]   cursor-pointer mt-6 "
                     >
                       <AiOutlineDelete />
@@ -430,7 +468,7 @@ export default function Profile({ doctor }) {
           ))}
 
           <button
-            onClick={(e) => addItem(e, "timeSlots")}
+            onClick={(e) => addItem(e, "timeSlots_data")}
             className="bg-[#000] p-2 px-5 rounded text-white h-fit cursor-pointer"
           >
             Add TimeSlot

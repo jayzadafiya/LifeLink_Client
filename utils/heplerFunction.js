@@ -38,3 +38,64 @@ export const decodeToken = (token) => {
 
   return data;
 };
+export const createTimeSlot = (slots) => {
+  let timeSlots = [];
+
+  slots.forEach((item) => {
+    const { slot, startingTime, endingTime, appointments_time } = item;
+    const startMinutes = timeToMinutes(startingTime);
+    const endMinutes = timeToMinutes(endingTime);
+
+    validateTimeslot(slot, startMinutes, endMinutes);
+
+    const generaterSLots = timeslotGenerator(
+      startMinutes,
+      endMinutes,
+      appointments_time
+    );
+
+    timeSlots.push(...generaterSLots);
+  });
+
+  return timeSlots;
+};
+
+export const timeslotGenerator = (start, end, time) => {
+  let timeslots = [];
+  let currentMinute = start;
+
+  while (currentMinute < end) {
+    timeslots.push(minutesToTime(currentMinute));
+    console.log(minutesToTime(currentMinute));
+    currentMinute += time;
+  }
+
+  return timeslots;
+};
+
+const timeToMinutes = (time) => {
+  const [hours, minutes] = time.split(":").map(Number);
+  return hours * 60 + minutes;
+};
+
+const minutesToTime = (minutes) => {
+  const hours = Math.floor(minutes / 60);
+  const mins = minutes % 60;
+  return `${String(hours).padStart(2, "0")}:${String(mins).padStart(2, "0")}`;
+};
+
+const validateTimeslot = (slot, startMinutes, endMinutes) => {
+  const timeSlots = {
+    morning: { start: "06:00", end: "11:59" },
+    afternoon: { start: "12:00", end: "16:59" },
+    evening: { start: "17:00", end: "20:59" },
+  };
+
+  const { start, end } = timeSlots[slot];
+  const startTime = timeToMinutes(start);
+  const endTime = timeToMinutes(end);
+
+  if (startMinutes < startTime || endMinutes > endTime) {
+    throw new Error("not valid");
+  }
+};

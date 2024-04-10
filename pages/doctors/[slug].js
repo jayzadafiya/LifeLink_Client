@@ -23,6 +23,7 @@ export default function DoctorDetails({ doctor, error }) {
     reviews,
     timeSlots,
     fees,
+    address,
   } = doctor;
 
   // Reset the tab to about whenever the doctor prop changes
@@ -114,8 +115,10 @@ export default function DoctorDetails({ doctor, error }) {
                   doctorId={doctor._id}
                   timeSlots={timeSlots}
                   fees={fees}
+                  address={address}
                 />
               </div>
+
             </div>
           </div>
         </section>

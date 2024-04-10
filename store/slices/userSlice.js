@@ -49,45 +49,38 @@ export const fetchUser = createAsyncThunk("user/fatchUser", async () => {
   }
 });
 
-export const updateUser = createAsyncThunk(
-  "user/updateUser",
-  async (formData) => {
-    try {
-      const token = Cookies.get("token");
+export const updateUser = createAsyncThunk("user/updateUser", async (data) => {
+  try {
+    const token = Cookies.get("token");
 
-      const decodedToken = jwt.decode(token);
-      let res = null;
+    const decodedToken = jwt.decode(token);
+    let res = null;
 
-      if (decodedToken.role === "patient") {
-        res = await axios.put(
-          `${BASE_URL}/users/${decodedToken.userId}`,
-          formData,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-      } else if (decodedToken.role === "doctor") {
-        res = await axios.put(
-          `${BASE_URL}/doctors/${decodedToken.userId}`,
-          formData,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
-      }
-
-      return { data: res.data };
-    } catch (error) {
-      const err = error?.response?.data?.message || error?.message;
-      throw new Error(err);
+    if (decodedToken.role === "patient") {
+      res = await axios.put(`${BASE_URL}/users/${decodedToken.userId}`, data, {
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+      });
+    } else if (decodedToken.role === "doctor") {
+      res = await axios.put(
+        `${BASE_URL}/doctors/${decodedToken.userId}`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
     }
+
+    return { data: res.data };
+  } catch (error) {
+    const err = error?.response?.data?.message || error?.message;
+    throw new Error(err);
   }
-);
+});
 
 const userSlice = createSlice({
   name: "user",
