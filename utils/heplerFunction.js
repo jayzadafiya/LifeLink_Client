@@ -54,7 +54,7 @@ export const createTimeSlot = (slots) => {
       appointments_time
     );
 
-    timeSlots.push(...generaterSLots);
+    timeSlots.push({ [slot]: generaterSLots });
   });
 
   return timeSlots;
@@ -86,9 +86,9 @@ const minutesToTime = (minutes) => {
 
 const validateTimeslot = (slot, startMinutes, endMinutes) => {
   const timeSlots = {
-    morning: { start: "06:00", end: "11:59" },
-    afternoon: { start: "12:00", end: "16:59" },
-    evening: { start: "17:00", end: "20:59" },
+    morning: { start: "06:00", end: "12:00" },
+    afternoon: { start: "12:00", end: "17:00" },
+    evening: { start: "17:00", end: "21:00" },
   };
 
   const { start, end } = timeSlots[slot];
@@ -99,3 +99,29 @@ const validateTimeslot = (slot, startMinutes, endMinutes) => {
     throw new Error("not valid");
   }
 };
+
+//function for compare timeslots
+function compareTimeSlots(slot1, slot2) {
+  return (
+    slot1.slot === slot2.slot &&
+    slot1.appointments_time === slot2.appointments_time &&
+    slot1.startingTime === slot2.startingTime &&
+    slot1.endingTime === slot2.endingTime
+  );
+}
+
+// Function to find updated time slots
+export function findUpdatedTimeSlots(newData, existingData) {
+  const updatedSlots = [];
+
+  newData.forEach((newSlot) => {
+    const existingSlot = existingData.find((slot) =>
+      compareTimeSlots(newSlot, slot)
+    );
+    if (!existingSlot) {
+      updatedSlots.push(newSlot);
+    }
+  });
+
+  return updatedSlots;
+}

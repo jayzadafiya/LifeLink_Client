@@ -1,8 +1,8 @@
-import { convertTime } from "@/utils/heplerFunction";
-import Model from "../Model";
+import Model from "../Timeslots/Model";
 import { useState } from "react";
+import Timeslot from "../Timeslots/Timeslot";
 
-export default function SidePanel({ address, docotrId, timeSlots, fees }) {
+export default function SidePanel({ address, docotrId, timeslots, fees }) {
   const [open, setOpen] = useState(false);
 
   const handelModel = () => {
@@ -47,7 +47,7 @@ export default function SidePanel({ address, docotrId, timeSlots, fees }) {
         </button>
       </div>
       <Model open={open}>
-        <p>ok</p>
+        <Timeslot timeslots={timeslots} />
         <button onClick={handelModel}>close</button>
       </Model>
     </>

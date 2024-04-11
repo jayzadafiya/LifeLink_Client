@@ -27,23 +27,30 @@ export const fetchUser = createAsyncThunk("user/fatchUser", async () => {
     const token = Cookies.get("token");
 
     const decodedToken = jwt.decode(token);
-    let res = null;
+    let data = null;
 
     if (decodedToken.role === "patient") {
-      res = await axios.get(`${BASE_URL}/users/profile`, {
+      const res = await axios.get(`${BASE_URL}/users/profile`, {
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
       });
+
+      data = res.data;
     } else if (decodedToken.role === "doctor") {
-      res = await axios.get(`${BASE_URL}/doctors/${decodedToken.userId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      const res = await axios.get(
+        `${BASE_URL}/doctors/${decodedToken.userId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      data = res.data.doctor;
     }
-    return { data: res.data, token };
+    return { data: data, token };
   } catch (error) {
     throw new Error(error.response.data.message);
   }

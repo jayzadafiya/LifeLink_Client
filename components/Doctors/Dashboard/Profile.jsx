@@ -1,4 +1,5 @@
 import Image from "next/image";
+import axios from "axios";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -6,13 +7,14 @@ import { updateUser } from "../../../store/slices/userSlice";
 import { HashLoader } from "react-spinners";
 import { AiOutlineDelete } from "react-icons/ai";
 import { uploadImageToCloudinary } from "@/utils/uploadCloudinary";
-import { createTimeSlot } from "@/utils/heplerFunction";
+import { createTimeSlot, findUpdatedTimeSlots } from "@/utils/heplerFunction";
 import Error from "@/components/Error/Error";
+import { BASE_URL } from "@/utils/config";
 
 export default function Profile({ doctor }) {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { error, loading } = useSelector((state) => state.user);
+  const { error, loading, accessToken } = useSelector((state) => state.user);
 
   const [formData, setFormData] = useState({
     bio: doctor?.bio || "",
@@ -22,7 +24,7 @@ export default function Profile({ doctor }) {
     about: doctor?.about || "",
     gender: doctor?.gender || "",
     address: doctor?.address || "",
-    timeSlots_data: doctor?.timeSlots_data || [
+    timeSlots_data: doctor?.timeSlots_data.map((slot) => ({ ...slot })) || [
       { slot: "", appointments_time: "", startingTime: "", endingTime: "" },
     ],
     bloodType: doctor?.bloodType || "",
@@ -106,6 +108,10 @@ export default function Profile({ doctor }) {
         ? parseInt(value)
         : value;
 
+    if (newValue >= 60 || newValue < 0) {
+      return <Error errMessgae="Appointments time is not valid " />;
+    }
+
     setFormData((prevFormData) => {
       const updateItems = [...prevFormData[key]];
 
@@ -117,12 +123,45 @@ export default function Profile({ doctor }) {
 
   const updateProfileHandler = async (e) => {
     e.preventDefault();
+    const updatedFormData = { ...formData };
+    const newTimeSlotsData = findUpdatedTimeSlots(
+      formData.timeSlots_data,
+      doctor.timeSlots_data
+    );
 
     try {
-      const data = {
-        formData,
-        timeSlots: createTimeSlot(formData.timeSlots_data),
-      };
+      let data = null;
+
+      let deleteRequests = [];
+
+      if (newTimeSlotsData.length > 0) {
+        if (doctor.timeSlots_data.length > 0) {
+          newTimeSlotsData.forEach(async (timeslot) => {
+            deleteRequests = await axios.delete(
+              `${BASE_URL}/timeslot/${doctor._id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${accessToken}`,
+                },
+                data: { slotPhase: timeslot.slot },
+              }
+            );
+          });
+        }
+
+        await Promise.all(deleteRequests);
+
+        data = {
+          formData: updatedFormData,
+          timeSlots: createTimeSlot(newTimeSlotsData),
+        };
+      } else {
+        // No need to update time slots
+        data = {
+          formData: updatedFormData,
+        };
+      }
+
       dispatch(updateUser(data)).then((result) => {
         if (result.payload && result.payload.data) {
           router.push("/doctors/profile");

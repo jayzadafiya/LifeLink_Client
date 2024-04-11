@@ -7,9 +7,9 @@ import SidePanel from "@/components/Doctors/SidePanel";
 import { BASE_URL } from "@/utils/config";
 import axios from "axios";
 
-export default function DoctorDetails({ doctor, error }) {
+export default function DoctorDetails({ doctor, error, timeslots }) {
   const [tab, setTab] = useState("about");
-  console.log(tab);
+
   const {
     name,
     averageRating,
@@ -21,7 +21,6 @@ export default function DoctorDetails({ doctor, error }) {
     experiences,
     qualifications,
     reviews,
-    timeSlots,
     fees,
     address,
   } = doctor;
@@ -113,12 +112,11 @@ export default function DoctorDetails({ doctor, error }) {
               <div>
                 <SidePanel
                   doctorId={doctor._id}
-                  timeSlots={timeSlots}
+                  timeslots={timeslots}
                   fees={fees}
                   address={address}
                 />
               </div>
-
             </div>
           </div>
         </section>
@@ -134,7 +132,8 @@ export async function getStaticProps(context) {
 
     return {
       props: {
-        doctor: res.data,
+        doctor: res.data.doctor,
+        timeslots: res.data.timeslots,
       },
     };
   } catch (error) {
