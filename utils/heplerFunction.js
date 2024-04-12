@@ -125,3 +125,6 @@ export function findUpdatedTimeSlots(newData, existingData) {
 
   return updatedSlots;
 }
+
+//Make first word Capital
+export const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);

@@ -23,6 +23,7 @@ export default function DoctorDetails({ doctor, error, timeslots }) {
     reviews,
     fees,
     address,
+    timeSlots_data,
   } = doctor;
 
   // Reset the tab to about whenever the doctor prop changes
@@ -111,7 +112,7 @@ export default function DoctorDetails({ doctor, error, timeslots }) {
               </div>
               <div>
                 <SidePanel
-                  doctorId={doctor._id}
+                  timeslotsData={timeSlots_data}
                   timeslots={timeslots}
                   fees={fees}
                   address={address}
