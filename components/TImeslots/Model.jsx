@@ -24,7 +24,7 @@ function Modal({ open, children }) {
   return createPortal(
     <dialog className="modal" ref={dialog}>
       <section>
-        <div className="container">{open ? children : null}</div>
+        <div className="">{open ? children : null}</div>
       </section>
     </dialog>,
     document.getElementById("modal")

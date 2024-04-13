@@ -128,3 +128,7 @@ export function findUpdatedTimeSlots(newData, existingData) {
 
 //Make first word Capital
 export const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
+
+//Convert ISOString to string like yyyy-mm-dd
+export const dateToString = (newDateStr) =>
+  new Date(newDateStr).toISOString().split("T")[0];

@@ -1,10 +1,12 @@
 import axios from "axios";
-import { capitalize } from "@/utils/heplerFunction";
+import { capitalize, dateToString } from "@/utils/heplerFunction";
 import { useRouter } from "next/router";
 import React, { useEffect, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { BASE_URL } from "@/utils/config";
 import { useSelector } from "react-redux";
+import Calander from "./Calander";
+import Slot from "./Slot";
 
 //Memoize the component to prevent unnecessary re-renders
 const Timeslot = React.memo(({ timeslots, fees }) => {
@@ -14,6 +16,7 @@ const Timeslot = React.memo(({ timeslots, fees }) => {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedSlot, setSelectedSlot] = useState("");
+  const [selectedDate, setSelectedDate] = useState(dateToString(new Date()));
 
   const { accessToken } = useSelector((state) => state.user);
 
@@ -28,13 +31,19 @@ const Timeslot = React.memo(({ timeslots, fees }) => {
     setDialogOpen(true);
   };
 
+  const onChangeDate = (newDateStr) => {
+    const formattedDate = dateToString(newDateStr);
+    setSelectedDate(formattedDate);
+    console.log(formattedDate);
+  };
+
+  console.log(selectedDate);
+
   const confirmBooking = async () => {
     setDialogOpen(false);
 
-    const currentDate = new Date().toISOString().split("T")[0];
-
     const data = {
-      bookingDate: currentDate,
+      bookingDate: selectedDate,
       time: selectedTime,
       slotPhase: selectedSlot,
     };
@@ -57,59 +66,58 @@ const Timeslot = React.memo(({ timeslots, fees }) => {
 
   return (
     <>
-      {!dialogOpen &&
-        timeslots.map((slot) =>
-          Object.keys(slot).map((period) => (
-            <div key={period}>
-              <h3 className="text-headingColor text-[16px] leading-6 font-semibold mb-4 mt-0">
-                {capitalize(period)}
-              </h3>
-              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3  mb-4">
-                {slot[period]?.map((time, index) => (
-                  <div
-                    key={`${period}-${index}`}
-                    className="p-2 md:p-4 w-[80px] bg-[#01b5c533] rounded-md cursor-pointer"
-                    onClick={() => openDetails(time, period)}
-                  >
-                    <p className="text-center text-[#01B5C5] ">{time}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))
-        )}
+      {!dialogOpen && (
+        <div className="container flex items-center justify-center gap-5  flex-col md:flex-row ">
+          <div className="p-2">
+            <Calander onChange={onChangeDate} />
+          </div>
+          <div className="md:w-[450px]  ">
+            {timeslots.map((slot, index) =>
+              Object.keys(slot).map((period, periodIndex) => (
+                <Slot
+                  slot={slot}
+                  period={period}
+                  openDetails={openDetails}
+                  key={`${index}-${periodIndex}`}
+                />
+              ))
+            )}
+          </div>
+        </div>
+      )}
       {dialogOpen && (
-        <div className="w-full h-[200px] overflow-hidden">
-          <dialog open={true} className=" w-full h-full p-4 mt-[-35px]   ">
-            <div className="mt-4">
-              <p className="text-[16px] leading-6 font-bold mb-4 mt-0">
-                Selected Slot:{" "}
-                <span className="text-textColor ">{selectedSlot}</span>
-              </p>
-              <p className="text-[16px] leading-6 font-bold mb-4 mt-0">
-                Selected Time:{" "}
-                <span className="text-textColor ">{selectedTime}</span>
-              </p>
-              <p className="text-[16px] leading-6 font-bold mb-4 mt-0">
-                Appointment Fees:{" "}
-                <span className="text-textColor ">{fees}</span>
-              </p>
+        <div className="w-full h-full bg-[#ddf2fc] p-8 mt-[-35px] mb-[-35px]   ">
+          <div className="">
+            <p className="text-[16px] leading-6 font-bold mb-4 mt-0">
+              Selected Date:{" "}
+              <span className="text-textColor ">{selectedDate}</span>
+            </p>
+            <p className="text-[16px] leading-6 font-bold mb-4 mt-0">
+              Selected Slot:{" "}
+              <span className="text-textColor ">{selectedSlot}</span>
+            </p>
+            <p className="text-[16px] leading-6 font-bold mb-4 mt-0">
+              Selected Time:{" "}
+              <span className="text-textColor ">{selectedTime}</span>
+            </p>
+            <p className="text-[16px] leading-6 font-bold mb-4 mt-0">
+              Appointment Fees: <span className="text-textColor ">{fees}</span>
+            </p>
 
-              <button
-                onClick={confirmBooking}
-                className="btn px-2 w-full rounded-md  bg-[#feb60d33] text-[#FEB60D] border border-solid hover:border-[#FEB60D]"
-              >
-                Confirm Booking
-              </button>
-            </div>
-
-            <div
-              className="absolute top-1 right-0 p-4 cursor-pointer text-primaryColor hover:text-red-600"
-              onClick={() => setDialogOpen(false)}
+            <button
+              onClick={confirmBooking}
+              className="btn px-2 w-full rounded-md  bg-[#feb60d33] text-[#FEB60D] border border-solid hover:border-[#FEB60D]"
             >
-              <FaTimes />
-            </div>
-          </dialog>
+              Confirm Booking
+            </button>
+          </div>
+
+          <div
+            className="absolute top-1 right-0 p-4 cursor-pointer text-primaryColor hover:text-red-600"
+            onClick={() => setDialogOpen(false)}
+          >
+            <FaTimes />
+          </div>
         </div>
       )}
     </>
