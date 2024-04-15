@@ -1,15 +1,29 @@
 import axios from "axios";
-import { capitalize, dateToString } from "@/utils/heplerFunction";
+import {
+  capitalize,
+  dateToString,
+  timeslotByDate,
+} from "@/utils/heplerFunction";
 import { useRouter } from "next/router";
-import React, { useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { BASE_URL } from "@/utils/config";
 import { useSelector } from "react-redux";
-import Calander from "./Calander";
 import Slot from "./Slot";
+import Calander from "./Calander";
 
 //Memoize the component to prevent unnecessary re-renders
 const Timeslot = React.memo(({ timeslots, fees }) => {
+  const sortedTimeslots = useMemo(() => {
+    return timeslots.slice().sort((a, b) => {
+      const order = ["morning", "afternoon", "evening"];
+
+      return (
+        order.indexOf(Object.keys(a)[0]) - order.indexOf(Object.keys(b)[0])
+      );
+    });
+  }, [timeslots]);
+
   const router = useRouter();
   const { slug } = router.query;
 
@@ -17,13 +31,9 @@ const Timeslot = React.memo(({ timeslots, fees }) => {
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedSlot, setSelectedSlot] = useState("");
   const [selectedDate, setSelectedDate] = useState(dateToString(new Date()));
+  const [newTimeslots, setNewTimeslots] = useState(sortedTimeslots);
 
   const { accessToken } = useSelector((state) => state.user);
-
-  timeslots.sort((a, b) => {
-    const order = ["moring", "afternoon", "evening"];
-    return order.indexOf(Object.keys(a)[0]) - order.indexOf(Object.keys(b)[0]);
-  });
 
   const openDetails = (time, period) => {
     setSelectedTime(time);
@@ -33,11 +43,10 @@ const Timeslot = React.memo(({ timeslots, fees }) => {
 
   const onChangeDate = (newDateStr) => {
     const formattedDate = dateToString(newDateStr);
-    setSelectedDate(formattedDate);
-    console.log(formattedDate);
-  };
 
-  console.log(selectedDate);
+    setSelectedDate(formattedDate);
+    setNewTimeslots(timeslotByDate(sortedTimeslots, formattedDate));
+  };
 
   const confirmBooking = async () => {
     setDialogOpen(false);
@@ -66,25 +75,28 @@ const Timeslot = React.memo(({ timeslots, fees }) => {
 
   return (
     <>
-      {!dialogOpen && (
-        <div className="container flex items-center justify-center gap-5  flex-col md:flex-row ">
-          <div className="p-2">
-            <Calander onChange={onChangeDate} />
-          </div>
-          <div className="md:w-[450px]  ">
-            {timeslots.map((slot, index) =>
-              Object.keys(slot).map((period, periodIndex) => (
-                <Slot
-                  slot={slot}
-                  period={period}
-                  openDetails={openDetails}
-                  key={`${index}-${periodIndex}`}
-                />
-              ))
-            )}
-          </div>
+      <div
+        className={`${
+          dialogOpen ? "hidden" : ""
+        } container flex items-center justify-center gap-5  flex-col md:flex-row `}
+      >
+        <div className="p-2">
+          <Calander onChange={onChangeDate} />
         </div>
-      )}
+        <div className="md:w-[450px]  ">
+          {newTimeslots.map((slot, index) =>
+            Object.keys(slot).map((period, periodIndex) => (
+              <Slot
+                slot={slot}
+                period={period}
+                openDetails={openDetails}
+                key={`${index}-${periodIndex}`}
+              />
+            ))
+          )}
+        </div>
+      </div>
+
       {dialogOpen && (
         <div className="w-full h-full bg-[#ddf2fc] p-8 mt-[-35px] mb-[-35px]   ">
           <div className="">

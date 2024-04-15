@@ -130,5 +130,27 @@ export function findUpdatedTimeSlots(newData, existingData) {
 export const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
 
 //Convert ISOString to string like yyyy-mm-dd
-export const dateToString = (newDateStr) =>
-  new Date(newDateStr).toISOString().split("T")[0];
+export const dateToString = (newDateStr) => {
+  const date = new Date(newDateStr);
+
+  date.setUTCHours(date.getUTCHours() + 5); // Add 5 hours for IST
+  date.setUTCMinutes(date.getUTCMinutes() + 30); // Add 30 minutes for IST
+
+  // Convert the date object to an ISO string
+  const ISTDateString = date.toISOString().split("T")[0];
+
+  return ISTDateString;
+};
+
+export const timeslotByDate = (timeslots, date) => {
+  const newTimeslots = timeslots.map((slot) =>
+    Object.keys(slot).reduce((newSlot, period) => {
+      const filteredData = slot[period].filter(({ bookingDate }) => {
+        return !bookingDate.includes(date);
+      });
+      newSlot[period] = filteredData;
+      return newSlot;
+    }, {})
+  );
+  return newTimeslots;
+};
