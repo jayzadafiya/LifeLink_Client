@@ -56,7 +56,6 @@ const Timeslot = React.memo(({ timeslots, fees }) => {
       time: selectedTime,
       slotPhase: selectedSlot,
     };
-    console.log(data);
     const booking = await axios.post(
       `${BASE_URL}/checkout-session/${slug}`,
       data,

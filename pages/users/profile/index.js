@@ -12,7 +12,7 @@ import { logout } from "@/store/slices/userSlice";
 import avtarImg from "../../../public/assets/images/patient-avatar.png";
 import { useRouter } from "next/router";
 
-export default function MyAccount({ user, doctors, error }) {
+export default function MyAccount({ user, appointments, error }) {
   const dispatch = useDispatch();
   const router = useRouter();
   const [tab, setTab] = useState("bookings");
@@ -89,7 +89,7 @@ export default function MyAccount({ user, doctors, error }) {
                 Profile Settings
               </button>
             </div>
-            {tab === "bookings" && <MyBookings appointentments={doctors} />}
+            {tab === "bookings" && <MyBookings appointments={appointments} />}
             {tab === "settings" && <Profile user={user} />}
           </div>
         </div>
@@ -109,7 +109,7 @@ export async function getServerSideProps(context) {
       },
     });
 
-    const doctors = await axios.get(`${BASE_URL}/users/my-appointments`, {
+    const appointments = await axios.get(`${BASE_URL}/users/my-appointments`, {
       headers: {
         Authorization: `Bearer ${cookieToken}`,
       },
@@ -117,7 +117,7 @@ export async function getServerSideProps(context) {
     return {
       props: {
         user: user.data,
-        doctors: doctors.data,
+        appointments: appointments.data,
       },
     };
   } catch (error) {
