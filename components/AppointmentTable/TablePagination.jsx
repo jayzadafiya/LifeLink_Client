@@ -12,12 +12,12 @@ import {
 import { useState } from "react";
 import AppointmentPage from "./AppointmentPage";
 
-export default function MyBookings({ appointments }) {
+export default function AppointmentTablePagination({ type, appointments }) {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
   const [order, setOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState("fees");
+  const [orderBy, setOrderBy] = useState("bookingDate");
   const [searchTerm, setSearchTerm] = useState("");
 
   const handleChangePage = (event, newPage) => {
@@ -44,37 +44,41 @@ export default function MyBookings({ appointments }) {
     <div>
       {appointments.length === 0 && (
         <h2 className="mt-5 text-center  leading-7 text-[20px] font-semibold text-primaryColor">
-          You did not book any doctro yet!
+          {`You did not ${
+            type === "user" ? " book " : " have"
+          } any appointment yet!`}
         </h2>
       )}
 
       {appointments.length > 0 && (
         <>
-          <TextField
-            label="Search Doctor"
-            variant="outlined"
-            fullWidth
-            margin="normal"
-            value={searchTerm}
-            onChange={handleSearchChange}
-          />
+          {type === "user" && (
+            <TextField
+              label="Search Doctor"
+              variant="outlined"
+              fullWidth
+              margin="normal"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="mt-5"
+            />
+          )}
           <Table className="w-full text-left text-sm text-gray-500 mt-3">
             <TableHead>
               <TableRow>
                 <TableCell>Doctor Name</TableCell>
                 <TableCell>Status</TableCell>
+                <TableCell>Fees</TableCell>
+                <TableCell>Time</TableCell>
                 <TableCell>
                   <TableSortLabel
-                    active={orderBy === "fees"}
-                    direction={orderBy === "fees" ? order : "asc"}
-                    onClick={() => handleRequestSort("fees")}
+                    active={orderBy === "bookingDate"}
+                    direction={orderBy === "bookingDate" ? order : "asc"}
+                    onClick={() => handleRequestSort("bookingDate")}
                   >
-                    Fees
+                    Booked For
                   </TableSortLabel>
                 </TableCell>
-                <TableCell>Date</TableCell>
-                <TableCell>Time</TableCell>
-                <TableCell>Booked On</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -83,8 +87,8 @@ export default function MyBookings({ appointments }) {
                 page={page}
                 rowsPerPage={rowsPerPage}
                 order={order}
-                orderBy={orderBy}
                 searchTerm={searchTerm}
+                userType={type}
               />
             </TableBody>
           </Table>

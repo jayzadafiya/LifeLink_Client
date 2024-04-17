@@ -1,35 +1,47 @@
 import React from "react";
 import { TableRow, TableCell } from "@mui/material";
 import { capitalize, formateDate } from "@/utils/heplerFunction";
+import Image from "next/image";
+import dayjs from "dayjs";
 
 export default function AppointmentPage({
   appointments,
   page,
   rowsPerPage,
   order,
-  orderBy,
   searchTerm,
+  userType,
 }) {
   const sortedAppointments = () => {
     const comparator = (a, b) => {
+      const dateA = dayjs(a.bookingDate + " " + a.time);
+      const dateB = dayjs(b.bookingDate + " " + b.time);
+
       if (order === "asc") {
-        return a[orderBy] - b[orderBy];
+        return dateA - dateB;
       } else {
-        return b[orderBy] - a[orderBy];
+        return dateB - dateA;
       }
     };
+
     return appointments.sort(comparator);
   };
 
   const filteredAppointments = () => {
     return sortedAppointments().filter((appointment) =>
-      appointment.doctor.name.toLowerCase().includes(searchTerm.toLowerCase())
+      appointment.doctor.name.toLowerCase().includes(searchTerm?.toLowerCase())
     );
   };
 
   const startIndex = page * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
-  const filteredAppointment = filteredAppointments();
+
+  let filteredAppointment;
+  if (userType === "doctor") {
+    filteredAppointment = sortedAppointments();
+  } else {
+    filteredAppointment = filteredAppointments();
+  }
 
   if (searchTerm !== "" && filteredAppointment.length === 0) {
     return (
@@ -43,9 +55,21 @@ export default function AppointmentPage({
     <TableRow key={item._id}>
       <TableCell>
         <div className="flex items-center">
+          <Image
+            src={userType === "doctor" ? item.user?.photo : item.doctor?.photo}
+            alt=""
+            className="rounded-full"
+            width={40}
+            height={40}
+          />
           <div className="pl-3">
             <div className="text-base font-semibold">
-              {capitalize(item.doctor.name)}
+              {capitalize(
+                userType === "doctor" ? item.user?.name : item.doctor?.name
+              )}
+            </div>
+            <div className="text-gray-500">
+              {userType === "doctor" ? item.user?.email : item.doctor?.email}
             </div>
           </div>
         </div>
@@ -64,9 +88,8 @@ export default function AppointmentPage({
         )}
       </TableCell>
       <TableCell>{item.fees}</TableCell>
-      <TableCell>{formateDate(item.bookingDate)}</TableCell>
       <TableCell>{item.time}</TableCell>
-      <TableCell>{formateDate(item.createdAt)}</TableCell>
+      <TableCell>{formateDate(item.bookingDate)}</TableCell>
     </TableRow>
   ));
 }

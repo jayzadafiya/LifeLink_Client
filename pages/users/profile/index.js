@@ -1,20 +1,20 @@
 import Image from "next/image";
 import axios from "axios";
-import MyBookings from "@/components/User/MyBookings";
 import Profile from "@/components/User/Profile";
 import Error from "@/components/Error/Error";
 
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BASE_URL } from "@/utils/config";
 import { useState } from "react";
 import { logout } from "@/store/slices/userSlice";
 
 import avtarImg from "../../../public/assets/images/patient-avatar.png";
 import { useRouter } from "next/router";
+import AppointmentTablePagination from "@/components/AppointmentTable/TablePagination";
 
 export default function MyAccount({ user, appointments, error }) {
   const dispatch = useDispatch();
-  const router = useRouter();
+  // const router = useRouter();
   const [tab, setTab] = useState("bookings");
 
   if (!user || error) {
@@ -25,6 +25,7 @@ export default function MyAccount({ user, appointments, error }) {
     dispatch(logout());
     router.replace("/");
   };
+
   return (
     <section>
       <div className="max-w[1178px] px-5 mx-auto ">
@@ -78,7 +79,15 @@ export default function MyAccount({ user, appointments, error }) {
                   tab === "bookings" && "bg-primaryColor text-white font-normal"
                 }  p-2 mr-5 px-5 rounded-md text-headingColor font-semibold text-[16px] border border-solid leading-7  border-primaryColor`}
               >
-                My bookings
+                My Appointments
+              </button>
+              <button
+                onClick={() => setTab("history")}
+                className={`${
+                  tab === "history" && "bg-primaryColor text-white font-normal"
+                } p-2 mr-5 px-5 rounded-md text-headingColor font-semibold text-[16px] border border-solid leading-7 border-primaryColor `}
+              >
+                History
               </button>
               <button
                 onClick={() => setTab("settings")}
@@ -89,8 +98,22 @@ export default function MyAccount({ user, appointments, error }) {
                 Profile Settings
               </button>
             </div>
-            {tab === "bookings" && <MyBookings appointments={appointments} />}
-            {tab === "settings" && <Profile user={user} />}
+            <div className={`${tab !== "bookings" ? "hidden" : ""}`}>
+              <AppointmentTablePagination
+                type="user"
+                appointments={appointments.upcoming}
+              />
+            </div>
+            <div className={`${tab !== "history" ? "hidden" : ""}`}>
+              <AppointmentTablePagination
+                type="user"
+                appointments={appointments.history}
+              />
+            </div>
+
+            <div className={`${tab !== "settings" ? "hidden" : ""}`}>
+              <Profile user={user} />
+            </div>
           </div>
         </div>
       </div>

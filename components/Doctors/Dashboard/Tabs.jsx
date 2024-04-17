@@ -48,6 +48,16 @@ export default function Tabs({ tab, setTab }) {
         >
           Profile
         </button>
+        <button
+          onClick={() => setTab("history")}
+          className={`${
+            tab === "history"
+              ? "bg-indigo-100 text-primaryColor "
+              : "bg-transparent text-headingColor"
+          } w-full btn mt-8 rounded-md`}
+        >
+          History
+        </button>
         <div className="mt-[100px] w-full ">
           <button
             className="w-full bg-[#181A1E] p-3 text-[16px] leading-7 rounded-md  text-white"
