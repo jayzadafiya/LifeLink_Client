@@ -50,26 +50,33 @@ const Timeslot = React.memo(({ timeslots, fees }) => {
 
   const confirmBooking = async () => {
     setDialogOpen(false);
+    try {
+      const data = {
+        bookingDate: selectedDate,
+        time: selectedTime,
+        slotPhase: selectedSlot,
+      };
 
-    const data = {
-      bookingDate: selectedDate,
-      time: selectedTime,
-      slotPhase: selectedSlot,
-    };
-    const booking = await axios.post(
-      `${BASE_URL}/checkout-session/${slug}`,
-      data,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
+      const session = await axios.post(
+        `${BASE_URL}/booking/checkout-session/${slug}`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
+
+      if (session.data.url) {
+        router.push(session.data.url);
       }
-    );
 
-    console.log(booking);
-    // Reset selectedTime and selectedSlot if needed
-    setSelectedTime("");
-    setSelectedSlot("");
+      // Reset selectedTime and selectedSlot if needed
+      setSelectedTime("");
+      setSelectedSlot("");
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
