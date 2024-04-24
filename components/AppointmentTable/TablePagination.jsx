@@ -1,4 +1,3 @@
-import { formateDate } from "@/utils/heplerFunction";
 import {
   Table,
   TableHead,
@@ -9,8 +8,10 @@ import {
   TableSortLabel,
   TextField,
 } from "@mui/material";
-import { useState } from "react";
+import Head from "next/head";
 import AppointmentPage from "./AppointmentPage";
+import { useState } from "react";
+import { formateDate } from "@/utils/heplerFunction";
 
 export default function AppointmentTablePagination({ type, appointments }) {
   const [page, setPage] = useState(0);
@@ -20,21 +21,25 @@ export default function AppointmentTablePagination({ type, appointments }) {
   const [orderBy, setOrderBy] = useState("bookingDate");
   const [searchTerm, setSearchTerm] = useState("");
 
+  // Function to handle page change
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
 
+  // Function to handle rows per page change
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
 
+  // Function to handle sorting request
   const handleRequestSort = (property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
     setOrderBy(property);
   };
 
+  // Function to handle search term change
   const handleSearchChange = (event) => {
     setSearchTerm(event.target.value);
     setPage(0);
@@ -42,6 +47,14 @@ export default function AppointmentTablePagination({ type, appointments }) {
 
   return (
     <div>
+      {/* <Head>
+        <title>Appointment page</title>
+        <meta
+          name="description"
+          content="User profile setting and appointment data"
+        />
+      </Head> */}
+
       {appointments.length === 0 && (
         <h2 className="mt-5 text-center  leading-7 text-[20px] font-semibold text-primaryColor">
           {`You did not ${

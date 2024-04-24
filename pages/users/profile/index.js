@@ -1,20 +1,23 @@
 import Image from "next/image";
+import Head from "next/head";
 import axios from "axios";
 import Profile from "@/components/User/Profile";
 import Error from "@/components/Error/Error";
+import AppointmentTablePagination from "@/components/AppointmentTable/TablePagination";
 
-import { useDispatch, useSelector } from "react-redux";
-import { BASE_URL } from "@/utils/config";
 import { useState } from "react";
+import { useRouter } from "next/router";
+import { useDispatch, useSelector } from "react-redux";
 import { logout } from "@/store/slices/userSlice";
 
+import { capitalize } from "@/utils/heplerFunction";
+import { BASE_URL } from "@/utils/config";
 import avtarImg from "../../../public/assets/images/patient-avatar.png";
-import { useRouter } from "next/router";
-import AppointmentTablePagination from "@/components/AppointmentTable/TablePagination";
 
 export default function MyAccount({ user, appointments, error }) {
   const dispatch = useDispatch();
-  // const router = useRouter();
+  const router = useRouter();
+
   const [tab, setTab] = useState("bookings");
 
   if (!user || error) {
@@ -28,6 +31,13 @@ export default function MyAccount({ user, appointments, error }) {
 
   return (
     <section>
+      <Head>
+        <title>{`${capitalize(user?.name)}'s Profile`}</title>
+        <meta
+          name="description"
+          content="User profile setting and appointment data"
+        />
+      </Head>
       <div className="max-w[1178px] px-5 mx-auto ">
         <div className="grid md:grid-cols-3 gap-10">
           <div className="pb-[50px] px-[38px] rounded-md">
@@ -144,7 +154,6 @@ export async function getServerSideProps(context) {
       },
     };
   } catch (error) {
-    console.error("Error fetching user data:", error);
     return {
       props: {
         error:

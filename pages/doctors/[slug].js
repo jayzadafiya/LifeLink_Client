@@ -1,11 +1,13 @@
 import Image from "next/image";
-import starIcon from "../../public/assets/images/Star.png";
-import { useEffect, useState } from "react";
+import axios from "axios";
+import Head from "next/head";
 import DoctorAbout from "@/components/Doctors/DoctorAbout";
 import FeedBack from "@/components/Doctors/FeedBack";
 import SidePanel from "@/components/Doctors/SidePanel";
+import starIcon from "../../public/assets/images/Star.png";
+import { useEffect, useState } from "react";
 import { BASE_URL } from "@/utils/config";
-import axios from "axios";
+import { capitalize } from "@/utils/heplerFunction";
 
 export default function DoctorDetails({ doctor, error, timeslots }) {
   const [tab, setTab] = useState("about");
@@ -36,6 +38,10 @@ export default function DoctorDetails({ doctor, error, timeslots }) {
       {error && <Error Error errMessgae={error} />}
       {!error && (
         <section>
+          <Head>
+            <title>{`${capitalize(doctor?.name)}'s Detail Page`}</title>
+            <meta name="description" content="Doctor profile page" />
+          </Head>
           <div className="max-w-[1170px] px-5 mx-auto">
             <div className="grid md:grid-cols-3 gap-[50px]">
               <div className="md:col-span-2">
@@ -138,13 +144,12 @@ export async function getStaticProps(context) {
       },
     };
   } catch (error) {
-    console.error("Error fetching user data:", error);
     return {
       props: {
         error:
           error?.response?.data?.message ||
           error?.message ||
-          "Error fetching user data",
+          "Error fetching doctor data",
       },
     };
   }

@@ -1,20 +1,22 @@
-import { useState } from "react";
-import { toast } from "react-toastify";
-
 import Link from "next/link";
 import Image from "next/image";
 import axios from "axios";
+import toast from "react-hot-toast";
+import Head from "next/head";
 import HashLoader from "react-spinners/HashLoader";
 
+import { useState } from "react";
+import { useRouter } from "next/router";
 import { BASE_URL } from "@/utils/config";
 import { uploadImageToCloudinary } from "@/utils/uploadCloudinary";
+import { signupFormvalidation } from "@/utils/formValidation";
 import signupImg from "../../public/assets/images/signup.gif";
-import { useRouter } from "next/router";
 
 export default function Signup() {
   const [selectFile, setSelectFile] = useState(null);
   const [previewURL, setPreviewURL] = useState("");
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
 
   const router = useRouter();
 
@@ -45,36 +47,57 @@ export default function Signup() {
     setFormDate({ ...formData, photo: url });
   };
 
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    const formErrors = signupFormvalidation({ ...formData, [name]: value });
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: formErrors[name] || "", // Clear previous errors for this field
+    }));
+  };
+
   const submitHandler = async (e) => {
     e.preventDefault();
-    setLoading(true);
 
-    try {
-      const res = await axios.post(`${BASE_URL}/auth/signup`, formData);
+    const formErrors = signupFormvalidation(formData);
+    setErrors(formErrors);
+    if (Object.keys(formErrors).length === 0) {
+      setLoading(true);
+      try {
+        await axios.post(`${BASE_URL}/auth/signup`, formData);
 
-      router.push("/login");
-      setLoading(false);
-    } catch (error) {
-      setLoading(false);
-      const err = error.response.data.message || error.message;
-      throw new Error(err);
+        router.push("/login");
+
+        toast.success("Registration Done !");
+        setLoading(false);
+      } catch (error) {
+        setLoading(false);
+        const err = error?.response?.data?.message || error?.message;
+        toast.error(err);
+
+        return null;
+      }
     }
   };
 
   return (
     <section className="px-5 xl:px-0">
+      <Head>
+        <title>Signup Page</title>
+        <meta name="description" content="Signup page" />
+      </Head>
       <div className="w-full max-w-[1178px] mx-auto ">
         <div className="grid grid-cols-1 lg:grid-cols-2">
           {/* img boc */}
 
-          <div className="hidden lg:block bg-primaryColor rounded-l-lg">
+          <div className="hidden lg:flex items-center bg-primaryColor rounded-l-lg ">
             <figure>
               <Image src={signupImg} alt="" className="w-full rounded-l-lg" />
             </figure>
           </div>
 
           {/* signup form  */}
-          <div className="rounded-l-lg lg:pl-16 py-10 ">
+          <div className="container rounded-l-lg lg:pl-16 py-10 ">
             <h3 className="text-headingColor text-[22px] leading-9 font-bold mb-10">
               Create an <span className="text-primaryColor">account</span>
             </h3>
@@ -87,9 +110,13 @@ export default function Signup() {
                   name="name"
                   value={formData.name}
                   onChange={handelInputChange}
+                  onBlur={handleBlur}
                   className="w-full pr-4 py-3 border-b border-solid border-[#8066ff61] focus:outline-none
               focus:border-b-primaryColor text-[16 px] leading-7 text-headingColor cursor-pointer "
                 />
+                {errors.name && (
+                  <p className="text-red-500 text-sm ">{errors.name}</p>
+                )}
               </div>
 
               <div className="mb-5">
@@ -98,10 +125,14 @@ export default function Signup() {
                   placeholder="Enter Your Email"
                   name="email"
                   value={formData.email}
+                  onBlur={handleBlur}
                   onChange={handelInputChange}
                   className="w-full  pr-4 py-3 border-b border-solid border-[#8066ff61] focus:outline-none
               focus:border-b-primaryColor text-[16 px] leading-7 text-headingColor cursor-pointer "
                 />
+                {errors.email && (
+                  <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+                )}
               </div>
               <div className="mb-5">
                 <input
@@ -109,10 +140,15 @@ export default function Signup() {
                   placeholder="Password"
                   name="password"
                   value={formData.password}
+                  onBlur={handleBlur}
                   onChange={handelInputChange}
                   className="w-full  pr-4 py-3 border-b border-solid border-[#8066ff61] focus:outline-none
               focus:border-b-primaryColor text-[16 px] leading-7 text-headingColor cursor-pointer "
                 />
+
+                {errors.password && (
+                  <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+                )}
               </div>
               <div className="mb-5">
                 <input
@@ -120,10 +156,16 @@ export default function Signup() {
                   placeholder="Confirm Password"
                   name="passwordConfirm"
                   value={formData.passwordConfirm}
+                  onBlur={handleBlur}
                   onChange={handelInputChange}
                   className="w-full  pr-4 py-3 border-b border-solid border-[#8066ff61] focus:outline-none
               focus:border-b-primaryColor text-[16 px] leading-7 text-headingColor cursor-pointer "
                 />
+                {errors.passwordConfirm && (
+                  <p className="text-red-500 text-sm mt-1">
+                    {errors.passwordConfirm}
+                  </p>
+                )}
               </div>
 
               <div className="mb-5 flex items-center justify-between">
@@ -145,6 +187,7 @@ export default function Signup() {
                   <select
                     name="gender"
                     value={formData.gender}
+                    onBlur={handleBlur}
                     onChange={handelInputChange}
                     className="text-textColor font-semibold text-[15px] leading-7 px-4 py-3 focus:outline-none"
                   >
@@ -154,6 +197,10 @@ export default function Signup() {
                     <option value="other">Other</option>
                   </select>
                 </label>
+
+                {errors.gender && (
+                  <p className="text-red-500 text-sm mt-1">{errors.gender}</p>
+                )}
               </div>
 
               <div className="mb-5 flex items-center gap-3">

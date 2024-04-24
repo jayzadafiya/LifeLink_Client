@@ -1,18 +1,19 @@
-import { useState } from "react";
-
 import Image from "next/image";
 import HashLoader from "react-spinners/HashLoader";
-
-import { useRouter } from "next/router";
-import { uploadImageToCloudinary } from "@/utils/uploadCloudinary";
-import { useDispatch, useSelector } from "react-redux";
-import { updateUser } from "@/store/slices/userSlice";
 import Error from "../Error/Error";
+
+import { useState } from "react";
+import { useRouter } from "next/router";
+import { updateUser } from "@/store/slices/userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { uploadImageToCloudinary } from "@/utils/uploadCloudinary";
+import { patientFormValidation } from "@/utils/formValidation";
 
 export default function Profile({ user }) {
   const dispatch = useDispatch();
   const router = useRouter();
   const { error, loading } = useSelector((state) => state.user);
+  const [errors, setErrors] = useState({});
 
   const [formData, setFormDate] = useState({
     name: user?.name || "",
@@ -41,18 +42,38 @@ export default function Profile({ user }) {
     setFormDate({ ...formData, photo: url });
   };
 
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+
+    const formErrors = patientFormValidation({ ...formData, [name]: value });
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: formErrors[name] || "", // Clear previous errors for this field
+    }));
+  };
+
   const submitHandler = async (e) => {
     e.preventDefault();
-    try {
-      dispatch(updateUser(formData)).then((result) => {
-        if (result.payload && result.payload.data) {
-          router.push("/users/profile");
-        }
-      });
-    } catch (error) {
-      return <Error errMessgae={error} />;
+
+    const formError = patientFormValidation(formData);
+    setErrors(formError);
+
+    if (Object.keys(formError).length === 0) {
+      try {
+        dispatch(updateUser(formData)).then((result) => {
+          if (result.payload && result.payload.data) {
+            router.push("/users/profile");
+          }
+        });
+      } catch (error) {
+        const err = error?.response?.data?.message || error?.message;
+        toast.error(err);
+
+        return null;
+      }
     }
   };
+
   return (
     <div className="mt-10">
       <form onSubmit={submitHandler}>
@@ -61,11 +82,15 @@ export default function Profile({ user }) {
             type="text"
             placeholder="Full Name"
             name="name"
+            onBlur={handleBlur}
             value={formData.name}
             onChange={handelInputChange}
             className="w-full pr-4 py-3 border-b border-solid border-[#8066ff61] focus:outline-none
               focus:border-b-primaryColor text-[16 px] leading-7 text-headingColor cursor-pointer "
           />
+          {errors.name && (
+            <p className="text-red-500 text-sm mt-1">{errors.name}</p>
+          )}
         </div>
 
         <div className="mb-5">
@@ -73,6 +98,7 @@ export default function Profile({ user }) {
             type="email"
             placeholder="Enter Your Email"
             name="email"
+            onBlur={handleBlur}
             value={formData.email}
             className="w-full  pr-4 py-3 border-b border-solid border-[#8066ff61] focus:outline-none
               focus:border-b-primaryColor text-[16 px] leading-7 text-headingColor cursor-pointer "
@@ -85,28 +111,38 @@ export default function Profile({ user }) {
             type="test"
             placeholder="Blood Type"
             name="bloodType"
+            onBlur={handleBlur}
             value={formData.bloodType}
             onChange={handelInputChange}
             className="w-full  pr-4 py-3 border-b border-solid border-[#8066ff61] focus:outline-none
               focus:border-b-primaryColor text-[16 px] leading-7 text-headingColor cursor-pointer "
           />
+          {errors.bloodType && (
+            <p className="text-red-500 text-sm mt-1">{errors.bloodType}</p>
+          )}
         </div>
 
-        <div className="mb-5 flex items-center justify-between">
-          <label className="text-headingColor  font-bold text-[16px] leading-7">
-            Gender:
-            <select
-              name="gender"
-              value={formData.gender}
-              onChange={handelInputChange}
-              className="text-textColor font-semibold text-[15px] leading-7 px-4 py-3 focus:outline-none"
-            >
-              <option value="">Select</option>
-              <option value="male">Male</option>
-              <option value="female">Female</option>
-              <option value="other">Other</option>
-            </select>
-          </label>
+        <div className="mb-5">
+          <div className=" flex items-center justify-between">
+            <label className="text-headingColor  font-bold text-[16px] leading-7">
+              Gender:
+              <select
+                name="gender"
+                onBlur={handleBlur}
+                value={formData.gender}
+                onChange={handelInputChange}
+                className="text-textColor font-semibold text-[15px] leading-7 px-4 py-3 focus:outline-none"
+              >
+                <option value="">Select</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="other">Other</option>
+              </select>
+            </label>
+          </div>
+          {errors.gender && (
+            <p className="text-red-500 text-sm mt-1">{errors.gender}</p>
+          )}
         </div>
 
         <div className="mb-5 flex items-center gap-3">

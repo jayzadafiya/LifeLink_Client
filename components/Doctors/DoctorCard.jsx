@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { BsArrowRight } from "react-icons/bs";
 import starIcon from "../../public/assets/images/Star.png";
+
 export default function DoctorCard({ doctor }) {
   const {
     _id,

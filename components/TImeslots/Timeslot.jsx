@@ -1,16 +1,14 @@
+import Head from "next/head";
 import axios from "axios";
-import {
-  capitalize,
-  dateToString,
-  timeslotByDate,
-} from "@/utils/heplerFunction";
-import { useRouter } from "next/router";
-import React, { useMemo, useState } from "react";
-import { FaTimes } from "react-icons/fa";
-import { BASE_URL } from "@/utils/config";
-import { useSelector } from "react-redux";
 import Slot from "./Slot";
 import Calander from "./Calander";
+import toast from "react-hot-toast";
+import React, { useMemo, useState } from "react";
+import { useSelector } from "react-redux";
+import { useRouter } from "next/router";
+import { FaTimes } from "react-icons/fa";
+import { BASE_URL } from "@/utils/config";
+import { dateToString, timeslotByDate } from "@/utils/heplerFunction";
 
 //Memoize the component to prevent unnecessary re-renders
 const Timeslot = React.memo(({ timeslots, fees }) => {
@@ -75,12 +73,19 @@ const Timeslot = React.memo(({ timeslots, fees }) => {
       setSelectedTime("");
       setSelectedSlot("");
     } catch (error) {
-      console.log(error);
+      const err = error?.response?.data?.message || error?.message;
+      toast.error(err);
+
+      return null;
     }
   };
 
   return (
     <>
+      <Head>
+        <title>{selectedDate} timeslots</title>
+        <meta name="description" content="Timeslots for appointment booking" />
+      </Head>
       <div
         className={`${
           dialogOpen ? "hidden" : ""

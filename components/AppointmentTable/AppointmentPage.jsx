@@ -1,8 +1,7 @@
-import React from "react";
-import { TableRow, TableCell } from "@mui/material";
-import { capitalize, formateDate } from "@/utils/heplerFunction";
 import Image from "next/image";
 import dayjs from "dayjs";
+import { TableRow, TableCell } from "@mui/material";
+import { capitalize, formateDate } from "@/utils/heplerFunction";
 
 export default function AppointmentPage({
   appointments,
@@ -12,6 +11,7 @@ export default function AppointmentPage({
   searchTerm,
   userType,
 }) {
+  // Function to sort appointments based on booking date and time
   const sortedAppointments = () => {
     const comparator = (a, b) => {
       const dateA = dayjs(a.bookingDate + " " + a.time);
@@ -27,6 +27,7 @@ export default function AppointmentPage({
     return appointments.sort(comparator);
   };
 
+  // Function to filter appointments based on search term
   const filteredAppointments = () => {
     return sortedAppointments().filter((appointment) =>
       appointment.doctor.name.toLowerCase().includes(searchTerm?.toLowerCase())
@@ -43,6 +44,7 @@ export default function AppointmentPage({
     filteredAppointment = filteredAppointments();
   }
 
+  // If search term is not empty and no appointments are found, display a message
   if (searchTerm !== "" && filteredAppointment.length === 0) {
     return (
       <p className="p-4 text-headingColor text-[16px] font-semibold">
@@ -51,6 +53,7 @@ export default function AppointmentPage({
     );
   }
 
+  // Render the filtered appointments within the specified range
   return filteredAppointment.slice(startIndex, endIndex).map((item) => (
     <TableRow key={item._id}>
       <TableCell>

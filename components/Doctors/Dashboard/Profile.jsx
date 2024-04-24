@@ -1,5 +1,7 @@
+import Head from "next/head";
 import Image from "next/image";
 import axios from "axios";
+import Error from "@/components/Error/Error";
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,14 +10,20 @@ import { HashLoader } from "react-spinners";
 import { AiOutlineDelete } from "react-icons/ai";
 import { uploadImageToCloudinary } from "@/utils/uploadCloudinary";
 import { createTimeSlot, findUpdatedTimeSlots } from "@/utils/heplerFunction";
-import Error from "@/components/Error/Error";
 import { BASE_URL } from "@/utils/config";
+import toast from "react-hot-toast";
+import {
+  doctorValidateForm,
+  handleInputValidation,
+} from "@/utils/formValidation";
 
 export default function Profile({ doctor }) {
   const dispatch = useDispatch();
   const router = useRouter();
-  const { error, loading, accessToken } = useSelector((state) => state.user);
+  const { loading, accessToken } = useSelector((state) => state.user);
 
+  const [errors, setErrors] = useState({});
+  const [nestedErrors, setNestedErrors] = useState({});
   const [formData, setFormData] = useState({
     bio: doctor?.bio || "",
     name: doctor?.name || "",
@@ -39,19 +47,24 @@ export default function Profile({ doctor }) {
     fees: doctor?.fees || "",
   });
 
-  if (error) {
-    console.log(error);
-    return <Error errMessgae={error} />;
-  }
-
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     const newValue =
       name === "phone" || name === "fees" ? parseInt(value) : value;
+
     setFormData({
       ...formData,
       [name]: newValue,
     });
+  };
+
+  const handleBlur = (e) => {
+    const { name, value } = e.target;
+    const formErrors = doctorValidateForm({ ...formData, [name]: value });
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: formErrors[name] || "", // Clear previous errors for this field
+    }));
   };
 
   const handleFileInputChange = async (e) => {
@@ -63,7 +76,6 @@ export default function Profile({ doctor }) {
   };
 
   //reusable function for adding  item
-
   const addItem = (e, key) => {
     e.preventDefault();
 
@@ -89,7 +101,6 @@ export default function Profile({ doctor }) {
   };
 
   //reusable function for deleting  item
-
   const deleteItem = (e, key, index) => {
     e.preventDefault();
 
@@ -108,8 +119,26 @@ export default function Profile({ doctor }) {
         ? parseInt(value)
         : value;
 
-    if (newValue >= 60 || newValue < 0) {
-      return <Error errMessgae="Appointments time is not valid " />;
+    if (name === "endingDate") {
+      const date = new Date(value);
+      const data = formData[key][index];
+
+      if (!data.startingDate) {
+        nestedErrors.startingDate = {
+          message: "Please provied first starting date",
+          index,
+          key,
+        };
+      }
+
+      const staringDate = new Date(data.startingDate);
+      if (staringDate >= date) {
+        nestedErrors.startingDate = {
+          message: "Please provied valid starting date",
+          index,
+          key,
+        };
+      }
     }
 
     setFormData((prevFormData) => {
@@ -121,61 +150,90 @@ export default function Profile({ doctor }) {
     });
   };
 
-  const updateProfileHandler = async (e) => {
-    e.preventDefault();
-    const updatedFormData = { ...formData };
-    const newTimeSlotsData = findUpdatedTimeSlots(
-      formData.timeSlots_data,
-      doctor.timeSlots_data
+  const handleReusableBlur = (e, key, index) => {
+    const { name, value } = e.target;
+
+    const updateItems = formData[key][index];
+
+    const formErrors = handleInputValidation(
+      { ...updateItems, [key]: value },
+      index,
+      key
     );
 
-    try {
-      let data = null;
+    setNestedErrors((prevErrors) => ({
+      ...prevErrors,
+      [name]: formErrors[name] || "", // Clear previous errors for this field
+    }));
+  };
 
-      let deleteRequests = [];
+  const updateProfileHandler = async (e) => {
+    e.preventDefault();
+    const formErrors = doctorValidateForm(formData);
+    setErrors(formErrors);
 
-      if (newTimeSlotsData.length > 0) {
-        if (doctor.timeSlots_data.length > 0) {
-          newTimeSlotsData.forEach(async (timeslot) => {
-            deleteRequests = await axios.delete(
-              `${BASE_URL}/timeslot/${doctor._id}`,
-              {
-                headers: {
-                  Authorization: `Bearer ${accessToken}`,
-                },
-                data: { slotPhase: timeslot.slot },
-              }
-            );
-          });
+    if (Object.keys(formErrors).length === 0) {
+      try {
+        const updatedFormData = { ...formData };
+        const newTimeSlotsData = findUpdatedTimeSlots(
+          formData.timeSlots_data,
+          doctor.timeSlots_data
+        );
+
+        let data = null;
+
+        let deleteRequests = [];
+
+        if (newTimeSlotsData.length > 0) {
+          if (doctor.timeSlots_data.length > 0) {
+            newTimeSlotsData.forEach(async (timeslot) => {
+              deleteRequests = await axios.delete(
+                `${BASE_URL}/timeslot/${doctor._id}`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                  },
+                  data: { slotPhase: timeslot.slot },
+                }
+              );
+            });
+          }
+
+          await Promise.all(deleteRequests);
+
+          data = {
+            formData: updatedFormData,
+            timeSlots: createTimeSlot(newTimeSlotsData),
+          };
+        } else {
+          // No need to update time slots
+          data = {
+            formData: updatedFormData,
+          };
         }
 
-        await Promise.all(deleteRequests);
-
-        data = {
-          formData: updatedFormData,
-          timeSlots: createTimeSlot(newTimeSlotsData),
-        };
-      } else {
-        // No need to update time slots
-        data = {
-          formData: updatedFormData,
-        };
+        dispatch(updateUser(data)).then((result) => {
+          if (result.payload && result.payload.data) {
+            router.push("/doctors/profile");
+          }
+        });
+      } catch (error) {
+        const err = error?.response?.data?.message || error?.message;
+        toast.error(err);
+        return null;
       }
-
-      dispatch(updateUser(data)).then((result) => {
-        if (result.payload && result.payload.data) {
-          router.push("/doctors/profile");
-        }
-      });
-    } catch (error) {
-      console.log(error);
-
-      return <Error errMessgae={error} />;
     }
   };
 
   return (
     <div>
+      {/* <Head>
+        <title>{`${capitalize(doctor?.name)}'s Profile`}</title>
+        <meta
+          name="description"
+          content="doctor profile setting and appointment data"
+        />
+      </Head> */}
       <h2 className="text-headingColor text-[24px] font-bold leading-9 mb-10">
         Profile Information
       </h2>
@@ -189,8 +247,12 @@ export default function Profile({ doctor }) {
             placeholder="Full Name"
             className="form__input"
             value={formData.name}
+            onBlur={handleBlur}
             onChange={handleInputChange}
           />
+          {errors.name && (
+            <p className="text-red-500 text-md  mb-4">{errors.name}</p>
+          )}
         </div>
         <div className="mb-5">
           <p className="form__label">Email*</p>
@@ -211,9 +273,13 @@ export default function Profile({ doctor }) {
             name="phone"
             placeholder="Phone Number"
             className="form__input"
+            onBlur={handleBlur}
             value={formData.phone}
             onChange={handleInputChange}
           />
+          {errors.phone && (
+            <p className="text-red-500 text-md  mb-4">{errors.phone}</p>
+          )}
         </div>
         <div className="mb-5">
           <p className="form__label">Bio*</p>
@@ -224,8 +290,12 @@ export default function Profile({ doctor }) {
             className="form__input"
             value={formData.bio}
             onChange={handleInputChange}
+            onBlur={handleBlur}
             maxLength={100}
           />
+          {errors.bio && (
+            <p className="text-red-500 text-md  mb-4">{errors.bio}</p>
+          )}
         </div>
         <div className="mb-5">
           <p className="form__label">Address*</p>
@@ -236,8 +306,12 @@ export default function Profile({ doctor }) {
             className="form__input"
             value={formData.address}
             onChange={handleInputChange}
+            onBlur={handleBlur}
             maxLength={100}
           />
+          {errors.address && (
+            <p className="text-red-500 text-md  mb-4">{errors.address}</p>
+          )}
         </div>
         <div className="mb-5">
           <div className="grid  grid-cols-3 gap-5 mb-[30px]">
@@ -247,6 +321,7 @@ export default function Profile({ doctor }) {
                 name="gender"
                 className="form__input"
                 onChange={handleInputChange}
+                onBlur={handleBlur}
                 value={formData.gender}
               >
                 <option value="">Select</option>
@@ -254,6 +329,9 @@ export default function Profile({ doctor }) {
                 <option value="female">Female</option>
                 <option value="other">Other</option>
               </select>
+              {errors.gender && (
+                <p className="text-red-500 text-md  mb-4">{errors.gender}</p>
+              )}
             </div>
             <div>
               <p className="form__label">Specialization</p>
@@ -261,6 +339,7 @@ export default function Profile({ doctor }) {
                 name="specialization"
                 value={formData.specialization}
                 onChange={handleInputChange}
+                onBlur={handleBlur}
                 className="form__input"
               >
                 <option value="">Select</option>
@@ -268,6 +347,11 @@ export default function Profile({ doctor }) {
                 <option value="neurologist">Neurologist</option>
                 <option value="dermatologist">Dermatologist</option>
               </select>
+              {errors.specialization && (
+                <p className="text-red-500 text-md  mb-4">
+                  {errors.specialization}
+                </p>
+              )}
             </div>
             <div>
               <p className="form__label">Appointment Fees</p>
@@ -277,8 +361,12 @@ export default function Profile({ doctor }) {
                 name="fees"
                 value={formData.fees}
                 onChange={handleInputChange}
+                onBlur={handleBlur}
                 className="form__input"
               />
+              {errors.fees && (
+                <p className="text-red-500 text-md  mb-4">{errors.fees}</p>
+              )}
             </div>
           </div>
         </div>
@@ -298,7 +386,17 @@ export default function Profile({ doctor }) {
                       onChange={(e) =>
                         handleReuableInputChange(e, "qualifications", index)
                       }
+                      onBlur={(e) =>
+                        handleReusableBlur(e, "qualifications", index)
+                      }
                     />
+                    {nestedErrors.startingDate &&
+                      nestedErrors.startingDate.key === "qualifications" &&
+                      index === nestedErrors.startingDate?.index && (
+                        <p className="text-red-500 text-md  mb-4">
+                          {nestedErrors.startingDate.message}
+                        </p>
+                      )}
                   </div>
                   <div>
                     <p className="form__label">Ending Date*</p>
@@ -310,7 +408,17 @@ export default function Profile({ doctor }) {
                       onChange={(e) =>
                         handleReuableInputChange(e, "qualifications", index)
                       }
+                      onBlur={(e) =>
+                        handleReusableBlur(e, "qualifications", index)
+                      }
                     />
+                    {nestedErrors.endingDate &&
+                      nestedErrors.endingDate.key === "qualifications" &&
+                      index === nestedErrors.endingDate?.index && (
+                        <p className="text-red-500 text-md  mb-4">
+                          {nestedErrors.endingDate.message}
+                        </p>
+                      )}
                   </div>
                 </div>
 
@@ -325,7 +433,16 @@ export default function Profile({ doctor }) {
                       onChange={(e) =>
                         handleReuableInputChange(e, "qualifications", index)
                       }
+                      onBlur={(e) =>
+                        handleReusableBlur(e, "qualifications", index)
+                      }
                     />
+                    {nestedErrors.degree &&
+                      index === nestedErrors.degree?.index && (
+                        <p className="text-red-500 text-md  mb-4">
+                          {nestedErrors.degree.message}
+                        </p>
+                      )}
                   </div>
                   <div>
                     <p className="form__label">University*</p>
@@ -337,7 +454,16 @@ export default function Profile({ doctor }) {
                       onChange={(e) =>
                         handleReuableInputChange(e, "qualifications", index)
                       }
+                      onBlur={(e) =>
+                        handleReusableBlur(e, "qualifications", index)
+                      }
                     />
+                    {nestedErrors.university &&
+                      index === nestedErrors.university.index && (
+                        <p className="text-red-500 text-md  mb-4">
+                          {nestedErrors.university.message}
+                        </p>
+                      )}
                   </div>
                 </div>
 
@@ -350,7 +476,11 @@ export default function Profile({ doctor }) {
               </div>
             </div>
           ))}
-
+          {errors.qualifications && (
+            <p className="text-red-500 text-md  mb-4">
+              {errors.qualifications}
+            </p>
+          )}
           <button
             onClick={(e) => addItem(e, "qualifications")}
             className="bg-[#000] p-2 px-5 rounded text-white h-fit cursor-pointer"
@@ -374,7 +504,17 @@ export default function Profile({ doctor }) {
                       onChange={(e) =>
                         handleReuableInputChange(e, "experiences", index)
                       }
+                      onBlur={(e) =>
+                        handleReusableBlur(e, "experiences", index)
+                      }
                     />
+                    {nestedErrors.startingDate &&
+                      nestedErrors.startingDate.key === "experiences" &&
+                      index === nestedErrors.startingDate?.index && (
+                        <p className="text-red-500 text-md  mb-4">
+                          {nestedErrors.startingDate.message}
+                        </p>
+                      )}
                   </div>
                   <div>
                     <p className="form__label">Ending Date*</p>
@@ -386,7 +526,17 @@ export default function Profile({ doctor }) {
                       onChange={(e) =>
                         handleReuableInputChange(e, "experiences", index)
                       }
+                      onBlur={(e) =>
+                        handleReusableBlur(e, "experiences", index)
+                      }
                     />
+                    {nestedErrors.endingDate &&
+                      nestedErrors.endingDate.key === "experiences" &&
+                      index === nestedErrors.endingDate?.index && (
+                        <p className="text-red-500 text-md  mb-4">
+                          {nestedErrors.endingDate.message}
+                        </p>
+                      )}
                   </div>
                 </div>
 
@@ -401,7 +551,16 @@ export default function Profile({ doctor }) {
                       onChange={(e) =>
                         handleReuableInputChange(e, "experiences", index)
                       }
+                      onBlur={(e) =>
+                        handleReusableBlur(e, "experiences", index)
+                      }
                     />
+                    {nestedErrors.position &&
+                      index === nestedErrors.position.index && (
+                        <p className="text-red-500 text-md  mb-4">
+                          {nestedErrors.position.message}
+                        </p>
+                      )}
                   </div>
                   <div>
                     <p className="form__label">Place*</p>
@@ -413,7 +572,16 @@ export default function Profile({ doctor }) {
                       onChange={(e) =>
                         handleReuableInputChange(e, "experiences", index)
                       }
+                      onBlur={(e) =>
+                        handleReusableBlur(e, "experiences", index)
+                      }
                     />
+                    {nestedErrors.place &&
+                      index === nestedErrors.place.index && (
+                        <p className="text-red-500 text-md  mb-4">
+                          {nestedErrors.place.message}
+                        </p>
+                      )}
                   </div>
                 </div>
 
@@ -426,7 +594,9 @@ export default function Profile({ doctor }) {
               </div>
             </div>
           ))}
-
+          {errors.experiences && (
+            <p className="text-red-500 text-md  mb-4">{errors.experiences}</p>
+          )}
           <button
             onClick={(e) => addItem(e, "experiences")}
             className="bg-[#000] p-2 px-5 rounded text-white h-fit cursor-pointer"
@@ -448,6 +618,9 @@ export default function Profile({ doctor }) {
                       onChange={(e) =>
                         handleReuableInputChange(e, "timeSlots_data", index)
                       }
+                      onBlur={(e) =>
+                        handleReusableBlur(e, "timeSlots_data", index)
+                      }
                       value={item.slot}
                     >
                       <option value="">Select</option>
@@ -455,6 +628,12 @@ export default function Profile({ doctor }) {
                       <option value="afternoon">Afternoon</option>
                       <option value="evening">Evening</option>
                     </select>
+
+                    {nestedErrors.slot && index === nestedErrors.slot.index && (
+                      <p className="text-red-500 text-md  mb-4">
+                        {nestedErrors.slot.message}
+                      </p>
+                    )}
                   </div>
                   <div>
                     <p className="form__label">Number*</p>
@@ -466,8 +645,17 @@ export default function Profile({ doctor }) {
                       onChange={(e) =>
                         handleReuableInputChange(e, "timeSlots_data", index)
                       }
+                      onBlur={(e) =>
+                        handleReusableBlur(e, "timeSlots_data", index)
+                      }
                       className="form__input"
                     />
+                    {nestedErrors.appointments_time &&
+                      index === nestedErrors.appointments_time.index && (
+                        <p className="text-red-500 text-md  mb-4">
+                          {nestedErrors.appointments_time.message}
+                        </p>
+                      )}
                   </div>
                   <div>
                     <p className="form__label">Starting Time*</p>
@@ -479,7 +667,16 @@ export default function Profile({ doctor }) {
                       onChange={(e) =>
                         handleReuableInputChange(e, "timeSlots_data", index)
                       }
+                      onBlur={(e) =>
+                        handleReusableBlur(e, "timeSlots_data", index)
+                      }
                     />
+                    {nestedErrors.startingTime &&
+                      index === nestedErrors.startingTime.index && (
+                        <p className="text-red-500 text-md  mb-4">
+                          {nestedErrors.startingTime.message}
+                        </p>
+                      )}
                   </div>
                   <div>
                     <p className="form__label">Ending Time*</p>
@@ -491,7 +688,16 @@ export default function Profile({ doctor }) {
                       onChange={(e) =>
                         handleReuableInputChange(e, "timeSlots_data", index)
                       }
+                      onBlur={(e) =>
+                        handleReusableBlur(e, "timeSlots_data", index)
+                      }
                     />
+                    {nestedErrors.endingTime &&
+                      index === nestedErrors.endingTime.index && (
+                        <p className="text-red-500 text-md  mb-4">
+                          {nestedErrors.endingTime.message}
+                        </p>
+                      )}
                   </div>
                   <div className="flex items-center ">
                     <button
@@ -505,7 +711,11 @@ export default function Profile({ doctor }) {
               </div>
             </div>
           ))}
-
+          {errors.timeSlots_data && (
+            <p className="text-red-500 text-md  mb-4">
+              {errors.timeSlots_data}
+            </p>
+          )}
           <button
             onClick={(e) => addItem(e, "timeSlots_data")}
             className="bg-[#000] p-2 px-5 rounded text-white h-fit cursor-pointer"
@@ -521,8 +731,12 @@ export default function Profile({ doctor }) {
             placeholder="Write about you"
             className="form__input"
             onChange={handleInputChange}
+            onBlur={handleBlur}
             value={formData.about}
           ></textarea>
+          {errors.about && (
+            <p className="text-red-500 text-md  mb-4">{errors.about}</p>
+          )}
         </div>
         <div className="mb-5 flex items-center gap-3">
           {formData.photo && (

@@ -3,6 +3,7 @@ import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
 import Cookies from "js-cookie";
 import jwt from "jsonwebtoken";
+import toast from "react-hot-toast";
 
 const initialState = {
   user: null,
@@ -52,6 +53,7 @@ export const fetchUser = createAsyncThunk("user/fatchUser", async () => {
     }
     return { data: data, token };
   } catch (error) {
+    toast.error(error.response.data.message);
     throw new Error(error.response.data.message);
   }
 });
@@ -103,6 +105,7 @@ const userSlice = createSlice({
       Cookies.remove("token");
       state.user = null;
       state.accessToken = null;
+      toast.success("Come back soon!!!");
     },
   },
   extraReducers: (builder) => {
@@ -123,11 +126,17 @@ const userSlice = createSlice({
           ),
           secure: true,
         });
+        toast.success(
+          `Welcome ${action.payload.data.role === "patient" ? "Mr. " : "Dr. "}${
+            action.payload.data.name
+          }`
+        );
       })
       .addCase(login.rejected, (state, action) => {
         state.isLogging = false;
         state.loading = false;
         state.error = action.error.message;
+        toast.error(action.error.message);
       })
       .addCase(fetchUser.fulfilled, (state, action) => {
         state.user = action.payload.data;
@@ -141,11 +150,17 @@ const userSlice = createSlice({
         state.user = action.payload.data;
         state.loading = false;
         state.error = null;
+        toast.success(
+          `${action.payload.data.role === "patient" ? "Mr. " : "Dr. "}${
+            action.payload.data.name
+          } data get updated succesfully`
+        );
       })
       .addCase(updateUser.rejected, (state, action) => {
         state.isLogging = false;
         state.loading = false;
         state.error = action.error.message;
+        toast.error(action.error.message);
       });
   },
 });

@@ -43,6 +43,7 @@ const doctorSlice = createSlice({
         state.isLogging = false;
         state.loading = false;
         state.error = action.error.message;
+        toast.error(action.error.message);
       });
   },
 });

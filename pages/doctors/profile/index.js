@@ -1,16 +1,18 @@
-import Tabs from "@/components/Doctors/Dashboard/Tabs";
-import Error from "@/components/Error/Error";
-import { BASE_URL } from "@/utils/config";
 import axios from "axios";
 import Image from "next/image";
-import { useState } from "react";
-import { FiInfo } from "react-icons/fi";
-
+import Head from "next/head";
+import Error from "@/components/Error/Error";
+import Tabs from "@/components/Doctors/Dashboard/Tabs";
 import avtarImg from "../../../public/assets/images/doctor-img01.png";
 import star from "../../../public/assets/images/Star.png";
 import DoctorAbout from "@/components/Doctors/DoctorAbout";
 import Profile from "@/components/Doctors/Dashboard/Profile";
 import AppointmentTablePagination from "@/components/AppointmentTable/TablePagination";
+
+import { useState } from "react";
+import { FiInfo } from "react-icons/fi";
+import { BASE_URL } from "@/utils/config";
+import { capitalize } from "@/utils/heplerFunction";
 
 export default function Dashboard({ doctor, error, appointments }) {
   const [tab, setTab] = useState("overview");
@@ -21,6 +23,15 @@ export default function Dashboard({ doctor, error, appointments }) {
 
   return (
     <section>
+      <Head>
+        {(tab === "overview" || tab === "settings") && (
+          <title>{`${capitalize(doctor?.name)}'s Profile`}</title>
+        )}
+        <meta
+          name="description"
+          content="doctor profile setting and appointment data"
+        />
+      </Head>
       <div className="max-w-[1170px] px-5 mx-auto">
         <div className="grid lg:grid-cols-3 gap-[30px] lg:gap-[50px]">
           <Tabs tab={tab} setTab={setTab} />
@@ -123,7 +134,7 @@ export async function getServerSideProps(context) {
         Authorization: `Bearer ${cookieToken}`,
       },
     });
-
+    
     return {
       props: {
         doctor: res.data.doctorDetails,
@@ -131,13 +142,12 @@ export async function getServerSideProps(context) {
       },
     };
   } catch (error) {
-    console.error("Error fetching user data:", error);
     return {
       props: {
         error:
           error?.response?.data?.message ||
           error?.message ||
-          "Error fetching user data",
+          "Error fetching doctor data",
       },
     };
   }

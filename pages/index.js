@@ -340,7 +340,6 @@ export async function getStaticProps() {
       },
     };
   } catch (error) {
-    console.error("Error fetching user data:", error);
     return {
       props: {
         error:

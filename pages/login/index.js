@@ -1,10 +1,12 @@
-import Error from "@/components/Error/Error";
-import { login, setUserState } from "@/store/slices/userSlice";
+import Head from "next/head";
 import Link from "next/link";
+import toast from "react-hot-toast";
+import { useState } from "react";
 import { useRouter } from "next/router";
-import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { login } from "@/store/slices/userSlice";
 import { HashLoader } from "react-spinners";
+import { loginFormvalidation } from "@/utils/formValidation";
 
 export default function Login() {
   const dispatch = useDispatch();
@@ -15,6 +17,7 @@ export default function Login() {
     email: "",
     password: "",
   });
+  const [errors, setErrors] = useState({});
 
   const handelInputChange = (e) => {
     setFormDate({
@@ -23,21 +26,43 @@ export default function Login() {
     });
   };
 
+  const handleBlur = (e) => {
+    // const { name, value } = e.target;
+    // const formErrors = loginFormvalidation({ ...formData, [name]: value });
+    // setErrors((prevErrors) => ({
+    //   ...prevErrors,
+    //   [name]: formErrors[name] || "", // Clear previous errors for this field
+    // }));
+  };
+
   const handleSubmit = (event) => {
     event.preventDefault();
-    try {
-      dispatch(login(formData)).then((result) => {
-        if (result.payload && result.payload.data) {
-          router.push("/");
-        }
-      });
-    } catch (error) {
-      return <Error errMessgae={error} />;
+
+    const formErrors = loginFormvalidation(formData, true);
+    setErrors(formErrors);
+
+    if (Object.keys(formErrors).length !== 0) {
+      try {
+        dispatch(login(formData)).then((result) => {
+          if (result.payload && result.payload.data) {
+            router.push("/");
+          }
+        });
+      } catch (error) {
+        const err = error?.response?.data?.message || error?.message;
+        toast.error(err);
+
+        return null;
+      }
     }
   };
 
   return (
     <section className="px-5 lg:px-0">
+      <Head>
+        <title>Login Page</title>
+        <meta name="description" content="Login page" />
+      </Head>
       <div className="w-full max-w-[570px] mx-auto rounded-lg shadow-md md:p-10">
         <h3 className="text-headingColor text-[22px] leading-9 font-bold mb-10">
           Hello! <span className="text-primaryColor">Welcome</span> Back
@@ -50,10 +75,14 @@ export default function Login() {
               placeholder="Enter Your Email"
               name="email"
               value={formData.email}
+              onBlur={handleBlur}
               onChange={handelInputChange}
               className="w-full py-3 border-b border-solid border-[#8066ff61] focus:outline-none
               focus:border-b-primaryColor text-[16 px] leading-7 text-headingColor cursor-pointer "
             />
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+            )}
           </div>
           <div className="mb-5">
             <input
@@ -61,10 +90,14 @@ export default function Login() {
               placeholder="Password"
               name="password"
               value={formData.password}
+              onBlur={handleBlur}
               onChange={handelInputChange}
               className="w-full py-3 border-b border-solid border-[#8066ff61] focus:outline-none
               focus:border-b-primaryColor text-[16 px] leading-7 text-headingColor cursor-pointer "
             />
+            {errors.password && (
+              <p className="text-red-500 text-sm mt-1">{errors.password}</p>
+            )}
           </div>
           <div className="mt-7">
             <button

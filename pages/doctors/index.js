@@ -1,10 +1,11 @@
+import axios from "axios";
+import Head from "next/head";
 import DoctorCard from "@/components/Doctors/DoctorCard";
 import Testimonial from "@/components/Testimonial/Testimonial";
-import { searchDoctor, setDocterList } from "@/store/slices/doctorSlice";
-import { BASE_URL } from "@/utils/config";
-import axios from "axios";
 import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { searchDoctor, setDocterList } from "@/store/slices/doctorSlice";
+import { BASE_URL } from "@/utils/config";
 
 export default function Doctors({ doctors, error }) {
   const query = useRef();
@@ -34,6 +35,10 @@ export default function Doctors({ doctors, error }) {
       {error && <Error Error errMessgae={error} />}
       {!error && (
         <>
+          <Head>
+            <title>Find a doctor</title>
+            <meta name="description" content="Doctor search page " />
+          </Head>
           <section className="bg-[#fff9ea]">
             <div className="container text-center">
               <h2 className=" heading">Find a Doctor</h2>
@@ -101,7 +106,6 @@ export async function getStaticProps() {
       },
     };
   } catch (error) {
-    console.error("Error fetching user data:", error);
     return {
       props: {
         error:

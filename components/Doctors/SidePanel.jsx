@@ -1,7 +1,7 @@
 import Model from "../Timeslots/Model";
-import { useState } from "react";
 import Timeslot from "../Timeslots/Timeslot";
 
+import { useMemo, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { capitalize, convertTime } from "@/utils/heplerFunction";
 
@@ -11,6 +11,17 @@ export default function SidePanel({ address, timeslots, timeslotsData, fees }) {
   const handelModel = () => {
     setOpen((prev) => !prev);
   };
+
+  const sortedTimeslots = useMemo(() => {
+    return timeslotsData.slice().sort((a, b) => {
+      const order = ["morning", "afternoon", "evening"];
+      return (
+        order.indexOf(Object.values(a)[0]) - order.indexOf(Object.values(b)[0])
+      );
+    });
+  }, [timeslotsData]);
+
+  console.log(sortedTimeslots);
 
   return (
     <>
@@ -31,7 +42,7 @@ export default function SidePanel({ address, timeslots, timeslotsData, fees }) {
           </p>
 
           <ul className="mt-3">
-            {timeslotsData.map((slot, index) => (
+            {sortedTimeslots.map((slot, index) => (
               <li
                 key={index}
                 className="flex items-center justify-between mb-2"
