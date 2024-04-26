@@ -21,8 +21,6 @@ export default function SidePanel({ address, timeslots, timeslotsData, fees }) {
     });
   }, [timeslotsData]);
 
-  console.log(sortedTimeslots);
-
   return (
     <>
       <div className="shadow-panelShadow p-3 lg:p-5 rounded-md">

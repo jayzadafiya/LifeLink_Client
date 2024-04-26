@@ -23,6 +23,7 @@ export const login = createAsyncThunk("user/login", async (formData) => {
   }
 });
 
+// Function use to get login user(patient and doctor) data
 export const fetchUser = createAsyncThunk("user/fatchUser", async () => {
   try {
     const token = Cookies.get("token");
