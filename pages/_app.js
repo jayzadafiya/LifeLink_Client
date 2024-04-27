@@ -1,6 +1,8 @@
 import Layout from "@/components/layout/layout";
 import store from "@/store/store";
 import "@/styles/globals.css";
+import "@/styles/style.css";
+
 import Head from "next/head";
 import { Provider } from "react-redux";
 

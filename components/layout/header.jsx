@@ -1,10 +1,12 @@
-import React, { useEffect, useRef } from "react";
-import { useRouter } from "next/router";
 import Image from "next/image";
 import Link from "next/link";
 import logo from "../../public/assets/images/logo.png";
+import dolLogo from "../../public/assets/images/dol/logo.png";
+import { useEffect, useRef } from "react";
+import { useRouter } from "next/router";
 import { BiMenu } from "react-icons/bi";
 import { useSelector } from "react-redux";
+import { capitalize } from "@/utils/heplerFunction";
 
 const navLink = [
   {
@@ -16,8 +18,8 @@ const navLink = [
     display: "Find a Doctor",
   },
   {
-    path: "/services",
-    display: "Searvices",
+    path: "/drop-of-life",
+    display: "Blood Donation",
   },
   {
     path: "/contact",
@@ -30,16 +32,22 @@ export default function Header() {
   const headerRef = useRef(null);
   const menuRef = useRef(null);
 
+  const isDOL = router.pathname.startsWith("/drop-of-life");
+
   const { user, accessToken } = useSelector((state) => state.user);
+
   const handleStickyheader = () => {
     window.addEventListener("scroll", () => {
       const scrollPosition =
         document.body.scrollTop || document.documentElement.scrollTop;
-
       if (scrollPosition > 80) {
-        headerRef?.current?.classList?.add("sticky_header");
+        headerRef?.current?.classList?.add(
+          `${isDOL ? "sticky-header-dol" : "sticky_header"}`
+        );
       } else {
-        headerRef?.current?.classList?.remove("sticky_header");
+        headerRef?.current?.classList?.remove(
+          `${isDOL ? "sticky-header-dol" : "sticky_header"}`
+        );
       }
     });
   };
@@ -49,17 +57,20 @@ export default function Header() {
 
     //unmount
     return () => window.removeEventListener("scroll", handleStickyheader);
-  }, []);
+  }, [headerRef]);
 
   const toggleMenu = () => menuRef.current?.classList?.toggle("show__menu");
 
   return (
-    <header className="header flex items-center" ref={headerRef}>
+    <header
+      className={` ${isDOL ? "dol-header" : "header"} flex items-center `}
+      ref={headerRef}
+    >
       <div className="container">
         <div className="flex items-center justify-between">
           <div>
             <Link href="/">
-              <Image src={logo} alt="Logo" width={134} />
+              <Image src={isDOL ? dolLogo : logo} alt="Logo" width={134} />
             </Link>
           </div>
 
@@ -72,8 +83,14 @@ export default function Header() {
                     href={link.path}
                     className={
                       router.pathname === link.path
-                        ? "text-primaryColor text-[16px]leading-7 font-[600]"
-                        : "text-textColor text-[16px] leading-7 font-[600] hover:text-primaryColor "
+                        ? `${
+                            isDOL ? "text-red-950" : "text-primaryColor"
+                          } text-[16px] leading-7 font-[600]`
+                        : `${
+                            isDOL
+                              ? "text-red-700  hover:text-white"
+                              : "text-textColor hover:text-primaryColor "
+                          } text-[16px] leading-7 font-[600] `
                     }
                   >
                     {link.display}
@@ -92,8 +109,9 @@ export default function Header() {
                 }`}
                 className="flex items-center gap-4 cursor-pointer"
               >
-                <h2>{user.name}</h2>
-
+                <h2 className={`${isDOL && "text-red-950"} font-semibold`}>
+                  {capitalize(user.name)}
+                </h2>
                 {user.photo && (
                   <figure className="w-[35px] h-[35px] rounded-full hidden  md:block lg:block">
                     <Image

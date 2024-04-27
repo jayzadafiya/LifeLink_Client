@@ -1,0 +1,245 @@
+.banner {
+  /* width: 100vw; */
+  height: 100vh;
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.9)), to(rgba(0, 0, 0, 0.4))), url(/assets/images/dol/background.jpg);
+  background-image: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.4)), url(/assets/images/dol/background.jpg);
+  background-size: cover;
+  background-position: cover;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: #fff;
+}
+
+.content h1 {
+  font-size: 65px;
+}
+
+.content p {
+  margin: 20px auto;
+  font-weight: 100;
+  font-size: 2rem;
+  text-align: center;
+}
+
+.content button {
+  width: 200px;
+  padding: 20px;
+  text-align: center;
+  border-radius: 10px;
+  margin: 20px 10px;
+  font-weight: bold;
+  color: #fff;
+  background-color: #b70000;
+  border: 2px solid #fff;
+  cursor: pointer;
+  overflow: hidden;
+  font-size: 19px;
+}
+
+
+.content button:hover {
+  background-color: rgba(252, 83, 83);
+  color: #b70000;
+  border-color: #b70000;
+}
+
+.firstblock {
+  width: 100%;
+  height: max-content;
+  display: flex;
+}
+
+.firstblock .text {
+  width: 50%;
+  padding: 5%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  font-size: 2rem;
+}
+
+.firstblock .text span {
+  color: red;
+
+}
+
+.firstblock .img-container {
+  width: 50%;
+  padding: 10px 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.firstblock .img-container img {
+  width: auto;
+  height: 100%;
+}
+
+.reasons-to-donate {
+  background: url(/assets/images/dol/homeBanner.png) no-repeat center;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 2%;
+  color: white;
+  font-size: 1.3rem;
+}
+
+.reasons-to-donate * {
+  margin: 10px;
+}
+
+.reasons-to-donate ol {
+  padding: 5% 0;
+}
+
+/* Card container */
+.process {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+}
+
+.process h3 {
+  margin-top: 30px;
+  font-size: 60px;
+}
+
+.process p {
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+.card-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 20px;
+}
+
+.cards {
+  width: 50%;
+  display: flex;
+  gap: 20px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-evenly;
+}
+
+.card {
+  width: 50%;
+  height: 550px;
+  margin-bottom: 3rem;
+  border: none;
+  border-radius: 0.25rem;
+  box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+}
+
+.card-img-top {
+  width: 100%;
+  min-height: 200px;
+  border-radius: 0.25rem 0.25rem 0 0;
+}
+
+.card-body {
+  padding: 25px;
+}
+
+.card-title {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.card-text {
+  font-size: 1.25rem;
+  text-align: center;
+}
+
+@media screen and (max-width:1024px) {
+
+  .card-container {
+    flex-direction: column;
+  }
+
+  .cards {
+    width: 100%;
+    /* justify-content: space-around; */
+  }
+
+}
+
+@media screen and (max-width:768px) {
+
+  .content h1 {
+    font-size: 40px;
+  }
+
+  .content p {
+    font-size: 1.50rem;
+  }
+
+  .content button {
+    font-size: 15px;
+    padding: 10px;
+    width: 150px;
+  }
+
+  .firstblock {
+    flex-direction: column-reverse;
+    padding: 0;
+  }
+
+  .firstblock .text {
+    width: 90%;
+    padding: 0;
+    font-size: 1.2rem;
+    margin: 5%;
+  }
+
+  .firstblock .img-container {
+    width: 100%;
+    height: auto;
+  }
+
+  .firstblock .img-container img {
+    width: 80%;
+  }
+
+  .process h3 {
+    margin-top: 15px;
+    font-size: 40px;
+  }
+
+  .cards {
+    flex-wrap: wrap;
+  }
+
+  .card {
+    height: 500px;
+  }
+}
+
+
+#contact-banner,
+#request-banner,
+#donate-banner {
+  height: 80vh;
+
+  background-image: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.4)), url(../public/assets/images/dol/background.jpg);
+  background-size: cover;
+  background-position: cover;
+}
