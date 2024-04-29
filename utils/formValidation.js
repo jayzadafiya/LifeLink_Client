@@ -3,6 +3,7 @@ import {
   validateAbout,
   validateAddress,
   validateBio,
+  validateDOB,
   validateDate,
   validateEmail,
   validateEndDate,
@@ -264,6 +265,80 @@ export const patientFormValidation = (formData) => {
 
   if (!validateRequired(bloodType)) {
     newErrors.bloodType = "Blood Type is required";
+  }
+
+  return newErrors;
+};
+
+// Donor form validation
+export const donorFormValidation = (formData) => {
+  const {
+    email,
+    name,
+    gender,
+    bloodType,
+    phone,
+    address,
+    city,
+    addharCard,
+    dob,
+    lastDonationDate,
+    weight,
+  } = formData;
+  const newErrors = {};
+
+  if (!validateRequired(name)) {
+    newErrors.name = "Name is required";
+  }
+
+  if (!validateRequired(email)) {
+    newErrors.email = "Email is required";
+  } else if (!validateEmail(email)) {
+    newErrors.email = "Invalid email format";
+  }
+
+  if (!validateRequired(gender)) {
+    newErrors.gender = "Gender is required";
+  }
+
+  if (!validateRequired(bloodType)) {
+    newErrors.bloodType = "Blood Type is required";
+  }
+
+  if (!validateRequired(city)) {
+    newErrors.city = "City is required";
+  }
+
+  if (!validateRequired(address)) {
+    newErrors.address = "Address is required";
+  } else if (!validateAddress(address)) {
+    newErrors.address = "Address should be less than 100 characters";
+  }
+
+  if (!validatePhone(phone)) {
+    newErrors.phone = "Invalid phone number";
+  }
+
+  if (!validateRequired(addharCard)) {
+    newErrors.addharCard = "Addhar card number isrequierd";
+  } else if (addharCard.trim().length !== 12) {
+    newErrors.addharCard = "Addhar card nummber length must be 12";
+  }
+
+  if (!validateRequired(dob)) {
+    newErrors.dob = "Birth date is requierd";
+  } else if (!validateDOB(dob)) {
+    newErrors.dob = "Age limit is between 18 to 65 ";
+  }
+
+  if (!validateEndDate(lastDonationDate)) {
+    newErrors.lastDonationDate = "Please enter correct Date";
+  }
+
+  if (!validateRequired(weight)) {
+    newErrors.weight = "Weight is required!";
+  } else if (parseInt(weight) < 45) {
+    newErrors.weight = "Minimum 45Kg weight required";
   }
 
   return newErrors;

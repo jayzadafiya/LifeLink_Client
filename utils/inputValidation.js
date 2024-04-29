@@ -96,3 +96,16 @@ export const validateTimeSlots = (timeSlots) => {
     );
   });
 };
+
+// Validation function for birthDate
+export const validateDOB = (dob) => {
+  const dateOfBirth = new Date(dob);
+  const currentDate = new Date();
+
+  const differenceMs = currentDate - dateOfBirth;
+
+  // Convert the difference to years
+  const differenceYears = differenceMs / (1000 * 60 * 60 * 24 * 365);
+
+  return differenceYears >= 18 && differenceYears <= 65;
+};

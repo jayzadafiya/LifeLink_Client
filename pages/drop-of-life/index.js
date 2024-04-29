@@ -7,7 +7,7 @@ import registration from "../../public/assets/images/dol/registration.jpg";
 import refreshment from "../../public/assets/images/dol/refreshment.jpg";
 import bloodcheck from "../../public/assets/images/dol/bloodcheck.jpg";
 import donation from "../../public/assets/images/dol/donation.jpg";
-import Card from "@/components/dol/Card";
+import Card from "@/components/DOL/Card";
 
 export default function () {
   return (
