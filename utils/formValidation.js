@@ -343,3 +343,25 @@ export const donorFormValidation = (formData) => {
 
   return newErrors;
 };
+
+// Request message form validation
+export const requestFormValidation = (fromData) => {
+  const { name, phone, address } = fromData;
+  const newErrors = {};
+
+  if (!validateRequired(name)) {
+    newErrors.name = "Name is required";
+  }
+
+  if (!validatePhone(phone)) {
+    newErrors.phone = "Invalid phone number";
+  }
+
+  if (!validateRequired(address)) {
+    newErrors.address = "Address is required";
+  } else if (!validateAddress(address)) {
+    newErrors.address = "Address should be less than 100 characters";
+  }
+
+  return newErrors;
+};

@@ -104,7 +104,7 @@ body {
   /* background: #ddf2fc; */
   background: linear-gradient(to left, #b9e9ff 20%, #ddf2fc 80%, #e9f3ff);
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26);
+  /* box-shadow: 0 2px 8px rgba(0, 0, 0, 0.26); */
   animation: slide-down-fade-in 0.3s ease-out forwards;
 }
 

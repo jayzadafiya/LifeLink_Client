@@ -12,11 +12,11 @@
 
   .left_container {
     width: 25%;
-    background-color: #ffa3a3;
-    padding: 20px;
+    padding: 35px 25px;
     height: min-content;
     border-radius: 8px;
     box-shadow: 0px 10px 10px 0px rgba(71, 61, 62, 0.25);
+    border: 1px solid #754d42;
 
     form {
       label {
@@ -141,6 +141,65 @@
             border-color: #754d42;
           }
         }
+      }
+    }
+  }
+}
+
+.contect__model {
+  background-color: white;
+  padding: 30px;
+  margin: -35px 0;
+  // width: 400px;
+  form {
+    div {
+      display: flex;
+      margin-top: 15px;
+    }
+    label {
+      font-weight: 600;
+      font-size: 16px;
+      color: #754d42;
+      width: 110px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 16px;
+      outline: none;
+      border-radius: 4px;
+      font-size: 16px;
+      line-height: 1.75;
+      color: #4e545f;
+      cursor: pointer;
+      border: 1px solid black;
+    }
+
+    select {
+      padding: 15px;
+    }
+
+    textarea {
+      resize: none;
+    }
+
+    .search_button {
+      background-color: #754d42;
+      border-radius: 6px;
+      color: white;
+      font-weight: 500;
+      font-size: 18px;
+      width: 100%;
+      padding: 10px;
+      margin-top: 30px;
+      border: 1px solid transparent;
+
+      &:hover {
+        background-color: white;
+        border-color: #754d42;
+        color: #754d42;
       }
     }
   }
