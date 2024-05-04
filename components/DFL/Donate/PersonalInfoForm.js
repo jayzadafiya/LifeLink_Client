@@ -1,5 +1,7 @@
 import Image from "next/image";
-import donateLogo from "../../../public/assets/images/dol/donate logo.png";
+import donateLogo from "../../../public/assets/images/dfl/donate logo.png";
+
+import style from "../../../styles/DFL/donate.module.scss";
 
 export default function PersonalInfoForm({
   formData,
@@ -15,9 +17,9 @@ export default function PersonalInfoForm({
 
   return (
     <>
-      <div className="peronsal_info">
-        <div className="form_header">
-          <div className="header_logo">
+      <div className={style.peronsal_info}>
+        <div className={style.form_header}>
+          <div className={style.header_logo}>
             <Image
               src={donateLogo}
               alt=""
@@ -25,7 +27,7 @@ export default function PersonalInfoForm({
               className="header-logo-left"
             />
           </div>
-          <div className="header_text ">
+          <div className={style.header_text}>
             <h1>Blood Donation Form</h1>
             <p>
               Please answer the following questions correctly. This will help to
@@ -34,105 +36,59 @@ export default function PersonalInfoForm({
           </div>
         </div>
         <form>
-          <div className="form-items">
-            <div className="left">
-              <label htmlFor="name" className="dol_form__label">
-                Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                name="name"
-                autoComplete="name"
-                required
-                value={formData.name}
-                className="dol_form__input"
-                placeholder="Name"
-                onChange={handleChange}
-                onBlur={onBlur}
-              />
-              {errors.name && (
-                <p className="text-red-500 text-sm mt-1">{errors.name}</p>
-              )}
-
-              <label htmlFor="email" className="dol_form__label">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                autoComplete="email"
-                value={formData.email}
-                className="dol_form__input"
-                placeholder="E-mail"
-                onBlur={onBlur}
-                onChange={handleChange}
-                readOnly
-                aria-readonly
-              />
-              {errors.email && (
-                <p className="text-red-500 text-sm mt-1">{errors.email}</p>
-              )}
-
-              <label htmlFor="dob" className="dol_form__label">
-                Date of Birth
-              </label>
-              <input
-                type="date"
-                name="dob"
-                className="dol_form__input"
-                id="dob"
-                value={formData.dob}
-                onBlur={onBlur}
-                onChange={handleChange}
-              />
-              {errors.dob && (
-                <p className="text-red-500 text-sm mt-1">{errors.dob}</p>
-              )}
-
-              <label htmlFor="gender" className="dol_form__label">
-                Gender
-              </label>
-              <select
-                name="gender"
-                id="gender"
-                className="dol_form__input"
-                required
-                value={formData.gender}
-                onBlur={onBlur}
-                onChange={handleChange}
-              >
-                <option value="">Select</option>
-                <option value="male">Male</option>
-                <option value="female">Female</option>
-                <option value="other">Other</option>
-              </select>
-              {errors.gender && (
-                <p className="text-red-500 text-sm mt-1">{errors.gender}</p>
-              )}
-            </div>
-
-            <div className="right">
-              <div className="dol_form__label">
-                <label htmlFor="addharCard" className="dol_form__label">
-                  Addhar card No
-                </label>
+          <div className={style.form_items}>
+            <div className={style.form_row}>
+              <div>
+                <label htmlFor="name">Name</label>
+                <input
+                  type="text"
+                  id="name"
+                  name="name"
+                  autoComplete="name"
+                  required
+                  value={formData.name}
+                  className={style.dfl_form__input}
+                  placeholder="Name"
+                  onChange={handleChange}
+                  onBlur={onBlur}
+                />
+                {errors.name && <p>{errors.name}</p>}
+              </div>
+              <div>
+                <label htmlFor="addharCard">Addhar card No</label>
                 <input
                   type="text"
                   name="addharCard"
                   required
                   value={formData.addharCard}
-                  className="dol_form__input"
+                  className={style.dfl_form__input}
                   placeholder="xxxx-xxxx-xxxx"
                   onBlur={onBlur}
                   onChange={handleChange}
                 />
-                {errors.addharCard && (
-                  <p className="text-red-500 text-sm mt-1">
-                    {errors.addharCard}
-                  </p>
-                )}
+                {errors.addharCard && <p>{errors.addharCard}</p>}
+              </div>
+            </div>
+
+            <div className={style.form_row}>
+              <div>
+                <label htmlFor="email">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  name="email"
+                  autoComplete="email"
+                  value={formData.email}
+                  className={style.dfl_form__input}
+                  placeholder="E-mail"
+                  onBlur={onBlur}
+                  onChange={handleChange}
+                  readOnly
+                  aria-readonly
+                />
+                {errors.email && <p>{errors.email}</p>}
+              </div>
+              <div>
                 <label htmlFor="phone">Phone Number</label>
                 <input
                   type="number"
@@ -141,49 +97,76 @@ export default function PersonalInfoForm({
                   autoComplete="mobile"
                   required
                   value={formData.phone}
-                  className="dol_form__input"
+                  className={style.dfl_form__input}
                   placeholder="Phone Number"
                   onBlur={onBlur}
                   onChange={handleChange}
                 />
-                {errors.phone && (
-                  <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
-                )}
+                {errors.phone && <p>{errors.phone}</p>}
+              </div>
+            </div>
 
-                <label htmlFor="adress" className="dol_form__label">
-                  Address
-                </label>
+            <div className={style.form_row}>
+              <div>
+                <label htmlFor="dob">Date of Birth</label>
+                <input
+                  type="date"
+                  name="dob"
+                  className={style.dfl_form__input}
+                  id="dob"
+                  value={formData.dob}
+                  onBlur={onBlur}
+                  onChange={handleChange}
+                />
+                {errors.dob && <p>{errors.dob}</p>}
+              </div>
+              <div>
+                <label htmlFor="adress">Address</label>
                 <input
                   type="text"
                   name="address"
                   required
                   value={formData.address}
-                  className="dol_form__input"
+                  className={style.dfl_form__input}
                   placeholder="Enter your address"
                   onBlur={onBlur}
                   onChange={handleChange}
                 />
-                {errors.address && (
-                  <p className="text-red-500 text-sm mt-1">{errors.address}</p>
-                )}
+                {errors.address && <p>{errors.address}</p>}
+              </div>
+            </div>
 
-                <label htmlFor="city" className="dol_form__label">
-                  City
-                </label>
+            <div className={style.form_row}>
+              <div>
+                <label htmlFor="gender">Gender</label>
+                <select
+                  name="gender"
+                  id="gender"
+                  required
+                  value={formData.gender}
+                  onBlur={onBlur}
+                  onChange={handleChange}
+                >
+                  <option value="">Select</option>
+                  <option value="male">Male</option>
+                  <option value="female">Female</option>
+                  <option value="other">Other</option>
+                </select>
+                {errors.gender && <p>{errors.gender}</p>}
+              </div>
+              <div>
+                <label htmlFor="city">City</label>
                 <input
                   type="text"
                   id="city"
                   name="city"
                   required
                   value={formData.city}
-                  className="dol_form__input"
                   placeholder="Enter city name"
                   onBlur={onBlur}
                   onChange={handleChange}
                 />
-                {errors.city && (
-                  <p className="text-red-500 text-sm mt-1">{errors.city}</p>
-                )}
+                {errors.city && <p>{errors.city}</p>}
               </div>
             </div>
           </div>

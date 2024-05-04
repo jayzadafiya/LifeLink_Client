@@ -1,11 +1,13 @@
-import MedicalInfoForm from "@/components/DfL/Donate/MedicalInfoForm";
-import PersonalInfoForm from "@/components/DfL/Donate/PersonalInfoForm";
-import { BASE_URL } from "@/utils/config";
-import { donorFormValidation } from "@/utils/formValidation";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import MedicalInfoForm from "@/components/DFL/Donate/MedicalInfoForm";
+import PersonalInfoForm from "@/components/DFL/Donate/PersonalInfoForm";
+import { useState } from "react";
 import { useSelector } from "react-redux";
+import { donorFormValidation } from "@/utils/formValidation";
+import { BASE_URL } from "@/utils/config";
+
+import style from "../../../styles/DFL/donate.module.scss";
 
 export default function Donate() {
   const [showMedicalForm, setShowMedicalForm] = useState(false);
@@ -16,25 +18,21 @@ export default function Donate() {
 
   const [formData, setFormData] = useState({
     dob: "",
-    name: "",
     city: "",
-    email: "",
     phone: "",
     weight: "",
-    gender: "",
-    address: "",
-    surgery: "",
     disease: "",
     styling: "",
-    bloodType: "",
+    surgery: "",
     addharCard: "",
     lastDonationDate: "",
+    _id: user?._id || "",
+    name: user?.name || "",
+    email: user?.email || "",
+    gender: user?.gender || "",
+    address: user?.address || "",
+    bloodType: user?.bloodType || "",
   });
-
-  useEffect(() => {
-    console.log("object");
-    setFormData((prev) => ({ ...prev, ...user }));
-  }, [user]);
 
   const handleChange = (name, value) => {
     const newValue = name === "phone" ? parseInt(value) : value;
@@ -88,7 +86,7 @@ export default function Donate() {
     }
   };
   return (
-    <div>
+    <>
       <PersonalInfoForm
         formData={formData}
         onNextClick={handleSubmitPersonalInfo}
@@ -97,7 +95,7 @@ export default function Donate() {
         errors={errors}
       />
 
-      <div className={`${showMedicalForm ? "" : "hidden"}`}>
+      <div className={`${showMedicalForm ? "" : style.hidden}`}>
         <MedicalInfoForm
           formData={formData}
           onSubmit={handleSubmit}
@@ -107,6 +105,6 @@ export default function Donate() {
           errors={errors}
         />
       </div>
-    </div>
+    </>
   );
 }

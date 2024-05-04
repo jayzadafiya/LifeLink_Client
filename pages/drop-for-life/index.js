@@ -1,19 +1,19 @@
-// import styles from "./home.module.scss";
+import style from "../../styles/DFL/HomeDfl.module.scss";
 import Image from "next/image";
 import Link from "next/link";
+import Card from "@/components/DFL/Card";
 
 import donate from "../../public/assets/images/dfl/donate.jpg";
 import registration from "../../public/assets/images/dfl/registration.jpg";
 import refreshment from "../../public/assets/images/dfl/refreshment.jpg";
 import bloodcheck from "../../public/assets/images/dfl/bloodcheck.jpg";
 import donation from "../../public/assets/images/dfl/donation.jpg";
-import Card from "@/components/DFL/Card";
 
 export default function () {
   return (
     <>
-      <div className="banner ">
-        <div className="content">
+      <div className={style.banner}>
+        <div className={style.content}>
           <h1>A DROP FOR LIFE</h1>
           <p>
             “Blood Donation Is A Small Act Of Kindness That Does Great And Big
@@ -21,18 +21,18 @@ export default function () {
           </p>
 
           <div>
-            <Link href="/drop-of-life/donate">
+            <Link href="/drop-for-life/donate">
               <button type="button">DONATE</button>
             </Link>
-            <Link href="/drop-of-life/request">
+            <Link href="/drop-for-life/request">
               <button type="button">REQUEST</button>
             </Link>
           </div>
         </div>
       </div>
 
-      <div className="firstblock">
-        <div className="text">
+      <div className={style.firstblock}>
+        <div className={style.text}>
           <p>
             Patients' families in underdeveloped nations like <span>Nepal</span>
             bear the responsibility and worry of managing and transporting
@@ -43,7 +43,7 @@ export default function () {
           </p>
         </div>
 
-        <div className="img-container">
+        <div className={style.img_container}>
           <Image
             src={donate}
             className="donate"
@@ -54,7 +54,7 @@ export default function () {
         </div>
       </div>
 
-      <div className="reasons-to-donate">
+      <div className={style.reasons_container}>
         <h2>5 Reasons to donate blood</h2>
         <ol>
           <li> 1/3 of us will need a blood transfusion in our lifetime.</li>
@@ -77,15 +77,15 @@ export default function () {
       </div>
 
       <div>
-        <div className="process">
+        <div className={style.process}>
           <h3>DONATION PROCESS</h3>
           <p>
             The donation process from the time you arrive at center until the
             time you leave
           </p>
         </div>
-        <div className="card-container ">
-          <div className="cards">
+        <div className={style.card_container}>
+          <div className={style.cards}>
             <Card
               title="REGISTRATION"
               img={registration}
@@ -101,7 +101,7 @@ export default function () {
             />
           </div>
 
-          <div className="cards">
+          <div className={style.cards}>
             <Card
               title="DONATION"
               img={donation}

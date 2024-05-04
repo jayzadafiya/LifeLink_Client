@@ -1,10 +1,8 @@
+import Head from "next/head";
 import Layout from "@/components/layout/layout";
 import store from "@/store/store";
-import "@/styles/globals.css";
-import "@/styles/style.css";
-
-import Head from "next/head";
 import { Provider } from "react-redux";
+import "@/styles/globals.css";
 
 export default function App({ Component, pageProps }) {
   return (
