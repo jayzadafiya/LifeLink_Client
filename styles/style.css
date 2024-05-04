@@ -1,8 +1,8 @@
 .banner {
   /* width: 100vw; */
   height: 100vh;
-  background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.9)), to(rgba(0, 0, 0, 0.4))), url(/assets/images/dol/background.jpg);
-  background-image: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.4)), url(/assets/images/dol/background.jpg);
+  background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, 0.9)), to(rgba(0, 0, 0, 0.4))), url(/assets/images/dfl/background.jpg);
+  background-image: linear-gradient(rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.4)), url(/assets/images/dfl/background.jpg);
   background-size: cover;
   background-position: cover;
 }
@@ -85,7 +85,7 @@
 }
 
 .reasons-to-donate {
-  background: url(/assets/images/dol/homeBanner.png) no-repeat center;
+  background: url(/assets/images/dfl/homeBanner.png) no-repeat center;
   background-size: cover;
   display: flex;
   flex-direction: column;
@@ -171,7 +171,6 @@
 
 .card-text {
   font-size: 1.25rem;
-  text-align: center;
 }
 
 @media screen and (max-width:1024px) {

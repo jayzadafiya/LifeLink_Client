@@ -1,11 +1,11 @@
 import Head from "next/head";
-import LeftSidebar from "@/components/DOL/Request/LeftSidebar";
-import RightSidePanal from "@/components/DOL/Request/RightSidePanal";
-import { fetchDonorData } from "@/store/slices/userSlice";
+import LeftSidebar from "@/components/DFL/Request/LeftSidebar";
+import RightSidePanal from "@/components/DFL/Request/RightSidePanal";
 import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 
-import style from "../../../styles/DOL/request.module.scss";
+import style from "../../../styles/DFL/request.module.scss";
+import { fetchDonorData } from "@/store/slices/DFLSlice";
 
 export default function Request() {
   const dispatch = useDispatch();
@@ -17,6 +17,7 @@ export default function Request() {
       dispatch(
         fetchDonorData({
           latlng: `${latitude},${longitude}`,
+          page: 1,
         })
       );
     });

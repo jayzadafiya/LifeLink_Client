@@ -1,0 +1,250 @@
+.request_container {
+  display: flex;
+  gap: 30px;
+  align-content: center;
+  justify-content: center;
+  margin: 3%;
+
+  label {
+    color: #754d42;
+    font-weight: bold;
+  }
+
+  .left_container {
+    width: 25%;
+    padding: 35px 25px;
+    height: min-content;
+    border-radius: 8px;
+    box-shadow: 0px 10px 10px 0px rgba(71, 61, 62, 0.25);
+    border: 1px solid #754d42;
+
+    form {
+      label {
+        font-weight: 600;
+        font-size: 16px;
+        color: #754d42;
+      }
+
+      input,
+      select {
+        width: 100%;
+        padding: 12px 16px;
+        outline: none;
+        border-radius: 4px;
+        font-size: 16px;
+        line-height: 1.75;
+        color: #4e545f;
+        cursor: pointer;
+        border: 1px solid black;
+        margin-top: 8px;
+        margin-bottom: 20px;
+      }
+
+      select {
+        padding: 15px;
+      }
+
+      .search_button {
+        background-color: #754d42;
+        border-radius: 6px;
+        color: white;
+        font-weight: 500;
+        font-size: 18px;
+        width: 100%;
+        padding: 10px;
+        margin-top: 10px;
+        border: 1px solid transparent;
+
+        &:hover {
+          background-color: white;
+          border-color: #754d42;
+          color: #754d42;
+        }
+      }
+    }
+  }
+
+  .right_container {
+    width: 75%;
+    display: flex;
+    flex-direction: column;
+
+    .card_container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 10px;
+
+      .card {
+        border-radius: 22px;
+        width: 250px;
+        padding: 10px;
+        background-color: #fff;
+        color: #917072;
+        height: min-content;
+        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+
+        .inner {
+          padding: 20px;
+          padding-top: 10px;
+          background-color: #ffedec;
+          border-radius: 12px;
+          position: relative;
+          overflow: hidden;
+
+          span {
+            position: absolute;
+            top: 0;
+            right: 0;
+            background-color: #fbc8be;
+            border-radius: 0 0 0 5px;
+            display: flex;
+            align-items: center;
+            padding: 10px 12px;
+            font-size: 20px;
+            font-weight: 600;
+            color: #754d42;
+          }
+
+          h2 {
+            font-weight: 600;
+            font-size: 20px;
+            color: #754d42;
+            margin-top: 12px;
+          }
+
+          p {
+            margin-top: 16px;
+          }
+
+          ul {
+            display: flex;
+            flex-direction: column;
+
+            li {
+              display: flex;
+              align-items: center;
+              gap: 8px;
+              margin-top: 12px;
+            }
+          }
+
+          button {
+            background-color: #fbc8be;
+            border-radius: 6px;
+            color: #754d42;
+            font-weight: 500;
+            font-size: 18px;
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            font-weight: bold;
+            border: 1px solid transparent;
+
+            &:hover {
+              background-color: white;
+              border-color: #754d42;
+            }
+          }
+        }
+      }
+    }
+
+    .pagination_container {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 3% 2%;
+
+      button {
+        border-radius: 6px;
+        font-weight: bold;
+        font-size: 25px;
+        width: 100px;
+        padding: 8px 0;
+        margin-top: 10px;
+        border: 1px solid transparent;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+        border-color: #000;
+
+        &:hover {
+          // background-color: #754d42;
+          color: #000;
+        }
+
+        &.prev:hover::after {
+          font-size: 18px;
+          content: "Prev";
+          color: #000; /* Change color if needed */
+        }
+        &.next:hover::before {
+          flex-direction: row-reverse;
+          font-size: 18px;
+          content: "Next";
+          color: #000;
+        }
+      }
+    }
+  }
+}
+
+.contect__model {
+  background-color: white;
+  padding: 30px;
+  margin: -35px 0;
+  // width: 400px;
+  form {
+    div {
+      display: flex;
+      margin-top: 15px;
+    }
+    label {
+      font-weight: 600;
+      font-size: 16px;
+      color: #754d42;
+      width: 110px;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 16px;
+      outline: none;
+      border-radius: 4px;
+      font-size: 16px;
+      line-height: 1.75;
+      color: #4e545f;
+      cursor: pointer;
+      border: 1px solid black;
+    }
+
+    select {
+      padding: 15px;
+    }
+
+    textarea {
+      resize: none;
+    }
+
+    .search_button {
+      background-color: #754d42;
+      border-radius: 6px;
+      color: white;
+      font-weight: 500;
+      font-size: 18px;
+      width: 100%;
+      padding: 10px;
+      margin-top: 30px;
+      border: 1px solid transparent;
+
+      &:hover {
+        background-color: white;
+        border-color: #754d42;
+        color: #754d42;
+      }
+    }
+  }
+}

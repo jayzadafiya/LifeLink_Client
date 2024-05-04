@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchDonorData } from "@/store/slices/userSlice";
 import { HashLoader } from "react-spinners";
 
-import style from "../../../styles/DOL/request.module.scss";
+import style from "../../../styles/DFL/request.module.scss";
+import { fetchDonorData, setPrevData } from "@/store/slices/DFLSlice";
 
 export default function LeftSidebar() {
   const initalForm = {
@@ -14,7 +14,7 @@ export default function LeftSidebar() {
 
   const [formData, setFormData] = useState(initalForm);
 
-  const { loading } = useSelector((state) => state.user);
+  const { loading } = useSelector((state) => state.dfl);
   const dispatch = useDispatch();
 
   const handleChange = (e) => {
@@ -28,8 +28,8 @@ export default function LeftSidebar() {
 
   const handleSearch = (e) => {
     e.preventDefault();
-    dispatch(fetchDonorData({ formData: formData }));
-
+    dispatch(setPrevData());
+    dispatch(fetchDonorData({ formData: formData, page: 1 }));
     setFormData(initalForm);
   };
   return (

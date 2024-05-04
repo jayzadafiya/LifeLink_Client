@@ -12,7 +12,6 @@ const initialState = {
   isLogging: false,
   loading: false,
   error: null,
-  donorData: null,
 };
 
 export const login = createAsyncThunk("user/login", async (formData) => {
@@ -93,30 +92,6 @@ export const updateUser = createAsyncThunk("user/updateUser", async (data) => {
   }
 });
 
-export const fetchDonorData = createAsyncThunk(
-  "user/fetchDonorData",
-  async ({ latlng, formData }) => {
-    try {
-      let url = `${BASE_URL}/donor`;
-
-      if (formData) {
-        url += `?city=${formData.city}&bloodType=${encodeURIComponent(
-          formData.bloodType
-        )}&address=${formData.address}`;
-      }
-
-      const { data } = await axios.post(url, {
-        latlng: latlng,
-      });
-
-      return data;
-    } catch (error) {
-      const err = error?.response?.data?.message || error?.message;
-      throw new Error(err);
-    }
-  }
-);
-
 const userSlice = createSlice({
   name: "user",
   initialState,
@@ -183,19 +158,6 @@ const userSlice = createSlice({
         );
       })
       .addCase(updateUser.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-        toast.error(action.error.message);
-      })
-      .addCase(fetchDonorData.pending, (state, action) => {
-        state.loading = true;
-      })
-      .addCase(fetchDonorData.fulfilled, (state, action) => {
-        state.loading = false;
-
-        state.donorData = action.payload;
-      })
-      .addCase(fetchDonorData.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.message;
         toast.error(action.error.message);

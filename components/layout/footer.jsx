@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Logo from "../../public/assets/images/logo.png";
-import dolLogo from "../../public/assets/images/dol/logo.png";
+import dolLogo from "../../public/assets/images/dfl/logo.png";
 
 import { RiLinkedinFill } from "react-icons/ri";
 import { AiFillYoutube, AiFillGithub, AiFillInstagram } from "react-icons/ai";
@@ -78,14 +78,14 @@ const quickLinks03 = [
 export default function Footer() {
   const router = useRouter();
   const year = new Date().getFullYear();
-  const isDOL = router.pathname.startsWith("/drop-of-life");
+  const isDFL = router.pathname.startsWith("/drop-for-life");
 
   return (
     <footer className="pb-16 pt-10">
       <div className="container">
         <div className="flex justify-between flex-col md:flex-row flex-wrap gap-[30px]">
           <div>
-            <Image src={isDOL ? dolLogo : Logo} alt="Logo" width={134} />
+            <Image src={isDFL ? dolLogo : Logo} alt="Logo" width={134} />
 
             <p className="text-[16px] leading-7 font-[400] text-textColor mt-4">
               Coptright @ {year} developed by Jay Zadafiya all right reserved.

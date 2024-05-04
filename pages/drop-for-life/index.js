@@ -2,12 +2,12 @@
 import Image from "next/image";
 import Link from "next/link";
 
-import donate from "../../public/assets/images/dol/donate.jpg";
-import registration from "../../public/assets/images/dol/registration.jpg";
-import refreshment from "../../public/assets/images/dol/refreshment.jpg";
-import bloodcheck from "../../public/assets/images/dol/bloodcheck.jpg";
-import donation from "../../public/assets/images/dol/donation.jpg";
-import Card from "@/components/DOL/Card";
+import donate from "../../public/assets/images/dfl/donate.jpg";
+import registration from "../../public/assets/images/dfl/registration.jpg";
+import refreshment from "../../public/assets/images/dfl/refreshment.jpg";
+import bloodcheck from "../../public/assets/images/dfl/bloodcheck.jpg";
+import donation from "../../public/assets/images/dfl/donation.jpg";
+import Card from "@/components/DFL/Card";
 
 export default function () {
   return (

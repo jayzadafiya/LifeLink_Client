@@ -1,13 +1,12 @@
 import Model from "../../Timeslots/Model";
+import axios from "axios";
+import toast from "react-hot-toast";
 import { capitalize } from "@/utils/heplerFunction";
 import { useState } from "react";
-
 import { FaTimes } from "react-icons/fa";
-
-import style from "../../../styles/DOL/request.module.scss";
-import axios from "axios";
 import { BASE_URL } from "@/utils/config";
-import toast from "react-hot-toast";
+
+import style from "../../../styles/DFL/request.module.scss";
 
 export default function DonorCard({ donor }) {
   const [dialogOpen, setDialogOpen] = useState(false);

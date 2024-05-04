@@ -1,5 +1,5 @@
-import MedicalInfoForm from "@/components/DOL/Donate/MedicalInfoForm";
-import PersonalInfoForm from "@/components/DOL/Donate/PersonalInfoForm";
+import MedicalInfoForm from "@/components/DfL/Donate/MedicalInfoForm";
+import PersonalInfoForm from "@/components/DfL/Donate/PersonalInfoForm";
 import { BASE_URL } from "@/utils/config";
 import { donorFormValidation } from "@/utils/formValidation";
 import axios from "axios";

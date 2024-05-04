@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import logo from "../../public/assets/images/logo.png";
-import dolLogo from "../../public/assets/images/dol/logo.png";
+import dolLogo from "../../public/assets/images/dfl/logo.png";
 import { useEffect, useRef } from "react";
 import { useRouter } from "next/router";
 import { BiMenu } from "react-icons/bi";
@@ -18,7 +18,7 @@ const navLink = [
     display: "Find a Doctor",
   },
   {
-    path: "/drop-of-life",
+    path: "/drop-for-life",
     display: "Blood Donation",
   },
   {
@@ -32,7 +32,7 @@ export default function Header() {
   const headerRef = useRef(null);
   const menuRef = useRef(null);
 
-  const isDOL = router.pathname.startsWith("/drop-of-life");
+  const isDFL = router.pathname.startsWith("/drop-for-life");
 
   const { user, accessToken } = useSelector((state) => state.user);
 
@@ -42,11 +42,11 @@ export default function Header() {
         document.body.scrollTop || document.documentElement.scrollTop;
       if (scrollPosition > 80) {
         headerRef?.current?.classList?.add(
-          `${isDOL ? "sticky-header-dol" : "sticky_header"}`
+          `${isDFL ? "sticky-header-dol" : "sticky_header"}`
         );
       } else {
         headerRef?.current?.classList?.remove(
-          `${isDOL ? "sticky-header-dol" : "sticky_header"}`
+          `${isDFL ? "sticky-header-dol" : "sticky_header"}`
         );
       }
     });
@@ -63,14 +63,14 @@ export default function Header() {
 
   return (
     <header
-      className={` ${isDOL ? "dol-header" : "header"} flex items-center `}
+      className={` ${isDFL ? "dol-header" : "header"} flex items-center `}
       ref={headerRef}
     >
       <div className="container">
         <div className="flex items-center justify-between">
           <div>
             <Link href="/">
-              <Image src={isDOL ? dolLogo : logo} alt="Logo" width={134} />
+              <Image src={isDFL ? dolLogo : logo} alt="Logo" width={134} />
             </Link>
           </div>
 
@@ -84,10 +84,10 @@ export default function Header() {
                     className={
                       router.pathname === link.path
                         ? `${
-                            isDOL ? "text-red-950" : "text-primaryColor"
+                            isDFL ? "text-red-950" : "text-primaryColor"
                           } text-[16px] leading-7 font-[600]`
                         : `${
-                            isDOL
+                            isDFL
                               ? "text-red-700  hover:text-white"
                               : "text-textColor hover:text-primaryColor "
                           } text-[16px] leading-7 font-[600] `
@@ -109,7 +109,7 @@ export default function Header() {
                 }`}
                 className="flex items-center gap-4 cursor-pointer"
               >
-                <h2 className={`${isDOL && "text-red-950"} font-semibold`}>
+                <h2 className={`${isDFL && "text-red-950"} font-semibold`}>
                   {capitalize(user.name)}
                 </h2>
                 {user.photo && (
