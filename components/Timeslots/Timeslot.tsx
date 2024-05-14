@@ -68,7 +68,7 @@ const Timeslot = React.memo(
         };
 
         const session = await axios.post(
-          `${BASE_URL}/booking/checkout-session/${slug}`,
+          `${BASE_URL}/checkout-session/${slug}`,
           data,
           {
             headers: {

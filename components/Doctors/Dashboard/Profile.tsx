@@ -9,7 +9,7 @@ import {
 
 import {
   doctorValidateForm,
-  handleInputValidation,
+  handleNestedInputValidation,
 } from "../../../utils/formValidation";
 
 import {
@@ -20,6 +20,12 @@ import {
   TimeSlot,
   TimeslotCreated,
 } from "../../../interfaces/Doctor";
+
+import {
+  DoctorForm,
+  NestedDoctorForm,
+  ValidationErrors,
+} from "../../../interfaces/Forms";
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
@@ -30,15 +36,11 @@ import { RootState, useAppDispatch } from "../../../store/store";
 import { BASE_URL } from "../../../utils/config";
 import { PayloadAction } from "@reduxjs/toolkit";
 import { uploadImageToCloudinary } from "../../../utils/uploadCloudinary";
-import {
-  DoctorForm,
-  NestedDoctorForm,
-  ValidationErrors,
-} from "../../../interfaces/Forms";
 
 export default function Profile({ doctor }: { doctor: Doctor }) {
   const dispatch = useAppDispatch();
   const router = useRouter();
+
   const { loading, accessToken } = useSelector(
     (state: RootState) => state.user
   );
@@ -223,7 +225,7 @@ export default function Profile({ doctor }: { doctor: Doctor }) {
 
     const updateItems = (formData[key] as QTE)[index];
 
-    const formErrors = handleInputValidation(
+    const formErrors = handleNestedInputValidation(
       { ...updateItems, [key]: value } as NestedDoctorForm,
       index,
       key

@@ -105,6 +105,7 @@ export default function AppointmentTablePagination({
                     Booked For
                   </TableSortLabel>
                 </TableCell>
+                <TableCell>Script</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>

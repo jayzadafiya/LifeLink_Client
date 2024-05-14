@@ -1,4 +1,9 @@
-import { Experience, Qualification, TimeSlot } from "../interfaces/Doctor";
+import {
+  Experience,
+  Medicine,
+  Qualification,
+  TimeSlot,
+} from "../interfaces/Doctor";
 
 // Validation function for required fields
 export const validateRequired = (value: string): boolean => {
@@ -100,6 +105,18 @@ export const validateTimeSlots = (timeSlots: TimeSlot[]): boolean => {
   });
 };
 
+// Validation function for medicine
+export const validateMedicine = (medicines: Medicine[]): boolean => {
+  return medicines.every((item) => {
+    return (
+      item.name.trim() !== "" &&
+      item.totalMedicine !== 0 &&
+      item.mealTime.trim() !== "" &&
+      item.dailyTime.trim() !== ""
+    );
+  });
+};
+
 // Validation function for birthDate
 export const validateDOB = (dob: string): boolean => {
   const dateOfBirth = new Date(dob);
@@ -111,4 +128,9 @@ export const validateDOB = (dob: string): boolean => {
   const differenceYears = differenceMs / (1000 * 60 * 60 * 24 * 365);
 
   return differenceYears >= 18 && differenceYears <= 65;
+};
+
+// Validation function for validate String array
+export const validateStringArray = (data: string[]) => {
+  return data?.some((item) => item.trim() !== "");
 };

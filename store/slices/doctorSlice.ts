@@ -1,6 +1,6 @@
 import axios from "axios";
 import toast from "react-hot-toast";
-import { Doctor } from "../../interfaces/Doctor";
+import { Appointment, Doctor } from "../../interfaces/Doctor";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { BASE_URL } from "../../utils/config";
 
@@ -8,12 +8,14 @@ interface DoctorSliceState {
   doctorList: Doctor[] | null;
   searchDoctorList: Doctor[] | null;
   loading: boolean;
+  appointmentData: Appointment | null;
 }
 
 const initialState: DoctorSliceState = {
   doctorList: null,
   searchDoctorList: null,
   loading: false,
+  appointmentData: null,
 };
 
 export const searchDoctor: any = createAsyncThunk(
@@ -36,6 +38,9 @@ const doctorSlice = createSlice({
     setDocterList: (state, { payload }) => {
       state.doctorList = payload;
     },
+    setAppointmentData: (state, { payload }) => {
+      state.appointmentData = payload;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -53,6 +58,6 @@ const doctorSlice = createSlice({
   },
 });
 
-export const { setDocterList } = doctorSlice.actions;
+export const { setDocterList, setAppointmentData } = doctorSlice.actions;
 
 export default doctorSlice.reducer;

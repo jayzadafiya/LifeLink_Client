@@ -1,9 +1,10 @@
-import { Doctor } from "../interfaces/Doctor";
+import { Doctor, PrescriptionFormData } from "../interfaces/Doctor";
 import {
   DoctorForm,
   DonorForm,
   LoginForm,
   NestedDoctorForm,
+  PrescriptionForm,
   RequestMessageForm,
   SignupForm,
   UserForm,
@@ -19,9 +20,11 @@ import {
   validateEmail,
   validateEndDate,
   validateExperiences,
+  validateMedicine,
   validatePhone,
   validateQualifications,
   validateRequired,
+  validateStringArray,
   validateTimeSlots,
 } from "./inputValidation";
 
@@ -104,7 +107,7 @@ export const doctorValidateForm = (formData: any): Partial<DoctorForm> => {
 };
 
 // Doctor Profile page handelInput form validation
-export const handleInputValidation = (
+export const handleNestedInputValidation = (
   formData: NestedDoctorForm,
   index: number,
   key: string
@@ -368,7 +371,9 @@ export const donorFormValidation = (
 };
 
 // Request message form validation
-export const requestFormValidation = (formData: RequestMessageForm) => {
+export const requestFormValidation = (
+  formData: RequestMessageForm
+): Partial<RequestMessageForm> => {
   const { name, phone, address } = formData;
   const newErrors: Partial<RequestMessageForm> = {};
 
@@ -387,4 +392,29 @@ export const requestFormValidation = (formData: RequestMessageForm) => {
   }
 
   return newErrors;
+};
+
+// Prescription form validation
+export const prescriptionFormValidation = (formData: PrescriptionFormData) => {
+  const { test, medicine, advice, symptoms } = formData;
+
+  const error: Partial<PrescriptionForm> = {};
+
+  if (symptoms.length > 0 && !validateStringArray(symptoms)) {
+    error.symptoms = "Please add Symptoms";
+  }
+
+  if (test.length > 0 && !validateStringArray(test)) {
+    error.test = "Please add test";
+  }
+
+  if (advice.length > 0 && !validateStringArray(advice)) {
+    error.advice = "Please add advice";
+  }
+
+  if (!validateMedicine(medicine)) {
+    error.medicine = "Please add medicine data";
+  }
+
+  return error;
 };

@@ -91,3 +91,10 @@ export interface RequestMessageForm {
   phone: string;
   message?: string;
 }
+
+export interface PrescriptionForm {
+  symptoms: string;
+  advice: string;
+  test: string;
+  medicine: string;
+}

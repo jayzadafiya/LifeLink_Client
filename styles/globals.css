@@ -82,6 +82,10 @@ body {
   @apply w-full px-4 py-3 border border-solid border-[#006ff61] focus:outline-none focus:border-primaryColor text-[16px] leading-7 text-headingColor placeholder:text-textColor cursor-pointer rounded-md;
 }
 
+.pscForm__input {
+  @apply pb-1 pl-1 focus:outline-none focus:border-primaryColor text-[14px] leading-6 text-headingColor placeholder:text-textColor cursor-pointer;
+}
+
 /* model css */
 .modal::backdrop {
   position: fixed;

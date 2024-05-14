@@ -78,3 +78,17 @@ export interface Review {
   reviewText: string;
   rating: number;
 }
+
+export interface PrescriptionFormData {
+  symptoms: string[];
+  advice: string[];
+  test: string[];
+  medicine: Medicine[];
+}
+
+export interface Medicine {
+  name: string;
+  dailyTime: string;
+  mealTime: string;
+  totalMedicine: number;
+}

@@ -1,4 +1,6 @@
 import Image from "next/image";
+import Link from "next/link";
+import avatarImg from "../../public/assets/images/avatar-icon.png";
 
 import {
   capitalize,
@@ -8,8 +10,10 @@ import {
 } from "../../utils/heplerFunction";
 import { TableRow, TableCell } from "@mui/material";
 import { Appointment } from "../../interfaces/Doctor";
-
-import avatarImg from "../../public/assets/images/avatar-icon.png";
+import { FaFilePrescription } from "react-icons/fa6";
+import { useAppDispatch } from "../../store/store";
+import { setAppointmentData } from "../../store/slices/doctorSlice";
+import { useRouter } from "next/router";
 
 // Interface for components props type
 interface AppointmentPageProps {
@@ -29,11 +33,13 @@ export default function AppointmentPage({
   searchTerm,
   userType,
 }: AppointmentPageProps): React.JSX.Element {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
   const startIndex = page * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
 
   // Condition for set appointment data base on userType
-
   let filteredAppointment = sortedAppointments(appointments, order);
   if (userType !== "doctor") {
     filteredAppointment = filteredAppointments(filteredAppointment, searchTerm);
@@ -46,6 +52,12 @@ export default function AppointmentPage({
       </TableCell>
     );
   }
+
+  const handleScriptClick = (item: Appointment) => {
+    dispatch(setAppointmentData(item));
+
+    router.push(`/prescription/${item._id}`);
+  };
 
   // Render the filtered appointments within the specified range
   return (
@@ -99,6 +111,11 @@ export default function AppointmentPage({
             <TableCell>{item.fees}</TableCell>
             <TableCell>{item.time}</TableCell>
             <TableCell>{formateDate(item.bookingDate)}</TableCell>
+            <TableCell>
+              <button onClick={() => handleScriptClick(item)}>
+                <FaFilePrescription className="text-[24px] ml-2" />
+              </button>
+            </TableCell>
           </TableRow>
         ))}
     </>

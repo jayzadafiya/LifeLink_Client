@@ -18,9 +18,9 @@ import { GetServerSidePropsContext } from "next";
 
 // Interface for components props type
 interface DashboardProps {
-  doctor?: Doctor;
-  appointments?: { upcoming: Appointment[]; history: Appointment[] };
-  error?: any;
+  doctor: Doctor;
+  appointments: { upcoming: Appointment[]; history: Appointment[] };
+  error: any;
 }
 
 export default function Dashboard({
@@ -139,7 +139,9 @@ export default function Dashboard({
 }
 
 // Data fetching Function for get data of Doctor profile and appointment
-export async function getServerSideProps(context: GetServerSidePropsContext) {
+export async function getServerSideProps(
+  context: GetServerSidePropsContext
+): Promise<{ props: Partial<DashboardProps> }> {
   try {
     const cookieToken = context.req.cookies.token;
 
