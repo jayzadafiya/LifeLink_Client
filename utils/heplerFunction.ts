@@ -7,6 +7,7 @@ import {
   Timeslots,
 } from "../interfaces/Doctor";
 import dayjs from "dayjs";
+import { PayLoad } from "../interfaces/User";
 
 /**
  * Format a given date based on the provided configuration.
@@ -63,8 +64,8 @@ export const convertTime = (time: string): string => {
  * @param {string} token - The JWT token to decode.
  * @returns {string|jwt.JwtPayload|null} The decoded payload, or null if decoding fails.
  */
-export const decodeToken = (token: string): string | jwt.JwtPayload | null => {
-  const data = jwt.decode(token);
+export const decodeToken = (token: string): PayLoad => {
+  const data = jwt.decode(token) as PayLoad;
 
   return data;
 };

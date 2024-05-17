@@ -6,13 +6,15 @@ import FeedBack from "../../components/Doctors/FeedBack";
 import SidePanel from "../../components/Doctors/SidePanel";
 import starIcon from "../../public/assets/images/Star.png";
 import Error from "../../components/Error/Error";
+import Cookies from "js-cookie";
 import avatarImg from "../../public/assets/images/doctor-img01.png";
 
 import { useEffect, useState } from "react";
 import { BASE_URL } from "../../utils/config";
-import { capitalize } from "../../utils/heplerFunction";
+import { capitalize, decodeToken } from "../../utils/heplerFunction";
 import { Doctor, Timeslots } from "../../interfaces/Doctor";
 import { GetStaticPropsContext } from "next";
+import { useRouter } from "next/router";
 
 // Interface for components props type
 interface DoctorDetailsProps {
@@ -26,7 +28,10 @@ export default function DoctorDetails({
   error,
   timeslots,
 }: DoctorDetailsProps): React.JSX.Element {
-  const [tab, setTab] = useState("about");
+  const [isAdmin, setIsAdmin] = useState<boolean>(false);
+  const [tab, setTab] = useState<string>("about");
+
+  const token = Cookies.get("token");
 
   if (error || !doctor) {
     return <Error errMessage={error} />;
@@ -51,6 +56,14 @@ export default function DoctorDetails({
   // Reset the tab to about whenever the doctor prop changes
   useEffect(() => {
     setTab("about");
+
+    if (token) {
+      const payload = decodeToken(token);
+
+      if (payload?.role === "admin") {
+        setIsAdmin(true);
+      }
+    }
   }, [doctor]);
 
   return (
@@ -58,7 +71,7 @@ export default function DoctorDetails({
       {!error && (
         <section>
           <Head>
-            <title>{`${capitalize(doctor?.name)}'s Detail Page`}</title>
+            <title>{`Dr.${capitalize(doctor?.name)}'s Detail Page`}</title>
             <meta name="description" content="Doctor profile page" />
           </Head>
           <div className="max-w-[1170px] px-5 mx-auto">
@@ -112,9 +125,12 @@ export default function DoctorDetails({
                   </button>
                   <button
                     className={`${
-                      tab === "feedback" &&
-                      "border-b border-solid border-primaryColor"
-                    } py-2 px-5 mr-5 tetxt-[16px] leading-7 text-headingColor font-semibold  `}
+                      isAdmin
+                        ? "hidden"
+                        : `${tab === "feedback"} &&
+                          "border-b border-solid border-primaryColor"
+                     py-2 px-5 mr-5 tetxt-[16px] leading-7 text-headingColor font-semibold} `
+                    }`}
                     onClick={() => setTab("feedback")}
                   >
                     Feedback
@@ -123,7 +139,6 @@ export default function DoctorDetails({
 
                 <div className="mt-[50px] ">
                   <div className={`${tab !== "about" ? "hidden" : ""}`}>
-                    {" "}
                     <DoctorAbout
                       name={name}
                       about={about}
@@ -131,8 +146,11 @@ export default function DoctorDetails({
                       experiences={experiences}
                     />
                   </div>
-                  <div className={`${tab !== "feedback" ? "hidden" : ""}`}>
-                    {" "}
+                  <div
+                    className={`${
+                      !isAdmin && tab !== "feedback" ? "hidden" : ""
+                    }`}
+                  >
                     <FeedBack
                       reviews={reviews}
                       totalRating={totalRating || 0}
@@ -146,6 +164,8 @@ export default function DoctorDetails({
                   timeslots={timeslots}
                   fees={fees}
                   address={address}
+                  isAdmin={isAdmin}
+                  doctorId={doctor._id}
                 />
               </div>
             </div>

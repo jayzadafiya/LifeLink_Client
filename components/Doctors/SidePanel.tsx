@@ -5,6 +5,12 @@ import { useMemo, useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { capitalize, convertTime } from "../../utils/heplerFunction";
 import { TimeSlot, Timeslots } from "../../interfaces/Doctor";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
+import axios from "axios";
+import { BASE_URL } from "../../utils/config";
+import toast from "react-hot-toast";
+import { useRouter } from "next/router";
 
 // Interface for components props type
 interface SidePanelProps {
@@ -12,6 +18,8 @@ interface SidePanelProps {
   timeslotsData?: TimeSlot[];
   fees: number;
   timeslots: Timeslots[];
+  isAdmin: boolean;
+  doctorId: string | undefined;
 }
 
 export default function SidePanel({
@@ -19,11 +27,36 @@ export default function SidePanel({
   timeslots,
   timeslotsData,
   fees,
+  isAdmin,
+  doctorId,
 }: SidePanelProps): React.JSX.Element {
-  const [open, setOpen] = useState(false);
+  const router = useRouter();
+  const [open, setOpen] = useState<boolean>(false);
+  const [isReject, setIsReject] = useState<boolean>(false);
+  const [message, setMessage] = useState<string | undefined>();
+
+  const { role } = useSelector((state: RootState) => state.user);
 
   const handelModel = () => {
     setOpen((prev) => !prev);
+  };
+  const handelRejectModel = async () => {
+    if (isReject) {
+      try {
+        setIsReject((prev) => !prev);
+
+        await axios.patch(`${BASE_URL}/admin/${doctorId}`, {
+          message: message,
+        });
+        router.replace("/admin");
+      } catch (error: any) {
+        const err = error?.response?.data?.message || error?.message;
+        toast.error(err);
+        return null;
+      }
+    } else {
+      setIsReject((prev) => !prev);
+    }
   };
 
   const sortedTimeslots = useMemo(() => {
@@ -35,6 +68,17 @@ export default function SidePanel({
       );
     });
   }, [timeslotsData]);
+
+  const handelAcceptBtn = async () => {
+    try {
+      await axios.patch(`${BASE_URL}/admin/${doctorId}`);
+      router.replace("/admin");
+    } catch (error: any) {
+      const err = error?.response?.data?.message || error?.message;
+      toast.error(err);
+      return null;
+    }
+  };
 
   return (
     <>
@@ -72,12 +116,46 @@ export default function SidePanel({
           </ul>
         </div>
 
-        <button
-          className="btn px-2 w-full rounded-md   btn-hover"
-          onClick={handelModel}
-        >
-          Book Appoitement
-        </button>
+        {!isReject && (
+          <button
+            className={`${
+              role === "doctor"
+                ? "hidden"
+                : "btn px-2 w-full rounded-md   btn-hover"
+            }`}
+            onClick={handelModel}
+          >
+            Book Appoitement
+          </button>
+        )}
+        {isAdmin && (
+          <>
+            {!isReject && (
+              <button
+                className="btn px-2 w-full rounded-md bg-green-500  hover:border-green-500 hover:border-solid hover:border-[3px] hover:text-green-500 hover:bg-green-100 font-bold mt-5"
+                onClick={handelAcceptBtn}
+              >
+                Accept
+              </button>
+            )}
+            {isReject && (
+              <input
+                type="text"
+                name="message"
+                className="form__input"
+                placeholder="Enter reason for rejection "
+                value={message}
+                onChange={(e) => setMessage(e.target.value)}
+              />
+            )}
+            <button
+              className="btn px-2 w-full rounded-md bg-red-500  hover:border-red-500 hover:border-solid hover:border-[3px] hover:text-red-500 hover:bg-red-100 font-bold mt-5"
+              onClick={handelRejectModel}
+            >
+              {isReject ? "Submit" : "Reject"}
+            </button>
+          </>
+        )}
       </div>
       <Model open={open}>
         <Timeslot timeslots={timeslots} fees={fees} />

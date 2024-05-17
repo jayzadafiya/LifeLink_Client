@@ -49,7 +49,16 @@ export const fetchUser: any = createAsyncThunk("user/fatchUser", async () => {
       const decodedToken = jwt.decode(token) as PayLoad;
       let data = null;
 
-      if (decodedToken.role === "patient") {
+      if (decodedToken.role === "admin") {
+        const res = await axios.get(`${BASE_URL}/admin/profile`, {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        data = res.data;
+      } else if (decodedToken.role === "patient") {
         const res = await axios.get(`${BASE_URL}/users/profile`, {
           headers: {
             "Content-Type": "application/json",
@@ -172,9 +181,10 @@ const userSlice = createSlice({
         toast.error(action.error.message);
       })
       .addCase(fetchUser.fulfilled, (state, action) => {
+        console.log(action.payload.data);
         state.user = action.payload.data;
         state.accessToken = action.payload.token;
-        state.role = action.payload.data.role;
+        state.role = action.payload.data?.role;
       })
       .addCase(updateUser.pending, (state) => {
         state.loading = true;

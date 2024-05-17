@@ -37,6 +37,7 @@ export interface Doctor extends User {
   totalRating?: number;
   totalPatients?: number;
   isApproved?: ApprovalStatus;
+  message?: string;
 }
 
 export interface Appointment {

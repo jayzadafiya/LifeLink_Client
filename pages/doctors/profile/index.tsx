@@ -51,14 +51,20 @@ export default function Dashboard({
           <div className="lg:col-span-2 ">
             <div
               className={`${
-                doctor?.isApproved !== "pending" ? "hidden" : ""
-              } flex items-center justify-evenly p-4 mb-4 text-yellow-800 bg-yellow-50 rounded-lg`}
+                doctor?.isApproved === "approved" ? "hidden" : ""
+              } flex flex-col items-start justify-evenly p-4 mb-4 text-yellow-800 bg-yellow-50 rounded-lg`}
             >
-              <FiInfo size={30} />
+              <div className="flex items-center justify-center">
+                <FiInfo size={30} />
 
-              <div className="ml-3 text-sm font-medium">
-                To get approval please complete your profile. We&apos;ll review
-                manually and approve within 3 Days
+                <div className="ml-3 text-sm font-medium">
+                  To get approval please complete your profile. We&apos;ll
+                  review manually and approve within 3 Days
+                </div>
+              </div>
+
+              <div className="ml-[42px] text-lg font-medium">
+                {doctor.message}
               </div>
             </div>
 
@@ -80,7 +86,7 @@ export default function Dashboard({
                     </span>
 
                     <h3 className="text-[22pz] leading-9 font-bold text-headingColor mt-3">
-                      {doctor.name}
+                      Dr.{doctor.name}
                     </h3>
 
                     <div className="flex items-center gP-[6px]">

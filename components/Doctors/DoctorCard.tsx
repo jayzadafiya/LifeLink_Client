@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 
 import starIcon from "../../public/assets/images/Star.png";
-import avatarImg from "../../public/assets/images/avatar-icon.png";
+import avatarImg from "../../public/assets/images/doctor-img01.png";
 
 import { BsArrowRight } from "react-icons/bs";
 import { Doctor } from "../../interfaces/Doctor";
