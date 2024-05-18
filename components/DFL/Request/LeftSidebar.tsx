@@ -3,9 +3,10 @@ import { useSelector } from "react-redux";
 import { HashLoader } from "react-spinners";
 
 import style from "../../../styles/DFL/request.module.scss";
-import { fetchDonorData, setPrevData } from "../../../store/slices/DFLSlice";
+
 import { RootState, useAppDispatch } from "../../../store/store";
 import { DonorSearchForm } from "../../../interfaces/Forms";
+import { fetchData, setPrevData } from "../../../store/slices/pagination";
 
 export default function LeftSidebar(): React.JSX.Element {
   const initalForm: DonorSearchForm = {
@@ -16,7 +17,7 @@ export default function LeftSidebar(): React.JSX.Element {
 
   const [formData, setFormData] = useState<DonorSearchForm>(initalForm);
 
-  const { loading } = useSelector((state: RootState) => state.dfl);
+  const { loading } = useSelector((state: RootState) => state.pagination);
   const dispatch = useAppDispatch();
 
   const handleChange = (
@@ -33,7 +34,7 @@ export default function LeftSidebar(): React.JSX.Element {
   const handleSearch = (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     dispatch(setPrevData());
-    dispatch(fetchDonorData({ formData: formData, page: 1 }));
+    dispatch(fetchData({ formData: formData, page: 1, type: "donor" }));
     setFormData(initalForm);
   };
 

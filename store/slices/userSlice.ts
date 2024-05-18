@@ -181,7 +181,6 @@ const userSlice = createSlice({
         toast.error(action.error.message);
       })
       .addCase(fetchUser.fulfilled, (state, action) => {
-        console.log(action.payload.data);
         state.user = action.payload.data;
         state.accessToken = action.payload.token;
         state.role = action.payload.data?.role;

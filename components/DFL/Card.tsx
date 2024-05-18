@@ -1,11 +1,11 @@
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import style from "../../styles/DFL/HomeDfl.module.scss";
 
 // Interface for components props type
 interface CardProps {
   title: string;
   text: string;
-  img: string;
+  img: StaticImageData;
   alt?: string;
 }
 export default function Card({

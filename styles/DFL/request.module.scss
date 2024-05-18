@@ -2,7 +2,7 @@
   display: flex;
   gap: 30px;
   align-content: center;
-  justify-content: center;
+  justify-content: flex-start;
   margin: 3%;
 
   label {
@@ -64,128 +64,95 @@
     }
   }
 
-  .right_container {
-    width: 75%;
-    display: flex;
-    flex-direction: column;
+  .card {
+    border-radius: 22px;
+    width: 250px;
+    padding: 10px;
+    background-color: #fff;
+    color: #917072;
+    height: min-content;
+    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
 
-    .card_container {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-      gap: 10px;
+    .inner {
+      padding: 20px;
+      padding-top: 10px;
+      background-color: #ffedec;
+      border-radius: 12px;
+      position: relative;
+      overflow: hidden;
 
-      .card {
-        border-radius: 22px;
-        width: 250px;
+      span {
+        position: absolute;
+        top: 0;
+        right: 0;
+        background-color: #fbc8be;
+        border-radius: 0 0 0 5px;
+        display: flex;
+        align-items: center;
+        padding: 10px 12px;
+        font-size: 20px;
+        font-weight: 600;
+        color: #754d42;
+      }
+
+      h2 {
+        font-weight: 600;
+        font-size: 20px;
+        color: #754d42;
+        margin-top: 12px;
+      }
+
+      p {
+        margin-top: 16px;
+      }
+
+      ul {
+        display: flex;
+        flex-direction: column;
+
+        li {
+          display: flex;
+          align-items: center;
+          gap: 8px;
+          margin-top: 12px;
+        }
+      }
+
+      button {
+        background-color: #fbc8be;
+        border-radius: 6px;
+        color: #754d42;
+        font-weight: 500;
+        font-size: 18px;
+        width: 100%;
         padding: 10px;
-        background-color: #fff;
-        color: #917072;
-        height: min-content;
-        box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+        margin-top: 10px;
+        font-weight: bold;
+        border: 1px solid transparent;
 
-        .inner {
-          padding: 20px;
-          padding-top: 10px;
-          background-color: #ffedec;
-          border-radius: 12px;
-          position: relative;
-          overflow: hidden;
-
-          span {
-            position: absolute;
-            top: 0;
-            right: 0;
-            background-color: #fbc8be;
-            border-radius: 0 0 0 5px;
-            display: flex;
-            align-items: center;
-            padding: 10px 12px;
-            font-size: 20px;
-            font-weight: 600;
-            color: #754d42;
-          }
-
-          h2 {
-            font-weight: 600;
-            font-size: 20px;
-            color: #754d42;
-            margin-top: 12px;
-          }
-
-          p {
-            margin-top: 16px;
-          }
-
-          ul {
-            display: flex;
-            flex-direction: column;
-
-            li {
-              display: flex;
-              align-items: center;
-              gap: 8px;
-              margin-top: 12px;
-            }
-          }
-
-          button {
-            background-color: #fbc8be;
-            border-radius: 6px;
-            color: #754d42;
-            font-weight: 500;
-            font-size: 18px;
-            width: 100%;
-            padding: 10px;
-            margin-top: 10px;
-            font-weight: bold;
-            border: 1px solid transparent;
-
-            &:hover {
-              background-color: white;
-              border-color: #754d42;
-            }
-          }
+        &:hover {
+          background-color: white;
+          border-color: #754d42;
         }
       }
     }
+  }
 
-    .pagination_container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 3% 2%;
+  button {
+    &:hover {
+      // background-color: #754d42;
+      color: #000;
+    }
 
-      button {
-        border-radius: 6px;
-        font-weight: bold;
-        font-size: 25px;
-        width: 100px;
-        padding: 8px 0;
-        margin-top: 10px;
-        border: 1px solid transparent;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-        border-color: #000;
-
-        &:hover {
-          // background-color: #754d42;
-          color: #000;
-        }
-
-        &.prev:hover::after {
-          font-size: 18px;
-          content: "Prev";
-          color: #000; /* Change color if needed */
-        }
-        &.next:hover::before {
-          flex-direction: row-reverse;
-          font-size: 18px;
-          content: "Next";
-          color: #000;
-        }
-      }
+    &.prev:hover::after {
+      font-size: 18px;
+      content: "Prev";
+      color: #000; /* Change color if needed */
+    }
+    &.next:hover::before {
+      font-size: 18px;
+      content: "Next";
+      color: #000;
     }
   }
 }

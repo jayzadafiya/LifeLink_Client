@@ -1,6 +1,7 @@
 import { configureStore } from "@reduxjs/toolkit";
 import userReducer from "./slices/userSlice";
 import doctorReducer from "./slices/doctorSlice";
+import paginationReducer from "./slices/pagination";
 import DFLReducer from "./slices/DFLSlice";
 import { useDispatch } from "react-redux";
 
@@ -9,6 +10,7 @@ const store = configureStore({
     user: userReducer,
     doctor: doctorReducer,
     dfl: DFLReducer,
+    pagination: paginationReducer,
   },
 });
 

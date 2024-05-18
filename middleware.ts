@@ -10,15 +10,30 @@ export function middleware(request: NextRequest): NextResponse | undefined {
   const loggedInUserNotAccess = ["/login", "/signup"].includes(
     request.nextUrl.pathname
   );
+  const profileNotAccess = [
+    "/doctors/profile",
+    "/users/profile",
+    "/admin",
+  ].includes(request.nextUrl.pathname);
 
   if (decodedToken) {
-    if (decodedToken.role === "patient" && request.nextUrl.pathname === "/doctors/profile") {
+    if (
+      decodedToken.role !== "patient" &&
+      request.nextUrl.pathname === "/users/profile"
+    ) {
       return NextResponse.redirect(new URL("/", request.url));
     }
 
     if (
-      decodedToken.role === "doctor" &&
-      request.nextUrl.pathname === "/users/profile"
+      decodedToken.role !== "doctor" &&
+      request.nextUrl.pathname === "/doctors/profile"
+    ) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
+
+    if (
+      decodedToken.role !== "admin" &&
+      request.nextUrl.pathname === "/admin"
     ) {
       return NextResponse.redirect(new URL("/", request.url));
     }
@@ -31,6 +46,9 @@ export function middleware(request: NextRequest): NextResponse | undefined {
         request.url
       )
     );
+  } else if (profileNotAccess && !authToken) {
+    console.log(loggedInUserNotAccess, authToken);
+    return NextResponse.redirect(new URL("/", request.url));
   }
 }
 
@@ -39,6 +57,7 @@ export const config = {
   matcher: [
     "/login",
     "/signup",
+    "/admin",
     "/doctors/profile",
     "/users/profile",
     "/((?!_next/static|_next/image|favicon.ico).*)",

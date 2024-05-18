@@ -9,6 +9,9 @@ import { BASE_URL } from "../../utils/config";
 import { RootState, useAppDispatch } from "../../store/store";
 import { Doctor } from "../../interfaces/Doctor";
 import Error from "../../components/Error/Error";
+import { DonorForm } from "../../interfaces/Forms";
+import PaginationComponent from "../../components/Pagination/Pagination";
+import { fetchData, setData, setPrevData } from "../../store/slices/pagination";
 
 // Interface for components props type
 interface DoctorsProps {
@@ -24,90 +27,78 @@ export default function Doctors({
 
   const dispatch = useAppDispatch();
 
-  let { doctorList, searchDoctorList } = useSelector(
-    (state: RootState) => state.doctor
+  const renderItem = (doctor: Partial<Doctor | DonorForm>) => (
+    <DoctorCard key={doctor._id} doctor={doctor as Doctor} />
   );
 
   useEffect(() => {
     // docterList use for conditional dispatch action
-    if (!doctorList) {
-      dispatch(setDocterList(doctors));
+    if (doctors) {
+      dispatch(setData({ data: doctors, page: 1 }));
     }
-  }, [dispatch, doctors, doctorList]);
+  }, [dispatch, doctors]);
+
+  if (error) {
+    return <Error errMessage={error} />;
+  }
 
   // Function for doctor search
   const handleSearch = () => {
     const searchTerm = query.current?.value.trim();
     if (searchTerm !== "") {
-      dispatch(searchDoctor(searchTerm));
-    } else {
-      searchDoctorList = [];
+      dispatch(setPrevData());
+
+      dispatch(fetchData({ formData: searchTerm, page: 1, type: "doctor" }));
+      if (query.current) {
+        query.current.value = "";
+      }
     }
   };
 
   return (
     <>
-      {error && <Error errMessage={error} />}
-      {!error && (
-        <>
-          <Head>
-            <title>Find a doctor</title>
-            <meta name="description" content="Doctor search page " />
-          </Head>
-          <section className="bg-[#fff9ea]">
-            <div className="container text-center">
-              <h2 className=" heading">Find a Doctor</h2>
-              <div className="max-w-[578px] mt-[30px] mx-auto bg-[#0866ff2c] rounded-md flex items-center justify-between">
-                <input
-                  type="search"
-                  className="py-4 px-2 bg-transparent w-full focus:outline-none cursor-pointer placeholder:text-textColor"
-                  placeholder="Search Doctor by name or specificatoins"
-                  ref={query}
-                />
-                <button
-                  className="btn mt-0 rounded-r-md rounded-[0px]"
-                  onClick={handleSearch}
-                >
-                  Search
-                </button>
-              </div>
-            </div>
-          </section>
+      <Head>
+        <title>Find a doctor</title>
+        <meta name="description" content="Doctor search page " />
+      </Head>
+      <section className="bg-[#fff9ea]">
+        <div className="container text-center">
+          <h2 className=" heading">Find a Doctor</h2>
+          <div className="max-w-[578px] mt-[30px] mx-auto bg-[#0866ff2c] rounded-md flex items-center justify-between">
+            <input
+              type="search"
+              className="py-4 px-2 bg-transparent w-full focus:outline-none cursor-pointer placeholder:text-textColor"
+              placeholder="Search Doctor by name or specificatoins"
+              ref={query}
+            />
+            <button
+              className="btn mt-0 rounded-r-md rounded-[0px]"
+              onClick={handleSearch}
+            >
+              Search
+            </button>
+          </div>
+        </div>
+      </section>
 
-          <section>
-            <div className="container">
-              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4   gap-5  ">
-                {searchDoctorList &&
-                  searchDoctorList.length > 0 &&
-                  searchDoctorList.map((doctor) => (
-                    <DoctorCard key={doctor._id} doctor={doctor} />
-                  ))}
+      <section>
+        <div className="container">
+          <PaginationComponent renderItem={renderItem} type="doctor" />
+        </div>
+      </section>
 
-                {!query.current?.value &&
-                  doctors?.map((doctor) => (
-                    <DoctorCard key={doctor._id} doctor={doctor} />
-                  ))}
-
-                {query.current?.value.trim() !== "" &&
-                  searchDoctorList?.length === 0 && <div>No Doctor found</div>}
-              </div>
-            </div>
-          </section>
-
-          <section>
-            <div className="container">
-              <div className="lg:w-[470px] mx-auto ">
-                <h2 className="heading text-center">What out patient say</h2>
-                <p className="text__para text-center">
-                  Wolrd-class for everyone. Our health System offers unmatched
-                  expert health care
-                </p>
-              </div>
-              <Testimonial />
-            </div>
-          </section>
-        </>
-      )}
+      <section>
+        <div className="container">
+          <div className="lg:w-[470px] mx-auto ">
+            <h2 className="heading text-center">What out patient say</h2>
+            <p className="text__para text-center">
+              Wolrd-class for everyone. Our health System offers unmatched
+              expert health care
+            </p>
+          </div>
+          <Testimonial />
+        </div>
+      </section>
     </>
   );
 }
@@ -115,7 +106,7 @@ export default function Doctors({
 // Data fetching Function for get data of Doctors
 export async function getStaticProps(): Promise<{ props: DoctorsProps }> {
   try {
-    const res = await axios.get(`${BASE_URL}/doctors`);
+    const res = await axios.get(`${BASE_URL}/doctors?page=1&limit=1`);
 
     return {
       props: {

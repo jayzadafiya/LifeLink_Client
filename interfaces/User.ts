@@ -1,3 +1,4 @@
+import { Doctor } from "./Doctor";
 import { Gender } from "./enums";
 
 export interface User {
@@ -20,4 +21,13 @@ export interface PayLoad {
 export interface ReviewData {
   reviewText: string;
   rating: number;
+}
+
+export interface Admin {
+  _id: string;
+  email: string;
+  password: string;
+  name: string;
+  role: string;
+  doctors: Doctor[];
 }

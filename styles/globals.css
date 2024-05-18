@@ -150,6 +150,18 @@ body {
   section {
     @apply py-[75px];
   }
+
+  .content-prev::after {
+    content: "Prev";
+    font-size: 18px;
+    color: #000;
+  }
+
+  .content-next::before {
+    content: "Next";
+    font-size: 18px;
+    color: #000;
+  }
 }
 
 
@@ -164,7 +176,11 @@ body {
   }
 
   .btn-hover {
-    @apply border border-solid hover:border-[3px] hover:border-primaryColor hover:bg-blue-100 hover:font-bold hover:text-[16px] hover:text-primaryColor
+    @apply border border-solid hover:border-[3px] hover:border-primaryColor hover:bg-blue-100 hover:font-bold hover:text-[16px] hover:text-primaryColor;
+  }
+
+  .btn-pagination {
+    @apply pt-2 pb-2 mt-2 border rounded-[6px] w-[100px] font-bold text-[25px] border-solid border-[#000] flex items-center justify-center gap-[5px];
   }
 
   .heading {
