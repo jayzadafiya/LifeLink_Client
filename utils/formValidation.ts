@@ -7,6 +7,7 @@ import {
   PrescriptionForm,
   RequestMessageForm,
   SignupForm,
+  UpdatePasswordForm,
   UserForm,
   ValidationErrors,
 } from "../interfaces/Forms";
@@ -227,7 +228,7 @@ export const signupFormvalidation = (
 
   // password  validation
   if (password !== passwordConfirm) {
-    errors.passwordConfirm = "Passwords do not match";
+    errors.passwordConfirm = "Confirm password done not mathch with Passwords ";
   }
 
   // Gender filed validation
@@ -417,4 +418,39 @@ export const prescriptionFormValidation = (formData: PrescriptionFormData) => {
   }
 
   return error;
+};
+
+// Update password form validation
+export const updatePasswordFormvalidation = (
+  formData: UpdatePasswordForm
+): Partial<UpdatePasswordForm> => {
+  const { oldPassword, newPassword, confirmPassword } = formData;
+
+  let errors: Partial<UpdatePasswordForm> = {};
+
+  // oldPassword filed validation
+  if (!validateRequired(oldPassword)) {
+    errors.oldPassword = "oldPassword is required";
+  } else if (oldPassword && oldPassword.length < 4) {
+    errors.oldPassword = "oldPassword must be at least 6 characters long";
+  } else if (!vaildatePassword(oldPassword)) {
+    errors.oldPassword =
+      "oldPassword must have at least one uppercase letter, one lowercase letter, one special character";
+  }
+  // newPassword filed validation
+  if (!validateRequired(newPassword)) {
+    errors.newPassword = "newPassword is required";
+  } else if (newPassword && newPassword.length < 4) {
+    errors.newPassword = "newPassword must be at least 6 characters long";
+  } else if (!vaildatePassword(newPassword)) {
+    errors.newPassword =
+      "newPassword must have at least one uppercase letter, one lowercase letter, one special character";
+  }
+
+  if (newPassword !== confirmPassword) {
+    errors.confirmPassword =
+      "Confirm password done not mathch with New passwords ";
+  }
+
+  return errors;
 };

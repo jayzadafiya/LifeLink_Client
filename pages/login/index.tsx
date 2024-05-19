@@ -9,11 +9,14 @@ import { HashLoader } from "react-spinners";
 import { loginFormvalidation } from "../../utils/formValidation";
 import { RootState, useAppDispatch } from "../../store/store";
 import { LoginForm } from "../../interfaces/Forms";
+import { PayloadAction } from "@reduxjs/toolkit";
+import { User } from "../../interfaces/User";
+import { Doctor } from "../../interfaces/Doctor";
 
 const Login: React.FC = () => {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const loading = useSelector((state: RootState) => state.user.loading);
+  const { loading } = useSelector((state: RootState) => state.user);
 
   const [formData, setFormDate] = useState<LoginForm>({
     email: "",
@@ -43,11 +46,15 @@ const Login: React.FC = () => {
     const formErrors = loginFormvalidation(formData);
     setErrors(formErrors);
 
-    if (Object.keys(formErrors).length === 0) {
+    if (Object.keys(formErrors).length !== 0) {
       try {
-        dispatch(login(formData));
-
-        router.push("/");
+        dispatch(login(formData)).then(
+          (result: PayloadAction<{ data: User | Doctor }>) => {
+            if (result.payload && result.payload.data) {
+              router.push("/");
+            }
+          }
+        );
       } catch (error: any) {
         const err = error?.response?.data?.message || error?.message;
         toast.error(err);

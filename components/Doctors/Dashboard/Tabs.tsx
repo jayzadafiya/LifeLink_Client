@@ -64,14 +64,24 @@ export default function Tabs({ tab, setTab }: TabsProps) {
         >
           History
         </button>
-        <div className="mt-[100px] w-full ">
+        <button
+          onClick={() => setTab("updatePassword")}
+          className={`${
+            tab === "updatePassword"
+              ? "bg-indigo-100 text-primaryColor "
+              : "bg-transparent text-headingColor"
+          } w-full btn mt-8 rounded-md`}
+        >
+          Change Password
+        </button>
+        <div className="mt-[50px] w-full ">
           <button
-            className="w-full bg-[#181A1E] p-3 text-[16px] leading-7 rounded-md  text-white"
+            className="w-full bg-[#181A1E] p-3 text-[16px] leading-7 rounded-md border-[3px] border-solid border-transparent hover:border-[#181A1E] hover:text-[#181A1E] hover:bg-slate-300 font-bold  text-white"
             onClick={handleLogout}
           >
             Logout
           </button>
-          <button className="w-full bg-red-600 mt-4 p-3 text-[16px] leading-7 rounded-md text-white">
+          <button className="w-full  rounded-md border-[3px] border-solid border-transparent bg-red-500  hover:border-red-500   hover:text-red-500 hover:bg-red-100 mt-4 p-3 text-[16px] leading-7 font-bold text-white">
             Delete Account
           </button>
         </div>

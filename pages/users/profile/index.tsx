@@ -16,6 +16,7 @@ import { User } from "../../../interfaces/User";
 import { Appointment } from "../../../interfaces/Doctor";
 import { GetServerSidePropsContext } from "next";
 import { useAppDispatch } from "../../../store/store";
+import PasswrodUpdate from "../../../components/PasswrodUpdate/PasswrodUpdate";
 
 // Interface for components props type
 interface MyAccountProps {
@@ -85,12 +86,12 @@ export default function MyAccount({
 
             <div className="mt-[50px] md:mt-[70px]">
               <button
-                className="w-full bg-[#181A1E] p-3 text-[16px] leading-7 rounded-md  text-white"
+                className="w-full bg-[#181A1E] p-3 text-[16px] leading-7 rounded-md border-[3px] border-solid border-transparent hover:border-[#181A1E] hover:text-[#181A1E] hover:bg-slate-100 font-bold  text-white"
                 onClick={handleLogout}
               >
                 Logout
               </button>
-              <button className="w-full bg-red-600 mt-4 p-3 text-[16px] leading-7 rounded-md text-white">
+              <button className="w-full  rounded-md border-[3px] border-solid border-transparent bg-red-500  hover:border-red-500   hover:text-red-500 hover:bg-red-100 mt-4 p-3 text-[16px] leading-7 font-bold text-white">
                 Delete Account
               </button>
             </div>
@@ -122,6 +123,15 @@ export default function MyAccount({
               >
                 Profile Settings
               </button>
+              <button
+                onClick={() => setTab("updatePassword")}
+                className={`${
+                  tab === "updatePassword" &&
+                  "bg-primaryColor text-white font-normal"
+                } p-2 mr-5 px-5 rounded-md text-headingColor font-semibold text-[16px] border border-solid leading-7 border-primaryColor `}
+              >
+                Change Password
+              </button>
             </div>
             <div className={`${tab !== "bookings" ? "hidden" : ""}`}>
               <AppointmentTablePagination
@@ -138,6 +148,10 @@ export default function MyAccount({
 
             <div className={`${tab !== "settings" ? "hidden" : ""}`}>
               <Profile user={user} />
+            </div>
+
+            <div className={`${tab !== "updatePassword" ? "hidden" : ""}`}>
+              <PasswrodUpdate />
             </div>
           </div>
         </div>

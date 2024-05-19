@@ -15,6 +15,7 @@ import { BASE_URL } from "../../../utils/config";
 import { capitalize } from "../../../utils/heplerFunction";
 import { Appointment, Doctor } from "../../../interfaces/Doctor";
 import { GetServerSidePropsContext } from "next";
+import PasswrodUpdate from "../../../components/PasswrodUpdate/PasswrodUpdate";
 
 // Interface for components props type
 interface DashboardProps {
@@ -135,6 +136,12 @@ export default function Dashboard({
                   type="doctor"
                   appointments={appointments?.history}
                 />
+              </div>
+              <div className={`${tab !== "updatePassword" ? "hidden" : ""}`}>
+                <h2 className="text-primaryColor  text-[24px] font-semibold leading-9 mb-5">
+                  Change Password
+                </h2>
+                <PasswrodUpdate />
               </div>
             </div>
           </div>

@@ -98,3 +98,9 @@ export interface PrescriptionForm {
   test: string;
   medicine: string;
 }
+
+export interface UpdatePasswordForm {
+  oldPassword: string;
+  newPassword: string;
+  confirmPassword: string;
+}

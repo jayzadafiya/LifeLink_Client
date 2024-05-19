@@ -87,6 +87,7 @@ export const fetchUser: any = createAsyncThunk("user/fatchUser", async () => {
   }
 });
 
+// Function use update user data
 export const updateUser: any = createAsyncThunk(
   "user/updateUser",
   async (data: { fromData: User; timeslot?: TimeslotCreated[] }) => {
@@ -125,6 +126,33 @@ export const updateUser: any = createAsyncThunk(
     } catch (error: any) {
       const err = error?.response?.data?.message || error?.message;
       throw new Error(err);
+    }
+  }
+);
+
+// Function use update password
+export const updatePassword: any = createAsyncThunk(
+  "/user/updatePassword",
+  async (formData) => {
+    try {
+      const token = Cookies.get("token");
+
+      if (token) {
+        const { data } = await axios.patch(
+          `${BASE_URL}/auth/update-password`,
+          formData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        return { token: data };
+      }
+    } catch (error: any) {
+      toast.error(error.response.data.message);
+      throw new Error(error.response.data.message);
     }
   }
 );
@@ -197,6 +225,22 @@ const userSlice = createSlice({
             action.payload.data.name
           } data get updated succesfully`
         );
+      })
+      .addCase(updatePassword.fulfilled, (state, action) => {
+        state.accessToken = action.payload.token;
+
+        const expiresInString = process.env.NEXT_PUBLIC_COOKIE_EXPIRESIN;
+
+        if (expiresInString) {
+          const expiresIn = parseInt(expiresInString, 10);
+
+          Cookies.set("token", action.payload.token, {
+            expires: new Date(Date.now() + expiresIn * 24 * 60 * 60 * 1000),
+            secure: true,
+          });
+        }
+
+        toast.success("Password get update succefully");
       })
       .addCase(updateUser.rejected, (state, action) => {
         state.loading = false;

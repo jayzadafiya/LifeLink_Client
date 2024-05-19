@@ -21,7 +21,7 @@ export default function Profile({ user }: { user: User }): React.JSX.Element {
   const { error, loading } = useSelector((state: RootState) => state.user);
   const [errors, setErrors] = useState<Partial<UserForm>>({});
 
-  const [formData, setFormDate] = useState<UserForm>({
+  const [formData, setFormData] = useState<UserForm>({
     name: user?.name || "",
     email: user?.email || "",
     photo: user?.photo || "",
@@ -36,7 +36,7 @@ export default function Profile({ user }: { user: User }): React.JSX.Element {
   const handelInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    setFormDate({
+    setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
@@ -51,7 +51,7 @@ export default function Profile({ user }: { user: User }): React.JSX.Element {
 
       const { url } = await uploadImageToCloudinary(file);
 
-      setFormDate({ ...formData, photo: url });
+      setFormData({ ...formData, photo: url });
     }
   };
 
@@ -125,7 +125,7 @@ export default function Profile({ user }: { user: User }): React.JSX.Element {
         </div>
         <div className="mb-5">
           <input
-            type="test"
+            type="text"
             placeholder="Blood Type"
             name="bloodType"
             onBlur={handleBlur}

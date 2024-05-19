@@ -132,7 +132,7 @@ export default function SidePanel({
           <>
             {!isReject && (
               <button
-                className="btn px-2 w-full rounded-md bg-green-500  hover:border-green-500 hover:border-solid hover:border-[3px] hover:text-green-500 hover:bg-green-100 font-bold mt-5"
+                className="btn px-2 w-full rounded-md bg-green-500  hover:border-green-500 hover:border-solid hover:border-[3px] hover:text-green-500 hover:bg-green-100 font-bold mt-4 text-[16px] leading-7"
                 onClick={handelAcceptBtn}
               >
                 Accept
@@ -149,7 +149,7 @@ export default function SidePanel({
               />
             )}
             <button
-              className="btn px-2 w-full rounded-md bg-red-500  hover:border-red-500 hover:border-solid hover:border-[3px] hover:text-red-500 hover:bg-red-100 font-bold mt-5"
+              className="btn px-2 w-full rounded-md bg-red-500  hover:border-red-500 hover:border-solid hover:border-[3px] hover:text-red-500 hover:bg-red-100 text-[16px] leading-7 font-bold mt-4"
               onClick={handelRejectModel}
             >
               {isReject ? "Submit" : "Reject"}

@@ -172,11 +172,11 @@ body {
   }
 
   .btn {
-    @apply bg-primaryColor py-[15px] px-[35px] rounded-[50px] text-white font-[600] mt-[38px];
+    @apply bg-primaryColor py-[15px] px-[35px] rounded-[50px] text-white font-[600] mt-[38px] border border-solid border-transparent;
   }
 
   .btn-hover {
-    @apply border border-solid hover:border-[3px] hover:border-primaryColor hover:bg-blue-100 hover:font-bold hover:text-[16px] hover:text-primaryColor;
+    @apply hover:border-primaryColor hover:bg-blue-100 hover:font-bold hover:text-[16px] hover:text-primaryColor;
   }
 
   .btn-pagination {
