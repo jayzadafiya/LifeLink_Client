@@ -4,6 +4,9 @@ import axios from "axios";
 import Profile from "../../../components/User/Profile";
 import Error from "../../../components/Error/Error";
 import AppointmentTablePagination from "../../../components/AppointmentTable/TablePagination";
+import PasswrodUpdate from "../../../components/PasswrodUpdate/PasswrodUpdate";
+import avatarImg from "../../../public/assets/images/patient-avatar.png";
+import Cookies from "js-cookie";
 
 import { useState } from "react";
 import { useRouter } from "next/router";
@@ -11,12 +14,12 @@ import { logout } from "../../../store/slices/userSlice";
 
 import { capitalize } from "../../../utils/heplerFunction";
 import { BASE_URL } from "../../../utils/config";
-import avatarImg from "../../../public/assets/images/patient-avatar.png";
 import { User } from "../../../interfaces/User";
 import { Appointment } from "../../../interfaces/Doctor";
 import { GetServerSidePropsContext } from "next";
-import { useAppDispatch } from "../../../store/store";
-import PasswrodUpdate from "../../../components/PasswrodUpdate/PasswrodUpdate";
+import { RootState, useAppDispatch } from "../../../store/store";
+import { useSelector } from "react-redux";
+import toast from "react-hot-toast";
 
 // Interface for components props type
 interface MyAccountProps {
@@ -31,6 +34,7 @@ export default function MyAccount({
   error,
 }: MyAccountProps): React.JSX.Element {
   const dispatch = useAppDispatch();
+  const { accessToken } = useSelector((state: RootState) => state.user);
   const router = useRouter();
 
   const [tab, setTab] = useState("bookings");
@@ -43,6 +47,37 @@ export default function MyAccount({
   const handleLogout = () => {
     dispatch(logout());
     router.replace("/");
+  };
+
+  const handleDelete = async (
+    e: React.MouseEvent<HTMLButtonElement>,
+    id: string
+  ) => {
+    e.preventDefault();
+    try {
+      const confirmation = window.confirm(
+        "Are you sure you want to delete your account? This action cannot be undone."
+      );
+      if (confirmation) {
+        await axios.patch(
+          `${BASE_URL}/users/${id}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        Cookies.remove("token");
+        router.replace("/login");
+      }
+    } catch (error: any) {
+      const err = error?.response?.data?.message || error?.message;
+      toast.error(err);
+
+      return null;
+    }
   };
 
   return (
@@ -91,19 +126,22 @@ export default function MyAccount({
               >
                 Logout
               </button>
-              <button className="w-full  rounded-md border-[3px] border-solid border-transparent bg-red-500  hover:border-red-500   hover:text-red-500 hover:bg-red-100 mt-4 p-3 text-[16px] leading-7 font-bold text-white">
+              <button
+                className="w-full  rounded-md border-[3px] border-solid border-transparent bg-red-500  hover:border-red-500   hover:text-red-500 hover:bg-red-100 mt-4 p-3 text-[16px] leading-7 font-bold text-white"
+                onClick={(e) => handleDelete(e, user._id)}
+              >
                 Delete Account
               </button>
             </div>
           </div>
 
           <div className="md:col-span-2 md:px-[30px]">
-            <div>
+            <div className="flex  gap-2 flex-wrap flex-grow flex-shrink md:flex-row items-center    ">
               <button
                 onClick={() => setTab("bookings")}
                 className={`${
                   tab === "bookings" && "bg-primaryColor text-white font-normal"
-                }  p-2 mr-5 px-5 rounded-md text-headingColor font-semibold text-[16px] border border-solid leading-7  border-primaryColor`}
+                }  p-2  px-5 rounded-md text-headingColor font-semibold text-[16px] border border-solid leading-7  border-primaryColor`}
               >
                 My Appointments
               </button>
@@ -111,7 +149,7 @@ export default function MyAccount({
                 onClick={() => setTab("history")}
                 className={`${
                   tab === "history" && "bg-primaryColor text-white font-normal"
-                } p-2 mr-5 px-5 rounded-md text-headingColor font-semibold text-[16px] border border-solid leading-7 border-primaryColor `}
+                } p-2  px-5 rounded-md text-headingColor font-semibold text-[16px] border border-solid leading-7 border-primaryColor `}
               >
                 History
               </button>
@@ -119,7 +157,7 @@ export default function MyAccount({
                 onClick={() => setTab("settings")}
                 className={`${
                   tab === "settings" && "bg-primaryColor text-white font-normal"
-                } p-2 mr-5 px-5 rounded-md text-headingColor font-semibold text-[16px] border border-solid leading-7 border-primaryColor `}
+                } p-2  px-5 rounded-md text-headingColor font-semibold text-[16px] border border-solid leading-7 border-primaryColor `}
               >
                 Profile Settings
               </button>
@@ -128,7 +166,7 @@ export default function MyAccount({
                 className={`${
                   tab === "updatePassword" &&
                   "bg-primaryColor text-white font-normal"
-                } p-2 mr-5 px-5 rounded-md text-headingColor font-semibold text-[16px] border border-solid leading-7 border-primaryColor `}
+                } p-2  px-5 rounded-md text-headingColor font-semibold text-[16px] border border-solid leading-7 border-primaryColor `}
               >
                 Change Password
               </button>
