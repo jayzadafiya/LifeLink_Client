@@ -51,7 +51,7 @@ export default function MyAccount({
 
   const handleDelete = async (
     e: React.MouseEvent<HTMLButtonElement>,
-    id: string
+    id?: string
   ) => {
     e.preventDefault();
     try {

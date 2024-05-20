@@ -44,10 +44,9 @@ export default function Prescription({
   const [role, setRole] = useState<string>("");
   const pdfRef = useRef<HTMLDivElement>(null);
   const { slug } = router.query;
+  const token = Cookies.get("token");
 
   useEffect(() => {
-    const token = Cookies.get("token");
-
     if (token) {
       const decodedToken = jwt.decode(token) as PayLoad;
       setRole(decodedToken.role);
@@ -138,8 +137,15 @@ export default function Prescription({
   const handleReusableBlur = (
     e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>
   ) => {
-    const formErrors = prescriptionFormValidation(formData);
-    setError(formErrors);
+    const { name, value } = e.target;
+    const formErrors = prescriptionFormValidation({
+      ...formData,
+      [name]: value,
+    });
+    setError((prevErrors) => ({
+      ...prevErrors,
+      [name]: formErrors[name as keyof PrescriptionFormData] || "",
+    }));
   };
 
   const handelSubmit = async (
@@ -157,12 +163,22 @@ export default function Prescription({
         if (type === "create") {
           prescription = await axios.post(
             `${BASE_URL}/prescription/${slug}`,
-            formData
+            formData,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
           );
         } else if (prescriptionId !== "" && type === "update") {
           prescription = await axios.patch(
             `${BASE_URL}/prescription/${slug}`,
-            formData
+            formData,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
           );
         }
 
@@ -205,10 +221,6 @@ export default function Prescription({
               <td colSpan={2}>
                 <div className="header  leading-6 w-full flex h-full p-5 items-center justify-between bg-slate-200">
                   <div className="w-[50%] ml-3">
-                    {/* <Image
-                      src=""
-                      alt="logo"
-                    /> */}
                     <p>
                       <strong>Doctor Name:</strong>
                       {appointmentData?.doctor?.name}
@@ -226,19 +238,17 @@ export default function Prescription({
                       {appointmentData?.bookingDate}
                     </p>
                   </div>
-                  <div className=" w-[30%] text-right mr-3">
-                    <p className="flex justify-evenly">
-                      <strong>Patient :</strong>
-                      {appointmentData?.user?.name}
-                    </p>
-                    <p className="flex justify-around">
-                      <strong>BloodType:</strong>
-                      {appointmentData?.user?.bloodType}
-                    </p>
-                    <p className="flex justify-around">
-                      <strong>Gender:</strong>
-                      {appointmentData?.user?.gender}
-                    </p>
+                  <div className=" w-[30%]  flex ">
+                    <div className="flex flex-col">
+                      <strong>Patient </strong>
+                      <strong>Gender</strong>
+                      <strong>BloodType</strong>
+                    </div>
+                    <div className="flex flex-col">
+                      <p>: {appointmentData?.user?.name}</p>
+                      <p>: {appointmentData?.user?.gender}</p>
+                      <p>: {appointmentData?.user?.bloodType || "-"}</p>
+                    </div>
                   </div>
                 </div>
               </td>
@@ -395,20 +405,27 @@ export default function Prescription({
                       </button>
                     </ol>
                   </div>
-                  <div className="ml-3 mt-2">
+                  <div className="ml-3 mt-2 flex  items-center justify-between">
                     {role === "doctor" && (
-                      <button
-                        type="submit"
-                        onClick={(e) =>
-                          handelSubmit(
-                            e,
-                            prescriptionId !== "" ? "update" : "create"
-                          )
-                        }
-                        className="bg-primaryColor p-2 px-5 rounded text-white h-fit cursor-pointer"
-                      >
-                        {prescriptionId !== "" ? "UPDATE" : "SUBMIT"}
-                      </button>
+                      <>
+                        <button
+                          type="submit"
+                          onClick={(e) =>
+                            handelSubmit(
+                              e,
+                              prescriptionId !== "" ? "update" : "create"
+                            )
+                          }
+                          className="bg-primaryColor p-2 px-5 rounded text-white h-fit cursor-pointer"
+                        >
+                          {prescriptionId !== "" ? "UPDATE" : "SUBMIT"}
+                        </button>
+                        {error.medicine && (
+                          <p className="text-red-500 text-md font-semibold  ">
+                            {error.medicine}
+                          </p>
+                        )}
+                      </>
                     )}
 
                     {role !== "doctor" && (
@@ -435,9 +452,14 @@ export async function getServerSideProps(
   context: GetServerSidePropsContext
 ): Promise<{ props: Partial<PrescritonProps> }> {
   try {
+    const cookieToken = context.req.cookies.token;
     const { slug } = context.query;
 
-    const { data } = await axios.get(`${BASE_URL}/prescription/${slug}`);
+    const { data } = await axios.get(`${BASE_URL}/prescription/${slug}`, {
+      headers: {
+        Authorization: `Bearer ${cookieToken}`,
+      },
+    });
 
     return {
       props: {

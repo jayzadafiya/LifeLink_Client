@@ -29,7 +29,7 @@ export default function Tabs({ tab, setTab }: TabsProps) {
     e.preventDefault();
     try {
       const confirmation = window.confirm(
-        "Are you sure you want to delete your account? This action cannot be undone."
+        "Are you sure you want to delete your account? This action cannot be undone and you can not able to use this email id for create new account"
       );
 
       if (confirmation && user) {

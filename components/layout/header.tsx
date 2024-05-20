@@ -64,7 +64,11 @@ export default function Header(): React.JSX.Element {
 
   return (
     <header
-      className={` ${isDFL ? "dol-header" : "header"} flex items-center `}
+      className={`${
+        user && user.role === "admin"
+          ? "hidden"
+          : `${isDFL ? "dol-header" : "header"} flex items-center`
+      }`}
       ref={headerRef}
     >
       <div className="container">

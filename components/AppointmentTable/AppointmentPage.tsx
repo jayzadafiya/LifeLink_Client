@@ -96,15 +96,22 @@ export default function AppointmentPage({
               </div>
             </TableCell>
             <TableCell>
-              {item.isPaid ? (
+              {item.status === "pending" && (
+                <div className="flex items-center">
+                  <div className="h-2.5 w-2.5 bg-yellow-500 mr-2"></div>
+                  Pending
+                </div>
+              )}
+              {item.status === "complate" && (
                 <div className="flex items-center">
                   <div className="h-2.5 w-2.5 bg-green-500 mr-2"></div>
-                  Paid
+                  Complate
                 </div>
-              ) : (
+              )}
+              {item.status === "cancelled" && (
                 <div className="flex items-center">
                   <div className="h-2.5 w-2.5 bg-red-500 mr-2"></div>
-                  Unpaid
+                  Cancelled
                 </div>
               )}
             </TableCell>

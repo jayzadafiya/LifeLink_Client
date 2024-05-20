@@ -45,7 +45,6 @@ export default function PaginationComponent({
     }
   };
 
-  console.log(prevData);
   return (
     <div>
       <div>

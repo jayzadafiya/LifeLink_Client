@@ -8,8 +8,11 @@ import registration from "../../public/assets/images/dfl/registration.jpg";
 import refreshment from "../../public/assets/images/dfl/refreshment.jpg";
 import bloodcheck from "../../public/assets/images/dfl/bloodcheck.jpg";
 import donation from "../../public/assets/images/dfl/donation.jpg";
+import { useSelector } from "react-redux";
+import { RootState } from "../../store/store";
 
 export default function (): React.JSX.Element {
+  const { user } = useSelector((state: RootState) => state.user);
   return (
     <>
       <div className={style.banner}>
@@ -21,7 +24,7 @@ export default function (): React.JSX.Element {
           </p>
 
           <div>
-            <Link href="/drop-for-life/donate">
+            <Link href={`/drop-for-life/donate/${user?._id}`}>
               <button type="button">DONATE</button>
             </Link>
             <Link href="/drop-for-life/request">

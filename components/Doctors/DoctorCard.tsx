@@ -19,7 +19,6 @@ export default function DoctorCard({
     totalRating,
     photo,
     specialization,
-    totalPatients,
     experiences,
   } = doctor;
   return (
@@ -56,9 +55,6 @@ export default function DoctorCard({
 
       <div className="mt-[18px] lg:mt-5 flex items-center justify-between">
         <div className="">
-          <h3 className="text-[16px] leading-7 lg:text-[16px] lg:leading-[30px] font-semibold ">
-            +{totalPatients} patients
-          </h3>
           <p className="text-[14px] leading-6 font-[400] text-textColor">
             At {experiences && experiences[0]?.place}
           </p>

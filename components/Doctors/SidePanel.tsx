@@ -35,7 +35,7 @@ export default function SidePanel({
   const [isReject, setIsReject] = useState<boolean>(false);
   const [message, setMessage] = useState<string | undefined>();
 
-  const { role } = useSelector((state: RootState) => state.user);
+  const { role, accessToken } = useSelector((state: RootState) => state.user);
 
   const handelModel = () => {
     setOpen((prev) => !prev);
@@ -45,9 +45,17 @@ export default function SidePanel({
       try {
         setIsReject((prev) => !prev);
 
-        await axios.patch(`${BASE_URL}/admin/${doctorId}`, {
-          message: message,
-        });
+        await axios.patch(
+          `${BASE_URL}/admin/${doctorId}`,
+          {
+            message: message,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
         router.replace("/admin");
       } catch (error: any) {
         const err = error?.response?.data?.message || error?.message;
@@ -71,7 +79,15 @@ export default function SidePanel({
 
   const handelAcceptBtn = async () => {
     try {
-      await axios.patch(`${BASE_URL}/admin/${doctorId}`);
+      await axios.patch(
+        `${BASE_URL}/admin/${doctorId}`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        }
+      );
       router.replace("/admin");
     } catch (error: any) {
       const err = error?.response?.data?.message || error?.message;

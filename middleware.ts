@@ -14,7 +14,11 @@ export function middleware(request: NextRequest): NextResponse | undefined {
     "/doctors/profile",
     "/users/profile",
     "/admin",
+    "/drop-for-life/donate",
   ].includes(request.nextUrl.pathname);
+
+  const prescriptionNotAccess =
+    request.nextUrl.pathname.startsWith("/prescription");
 
   if (decodedToken) {
     if (
@@ -47,7 +51,8 @@ export function middleware(request: NextRequest): NextResponse | undefined {
       )
     );
   } else if (profileNotAccess && !authToken) {
-    console.log(loggedInUserNotAccess, authToken);
+    return NextResponse.redirect(new URL("/", request.url));
+  } else if (prescriptionNotAccess && !authToken) {
     return NextResponse.redirect(new URL("/", request.url));
   }
 }
@@ -60,6 +65,8 @@ export const config = {
     "/admin",
     "/doctors/profile",
     "/users/profile",
+    "/prescription/:path",
+    "/drop-for-life/donate",
     "/((?!_next/static|_next/image|favicon.ico).*)",
   ],
 };

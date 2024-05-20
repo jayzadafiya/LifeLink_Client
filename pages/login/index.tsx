@@ -46,7 +46,7 @@ const Login: React.FC = () => {
     const formErrors = loginFormvalidation(formData);
     setErrors(formErrors);
 
-    if (Object.keys(formErrors).length !== 0) {
+    if (!loading && Object.keys(formErrors).length === 0) {
       try {
         dispatch(login(formData)).then(
           (result: PayloadAction<{ data: User | Doctor }>) => {

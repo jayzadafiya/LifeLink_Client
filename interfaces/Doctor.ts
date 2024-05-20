@@ -1,5 +1,5 @@
 import { User } from "./User";
-import { ApprovalStatus } from "./enums";
+import { ApprovalStatus, BookingStatus } from "./enums";
 
 export interface Qualification {
   startingDate: string;
@@ -35,7 +35,6 @@ export interface Doctor extends User {
   reviews?: Review[];
   averageRating?: number;
   totalRating?: number;
-  totalPatients?: number;
   isApproved?: ApprovalStatus;
   message?: string;
 }
@@ -48,7 +47,7 @@ export interface Appointment {
   sessionCustomerId: string;
   time: string;
   bookingDate: string;
-  status: ApprovalStatus;
+  status: BookingStatus;
   isPaid: boolean;
 }
 

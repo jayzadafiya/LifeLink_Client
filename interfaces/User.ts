@@ -2,7 +2,7 @@ import { Doctor } from "./Doctor";
 import { Gender } from "./enums";
 
 export interface User {
-  _id: string;
+  _id?: string;
   email: string;
   name: string;
   phone?: string;

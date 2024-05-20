@@ -2,7 +2,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import MedicalInfoForm from "../../../components/DFL/Donate/MedicalInfoForm";
 import PersonalInfoForm from "../../../components/DFL/Donate/PersonalInfoForm";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import style from "../../../styles/DFL/donate.module.scss";
 import { useSelector } from "react-redux";
 import { donorFormValidation } from "../../../utils/formValidation";
@@ -10,11 +10,22 @@ import { BASE_URL } from "../../../utils/config";
 
 import { RootState } from "../../../store/store";
 import { DonorForm } from "../../../interfaces/Forms";
+import { GetServerSidePropsContext } from "next";
+import Error from "../../../components/Error/Error";
 
-export default function Donate(): React.JSX.Element {
+interface DonateProp {
+  donor: DonorForm;
+  error: any;
+}
+
+export default function Donate({
+  donor,
+  error,
+}: Partial<DonateProp>): React.JSX.Element {
   const [showMedicalForm, setShowMedicalForm] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<Partial<DonorForm>>({});
+  const [donorData, setDonorData] = useState<Partial<DonorForm>>(donor ?? {});
 
   const { user, accessToken } = useSelector((state: RootState) => state.user);
 
@@ -23,21 +34,31 @@ export default function Donate(): React.JSX.Element {
     city: "",
     phone: "",
     address: "",
-    weight: "",
+    weight: 0,
     disease: "",
     styling: "",
     surgery: "",
-    addharCard: "",
+    addharCard: donorData.addharCard || "",
     lastDonationDate: "",
-    _id: user?._id || "",
-    name: user?.name || "",
-    email: user?.email || "",
-    gender: user?.gender || "",
-    bloodType: user?.bloodType || "",
+    _id: donorData?._id || "",
+    name: donorData?.name || "",
+    email: donorData?.email || "",
+    gender: donorData?.gender || "",
+    bloodType: donorData?.bloodType || "",
   });
 
+  useEffect(() => {
+    if (!donor && user) {
+      setDonorData(user);
+    }
+  }, []);
+
+  if (error) {
+    return <Error errMessage={error} />;
+  }
+
   const handleChange = (name: string, value: string) => {
-    const newValue = name === "phone" ? parseInt(value) : value;
+    const newValue = name === "weight" ? parseInt(value || "0") : value;
     setFormData((prevData) => ({
       ...prevData,
       [name]: newValue,
@@ -70,13 +91,12 @@ export default function Donate(): React.JSX.Element {
     if (Object.keys(formError).length === 0) {
       try {
         setLoading(true);
-        const { data } = await axios.put(`${BASE_URL}/donor`, formData, {
+        await axios.put(`${BASE_URL}/donor`, formData, {
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${accessToken}`,
           },
         });
-        console.log(data);
 
         toast.success("Thank you so much for become donor");
 
@@ -111,4 +131,30 @@ export default function Donate(): React.JSX.Element {
       </div>
     </>
   );
+}
+
+export async function getServerSideProps(
+  context: GetServerSidePropsContext
+): Promise<{ props: Partial<DonateProp> }> {
+  try {
+    const cookieToken = context.req.cookies.token;
+    const { slug } = context.query;
+    const { data } = await axios.get(`${BASE_URL}/donor/profile`, {
+      headers: {
+        Authorization: `Bearer ${cookieToken}`,
+      },
+    });
+    return {
+      props: { donor: data },
+    };
+  } catch (error: any) {
+    return {
+      props: {
+        error:
+          error?.response?.data?.message ||
+          error?.message ||
+          "Error fetching prescription data",
+      },
+    };
+  }
 }

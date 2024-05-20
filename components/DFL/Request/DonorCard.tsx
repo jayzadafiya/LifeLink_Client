@@ -1,7 +1,6 @@
 import Model from "../../Timeslots/Model";
 import axios from "axios";
 import toast from "react-hot-toast";
-import { capitalize } from "../../../utils/heplerFunction";
 import { useState } from "react";
 import { FaTimes } from "react-icons/fa";
 import { BASE_URL } from "../../../utils/config";
@@ -93,7 +92,7 @@ export default function DonorCard({
   return (
     <div className={style.card}>
       <div className={style.inner}>
-        <span>{capitalize(donor.bloodType)}</span>
+        <span>{donor.bloodType}</span>
         <h2>{donor.name}</h2>
         <p>
           <strong>Address: </strong> {donor.address}.

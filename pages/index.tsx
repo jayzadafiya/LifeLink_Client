@@ -331,7 +331,7 @@ export async function getStaticProps(): Promise<{
   props: Partial<HomeProps>;
 }> {
   try {
-    const res = await axios.get(`${BASE_URL}/doctors`);
+    const res = await axios.get(`${BASE_URL}/doctors?page=1&limit=3`);
     return {
       props: {
         doctors: res.data,

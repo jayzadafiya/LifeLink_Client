@@ -45,15 +45,24 @@ export default function MedicalInfoForm({
               </div>
               <div>
                 <label htmlFor="bloodType">Blood Type</label>
-                <input
-                  type="text"
+
+                <select
                   name="bloodType"
                   required
-                  placeholder="Enter your blood type"
-                  value={formData.bloodType}
                   onBlur={onBlur}
+                  value={formData.bloodType}
                   onChange={handleChange}
-                />
+                >
+                  <option value="">Select</option>
+                  <option value="A+">A+</option>
+                  <option value="A-">A-</option>
+                  <option value="B+">B+</option>
+                  <option value="B-">B-</option>
+                  <option value="O+">O+</option>
+                  <option value="O-">O-</option>
+                  <option value="AB+">AB+</option>
+                  <option value="AB-">AB-</option>
+                </select>
                 {errors.bloodType && <p>{errors.bloodType}</p>}
               </div>
             </div>
@@ -78,7 +87,7 @@ export default function MedicalInfoForm({
                   value={formData.styling}
                   onChange={handleChange}
                 >
-                  <option value="">select</option>
+                  <option value="">None</option>
                   <option value="tattooing">Tattooing </option>
                   <option value="ear_piercing">Ear piercing</option>
                   <option value="dental_extraction">Dental extraction</option>
@@ -90,7 +99,7 @@ export default function MedicalInfoForm({
                   value={formData.surgery}
                   onChange={handleChange}
                 >
-                  <option value="">select</option>
+                  <option value="">None</option>
                   <option value="major">Major</option>
                   <option value="minor">Minor</option>
                   <option value="blood_transfusion">Blood Transfusion </option>

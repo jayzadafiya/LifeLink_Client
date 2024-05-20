@@ -362,9 +362,7 @@ export const donorFormValidation = (
     newErrors.lastDonationDate = "Please enter correct Date";
   }
 
-  if (!validateRequired(weight)) {
-    newErrors.weight = "Weight is required!";
-  } else if (weight && parseInt(weight) < 45) {
+  if (weight < "45") {
     newErrors.weight = "Minimum 45Kg weight required";
   }
 

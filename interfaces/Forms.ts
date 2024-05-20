@@ -68,7 +68,7 @@ export interface DonorForm {
   name: string;
   email: string;
   phone: string;
-  weight: string;
+  weight: number | string;
   gender: string;
   address: string;
   disease?: string;
