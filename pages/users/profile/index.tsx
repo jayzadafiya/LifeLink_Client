@@ -55,9 +55,9 @@ export default function MyAccount({
   ) => {
     e.preventDefault();
     try {
-      const confirmation = window.confirm(
-        "Are you sure you want to delete your account? This action cannot be undone."
-      );
+      const message =
+        "Warning: Account Deletion Consequences\n\nIf you delete your account, you will lose all your appointments and will not be eligible for any refunds. Additionally, your current email ID will no longer be usable on this site.\n\nAre you sure you want to delete your account?";
+      const confirmation = window.confirm(message);
       if (confirmation) {
         await axios.patch(
           `${BASE_URL}/users/${id}`,

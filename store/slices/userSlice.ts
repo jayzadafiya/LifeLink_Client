@@ -161,12 +161,6 @@ const userSlice = createSlice({
   name: "user",
   initialState,
   reducers: {
-    setUserState: (state) => {
-      const userData = localStorage.getItem("user");
-      const token = localStorage.getItem("token");
-      state.user = userData ? JSON.parse(userData) : null;
-      state.accessToken = token || null;
-    },
     logout: (state) => {
       Cookies.remove("token");
       state.user = null;
@@ -250,6 +244,6 @@ const userSlice = createSlice({
   },
 });
 
-export const { setUserState, logout } = userSlice.actions;
+export const { logout } = userSlice.actions;
 
 export default userSlice.reducer;
