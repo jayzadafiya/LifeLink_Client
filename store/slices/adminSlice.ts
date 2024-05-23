@@ -28,7 +28,7 @@ export const adminLogin: any = createAsyncThunk(
   async (formData: LoginForm) => {
     try {
       const { data } = await axios.post(
-        `${BASE_URL}/auth/admin/login`,
+        `${BASE_URL}/auth/admin-login`,
         formData
       );
       return data;

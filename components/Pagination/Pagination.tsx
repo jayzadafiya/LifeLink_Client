@@ -9,11 +9,13 @@ import { HashLoader } from "react-spinners";
 interface PaginationComponentProps {
   renderItem: (item: Partial<Doctor | DonorForm>) => JSX.Element;
   type: string;
+  tab?: string;
 }
 
 export default function PaginationComponent({
   renderItem,
   type,
+  tab,
 }: PaginationComponentProps): React.JSX.Element {
   const { data, requestData, currentPage, loading, prevData } = useSelector(
     (state: RootState) => state.pagination
@@ -32,6 +34,7 @@ export default function PaginationComponent({
           latlng: requestData?.latlng,
           formData: requestData?.formData,
           page: nextPage,
+          status: tab,
         })
       );
     }

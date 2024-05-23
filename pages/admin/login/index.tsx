@@ -7,7 +7,7 @@ import { loginFormvalidation } from "../../../utils/formValidation";
 import { RootState, useAppDispatch } from "../../../store/store";
 import { LoginForm } from "../../../interfaces/Forms";
 import { PayloadAction } from "@reduxjs/toolkit";
-import { User } from "../../../interfaces/User";
+import { Admin, User } from "../../../interfaces/User";
 import { Doctor } from "../../../interfaces/Doctor";
 import { HashLoader } from "react-spinners";
 import { adminLogin } from "../../../store/slices/adminSlice";
@@ -48,7 +48,7 @@ const Login: React.FC = () => {
     if (!loading && Object.keys(formErrors).length === 0) {
       try {
         dispatch(adminLogin(formData)).then(
-          (result: PayloadAction<{ data: User | Doctor }>) => {
+          (result: PayloadAction<{ data: Admin }>) => {
             if (result.payload && result.payload.data) {
               router.push("/admin");
             }

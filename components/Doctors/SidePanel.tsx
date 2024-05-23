@@ -20,6 +20,7 @@ interface SidePanelProps {
   timeslots: Timeslots[];
   isAdmin: boolean;
   doctorId: string | undefined;
+  status?: string;
 }
 
 export default function SidePanel({
@@ -29,6 +30,7 @@ export default function SidePanel({
   fees,
   isAdmin,
   doctorId,
+  status,
 }: SidePanelProps): React.JSX.Element {
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
@@ -132,7 +134,7 @@ export default function SidePanel({
           </ul>
         </div>
 
-        {!isReject && (
+        {!isAdmin && (
           <button
             className={`${
               role === "doctor"
@@ -146,7 +148,7 @@ export default function SidePanel({
         )}
         {isAdmin && (
           <>
-            {!isReject && (
+            {!isReject && status !== "approved" && (
               <button
                 className="btn px-2 w-full rounded-md bg-green-500  hover:border-green-500 hover:border-solid hover:border-[3px] hover:text-green-500 hover:bg-green-100 font-bold mt-4 text-[16px] leading-7"
                 onClick={handelAcceptBtn}
@@ -165,7 +167,11 @@ export default function SidePanel({
               />
             )}
             <button
-              className="btn px-2 w-full rounded-md bg-red-500  hover:border-red-500 hover:border-solid hover:border-[3px] hover:text-red-500 hover:bg-red-100 text-[16px] leading-7 font-bold mt-4"
+              className={`${
+                status === "cancelled"
+                  ? "hidden"
+                  : "btn px-2 w-full rounded-md bg-red-500  hover:border-red-500 hover:border-solid hover:border-[3px] hover:text-red-500 hover:bg-red-100 text-[16px] leading-7 font-bold mt-4"
+              }`}
               onClick={handelRejectModel}
             >
               {isReject ? "Submit" : "Reject"}

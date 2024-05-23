@@ -166,6 +166,7 @@ export default function DoctorDetails({
                   address={address}
                   isAdmin={isAdmin}
                   doctorId={doctor._id}
+                  status={doctor.isApproved}
                 />
               </div>
             </div>

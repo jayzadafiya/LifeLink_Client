@@ -35,11 +35,13 @@ export const fetchData: any = createAsyncThunk(
     formData,
     page,
     type,
+    status,
   }: {
     latlng?: string;
     formData?: any;
     page: number;
     type: string;
+    status?: string;
   }) => {
     let data;
     try {
@@ -47,7 +49,7 @@ export const fetchData: any = createAsyncThunk(
         const token = Cookies.get("token");
 
         if (token) {
-          const url = `${BASE_URL}/admin/profile?page=${page}&limit=2`;
+          const url = `${BASE_URL}/admin/doctors?status=${status}&page=${page}&limit=1`;
 
           const res = await axios.get(url, {
             headers: {
@@ -55,7 +57,8 @@ export const fetchData: any = createAsyncThunk(
               Authorization: `Bearer ${token}`,
             },
           });
-          data = res.data.doctors;
+          console.log(res.data);
+          data = res.data;
         }
       } else if (type === "donor") {
         let url = `${BASE_URL}/donor?page=${page}&limit=2`;
@@ -107,6 +110,13 @@ const paginationSlice = createSlice({
     setPrevData: (state) => {
       state.prevData = [];
     },
+    setInitialData: (state) => {
+      state.currentPage = 1;
+      state.data = [];
+      state.prevData = [];
+      state.requestData = {};
+      state.loading = false;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -127,5 +137,6 @@ const paginationSlice = createSlice({
   },
 });
 
-export const { getData, setData, setPrevData } = paginationSlice.actions;
+export const { getData, setData, setPrevData, setInitialData } =
+  paginationSlice.actions;
 export default paginationSlice.reducer;
