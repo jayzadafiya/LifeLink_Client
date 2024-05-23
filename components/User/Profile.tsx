@@ -8,7 +8,10 @@ import { useState } from "react";
 import { useRouter } from "next/router";
 import { updateUser } from "../../store/slices/userSlice";
 import { useSelector } from "react-redux";
-import { uploadImageToCloudinary } from "../../utils/uploadCloudinary";
+import {
+  deleteImageFromCloudinary,
+  uploadImageToCloudinary,
+} from "../../utils/uploadCloudinary";
 import { patientFormValidation } from "../../utils/formValidation";
 import { RootState, useAppDispatch } from "../../store/store";
 import { User } from "../../interfaces/User";
@@ -43,15 +46,29 @@ export default function Profile({ user }: { user: User }): React.JSX.Element {
   };
 
   const handleFileInputChange = async (
-    e: React.ChangeEvent<HTMLInputElement>
+    e:
+      | React.ChangeEvent<HTMLInputElement>
+      | React.MouseEvent<HTMLButtonElement>,
+    type: string
   ) => {
-    const files = e.target.files;
-    if (files && files.length > 0) {
-      const file = files[0];
+    e.preventDefault();
+    if (type !== "remove") {
+      const inputElement = e.target as HTMLInputElement;
+      const files = inputElement.files;
+      if (files && files.length > 0) {
+        const file = files[0];
 
-      const { url } = await uploadImageToCloudinary(file);
+        const { url, public_id } = await uploadImageToCloudinary(file);
+        setFormData({ ...formData, photo: url });
+      }
+    }
 
-      setFormData({ ...formData, photo: url });
+    if (type !== "input") {
+      if (formData.photo) await deleteImageFromCloudinary(formData.photo);
+    }
+
+    if (type === "remove") {
+      setFormData({ ...formData, photo: "" });
     }
   };
 
@@ -164,32 +181,54 @@ export default function Profile({ user }: { user: User }): React.JSX.Element {
 
         <div className="mb-5 flex items-center gap-3">
           {formData.photo && (
-            <figure className="w-[68px] h-[68px] rounded-full border-2 border-solid border-primaryColor flex items-center justify-center ">
-              <Image
-                src={formData.photo || avtarImg}
-                alt=""
-                className="rounded-full w-[68px] h-[68px]"
-                height={68}
-                width={68}
+            <figure className="w-[68px] h-[68px] rounded-full border-2 border-solid border-primaryColor flex items-center justify-center cursor-pointer ">
+              <input
+                type="file"
+                name="photo"
+                id="customFile"
+                onChange={(e) => handleFileInputChange(e, "edit")}
+                accept=".jpg , .png"
+                className="absolute top-0 left-0 w-full opacity-0 cursor-pointer"
               />
+              <label htmlFor="customFile" className="">
+                <Image
+                  src={formData.photo}
+                  alt=""
+                  className="rounded-full w-[68px] h-[68px]"
+                  height={68}
+                  width={68}
+                />
+              </label>
             </figure>
           )}
 
           <div className="relative w-[138px] h-[58px]">
-            <input
-              type="file"
-              name="photo"
-              id="customFile"
-              onChange={handleFileInputChange}
-              accept=".jpg , .png"
-              className="absolute top-0 left-0 w-full opacity-0 cursor-pointer"
-            />
-            <label
-              htmlFor="customFile"
-              className="absolute  top-0 left-0 w-full h-full flex items-center px-[1.5rem] py-[0.375rem] text-[15px] leading-6 overflow-hidden bg-[#0066ff46] text-headingColor font-semibold rounded-lg truncate cursor-pointer"
-            >
-              Upload Photo
-            </label>
+            {formData.photo ? (
+              <button
+                type="submit"
+                onClick={(e) => handleFileInputChange(e, "remove")}
+                className="h-full flex items-center px-[1.5rem] py-[0.375rem] text-[15px] leading-6 overflow-hidden bg-[#ff000046] text-headingColor font-semibold rounded-lg truncate cursor-pointer"
+              >
+                Remove Photo
+              </button>
+            ) : (
+              <>
+                <input
+                  type="file"
+                  name="photo"
+                  id="customFile"
+                  onChange={(e) => handleFileInputChange(e, "input")}
+                  accept=".jpg , .png"
+                  className="absolute top-0 left-0 w-full opacity-0 cursor-pointer"
+                />
+                <label
+                  htmlFor="customFile"
+                  className="absolute  top-0 left-0 w-full h-full flex items-center px-[1.5rem] py-[0.375rem] text-[15px] leading-6 overflow-hidden bg-[#0066ff46] text-headingColor font-semibold rounded-lg truncate cursor-pointer"
+                >
+                  Upload Photo
+                </label>
+              </>
+            )}
           </div>
         </div>
 

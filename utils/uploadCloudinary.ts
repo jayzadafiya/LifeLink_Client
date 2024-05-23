@@ -1,5 +1,7 @@
 import axios from "axios";
 import toast from "react-hot-toast";
+import * as crypto from "crypto";
+import { BASE_URL } from "./config";
 
 export const uploadImageToCloudinary = async (file: File) => {
   const upload_preset = process.env.NEXT_PUBLIC_UPLOAD_PRESET;
@@ -30,4 +32,28 @@ export const uploadImageToCloudinary = async (file: File) => {
     toast.error("Error uploading photo");
     return null;
   }
+};
+
+export const deleteImageFromCloudinary = async (imageUrl: string) => {
+  const publicId = extractPublicId(imageUrl);
+
+  try {
+    await axios.post(`${BASE_URL}/cloudinary`, { publicId: publicId });
+
+    toast.success("Photo deleted successfully");
+  } catch (error) {
+    toast.error("Error deleting photo");
+    console.error(error);
+    return null;
+  }
+};
+
+const extractPublicId = (imageUrl: string): string => {
+  const parts = imageUrl.split("/");
+  const filename = parts.pop();
+  let publicId = "";
+  if (filename) {
+    publicId = filename.split(".")[0];
+  }
+  return publicId;
 };
