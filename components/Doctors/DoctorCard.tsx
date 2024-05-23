@@ -33,7 +33,7 @@ export default function DoctorCard({
         />
       </div>
 
-      <h2 className="text-[10px] leading-[30px] lg:text-[26px] lg:leading-9 text-headingColor font-[700]">
+      <h2 className="text-[14px] leading-[30px] md:text-[20px] lg:text-[26px] lg:leading-9 text-headingColor font-[700]">
         {name}
       </h2>
 

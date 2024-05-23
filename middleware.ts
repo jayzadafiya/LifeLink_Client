@@ -10,6 +10,9 @@ export function middleware(request: NextRequest): NextResponse | undefined {
   const loggedInUserNotAccess = ["/login", "/signup"].includes(
     request.nextUrl.pathname
   );
+  const loggedInAdminNotAccess = ["/admin/login", "/login", "/signup"].includes(
+    request.nextUrl.pathname
+  );
   const profileNotAccess = [
     "/doctors/profile",
     "/users/profile",
@@ -37,13 +40,16 @@ export function middleware(request: NextRequest): NextResponse | undefined {
 
     if (
       decodedToken.role !== "admin" &&
-      request.nextUrl.pathname === "/admin"
+      (request.nextUrl.pathname === "/admin" ||
+        request.nextUrl.pathname === "/admin/login")
     ) {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }
 
-  if (loggedInUserNotAccess && authToken) {
+  if (loggedInAdminNotAccess && authToken && decodedToken.role === "admin") {
+    return NextResponse.redirect(new URL("/admin", request.url));
+  } else if (loggedInUserNotAccess && authToken) {
     return NextResponse.redirect(
       new URL(
         `/${decodedToken.role === "patient" ? "users" : "doctors"}/profile`,
@@ -63,6 +69,7 @@ export const config = {
     "/login",
     "/signup",
     "/admin",
+    "/admin/login",
     "/doctors/profile",
     "/users/profile",
     "/prescription/:path",
