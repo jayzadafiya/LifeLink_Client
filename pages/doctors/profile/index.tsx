@@ -125,7 +125,7 @@ export default function Dashboard({
               </div>
 
               <div className={`${tab !== "settings" ? "hidden" : ""}`}>
-                <Profile doctor={doctor} />
+                <Profile doctor={doctor} setTab={setTab} />
               </div>
 
               <div className={`${tab !== "history" ? "hidden" : ""}`}>

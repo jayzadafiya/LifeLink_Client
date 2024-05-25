@@ -23,23 +23,23 @@ import toast from "react-hot-toast";
 
 // Interface for components props type
 interface MyAccountProps {
-  user: User;
+  userData: User;
   appointments: { upcoming: Appointment[]; history: Appointment[] };
   error: any;
 }
 
 export default function MyAccount({
-  user,
+  userData,
   appointments,
   error,
 }: MyAccountProps): React.JSX.Element {
   const dispatch = useAppDispatch();
-  const { accessToken } = useSelector((state: RootState) => state.user);
+  const { user, accessToken } = useSelector((state: RootState) => state.user);
   const router = useRouter();
 
   const [tab, setTab] = useState("bookings");
 
-  if (!user || error) {
+  if (!userData || error) {
     return <Error errMessage={error} />;
   }
 
@@ -83,7 +83,9 @@ export default function MyAccount({
   return (
     <section>
       <Head>
-        <title>{`${capitalize(user?.name)}'s Profile`}</title>
+        <title>{`${
+          user && user.name ? `${capitalize(user?.name)} 's` : "User"
+        } Profile`}</title>
         <meta
           name="description"
           content="User profile setting and appointment data"
@@ -128,7 +130,7 @@ export default function MyAccount({
               </button>
               <button
                 className="w-full  rounded-md border-[3px] border-solid border-transparent bg-red-500  hover:border-red-500   hover:text-red-500 hover:bg-red-100 mt-4 p-3 text-[16px] leading-7 font-bold text-white"
-                onClick={(e) => handleDelete(e, user._id)}
+                onClick={(e) => handleDelete(e, userData._id)}
               >
                 Delete Account
               </button>
@@ -185,7 +187,7 @@ export default function MyAccount({
             </div>
 
             <div className={`${tab !== "settings" ? "hidden" : ""}`}>
-              <Profile user={user} />
+              <Profile user={userData} setTab={setTab} />
             </div>
 
             <div className={`${tab !== "updatePassword" ? "hidden" : ""}`}>
@@ -219,7 +221,7 @@ export async function getServerSideProps(
     });
     return {
       props: {
-        user: user.data,
+        userData: user.data,
         appointments: appointments.data,
       },
     };

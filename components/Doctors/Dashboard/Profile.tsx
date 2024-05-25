@@ -34,14 +34,18 @@ import {
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
-import { updateUser } from "../../../store/slices/userSlice";
 import { HashLoader } from "react-spinners";
 import { AiOutlineDelete } from "react-icons/ai";
 import { RootState, useAppDispatch } from "../../../store/store";
 import { BASE_URL } from "../../../utils/config";
-import { PayloadAction } from "@reduxjs/toolkit";
 
-export default function Profile({ doctor }: { doctor: Doctor }) {
+export default function Profile({
+  doctor,
+  setTab,
+}: {
+  doctor: Doctor;
+  setTab: (tab: string) => void;
+}) {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
@@ -268,14 +272,15 @@ export default function Profile({ doctor }: { doctor: Doctor }) {
           doctor.timeSlots_data,
           formData.timeSlots_data
         );
-
         let data: { formData: Doctor; timeSlots?: TimeslotCreated[] };
 
         let deleteRequests: Promise<AxiosResponse<any>>[] = [];
 
         if (newTimeSlotsData.length > 0) {
           if (doctor?.timeSlots_data && doctor?.timeSlots_data?.length > 0) {
+
             newTimeSlotsData.forEach(async (timeslot) => {
+              // Delete timeslot because doctor dont want to get appointment for this time slots
               deleteRequests = await axios.delete(
                 `${BASE_URL}/timeslot/${doctor._id}`,
                 {
@@ -301,13 +306,21 @@ export default function Profile({ doctor }: { doctor: Doctor }) {
           };
         }
 
-        dispatch(updateUser(data)).then(
-          (result: PayloadAction<{ data: Doctor }>) => {
-            if (result.payload && result.payload.data) {
-              router.push("/doctors/profile");
-            }
-          }
-        );
+        // dispatch(updateUser(data)).then(
+        //   (result: PayloadAction<{ data: Doctor }>) => {
+        //     if (result.payload && result.payload.data) {
+        //       router.push("/doctors/profile");
+        //     }
+        //   }
+        // );
+
+        await axios.put(`${BASE_URL}/update-doctor/${doctor._id}`, data, {
+          headers: {
+            Authorization: `Bearer ${accessToken}`,
+          },
+        });
+        toast.success(`Update request send succefully`);
+        setTab("overview");
       } catch (error: any) {
         const err = error?.response?.data?.message || error?.message;
         toast.error(err);

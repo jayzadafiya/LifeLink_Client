@@ -13,7 +13,7 @@ import { useEffect, useState } from "react";
 import { BASE_URL } from "../../utils/config";
 import { capitalize, decodeToken } from "../../utils/heplerFunction";
 import { Doctor, Timeslots } from "../../interfaces/Doctor";
-import { GetStaticPropsContext } from "next";
+import { GetServerSidePropsContext, GetStaticPropsContext } from "next";
 import { useRouter } from "next/router";
 
 // Interface for components props type
@@ -177,27 +177,89 @@ export default function DoctorDetails({
   );
 }
 
-// Static function for get data of doctors
+// // Static function for get data of doctors
+// export async function getStaticProps(
+//   context: GetStaticPropsContext
+// ): Promise<{ props: Partial<DoctorDetailsProps> }> {
+//   try {
+//     const slug: string | string[] | undefined = context.params?.slug;
 
-export async function getStaticProps(
-  context: GetStaticPropsContext
-): Promise<{ props: Partial<DoctorDetailsProps> }> {
+//     if (!slug) {
+//       return {
+//         props: {
+//           error: "Slug parameter is missing.",
+//         },
+//       };
+//     }
+//     const res = await axios.get(`${BASE_URL}/doctors/${slug}`);
+
+//     return {
+//       props: {
+//         doctor: res.data.doctor,
+//         timeslots: res.data.timeslots,
+//       },
+//     };
+//   } catch (error: any) {
+//     return {
+//       props: {
+//         error:
+//           error?.response?.data?.message ||
+//           error?.message ||
+//           "Error fetching doctor data",
+//       },
+//     };
+//   }
+// }
+
+// // Static function for generate page at build time
+// export async function getStaticPaths() {
+//   try {
+//     const res = await axios.get(`${BASE_URL}/doctors`);
+//     const doctors: Doctor[] = res.data;
+
+//     // Get the paths we want to pre-render based on doctors
+//     const paths = doctors.map((doctor) => ({
+//       params: { slug: doctor._id },
+//     }));
+
+//     return { paths, fallback: "blocking" };
+//   } catch (error) {
+//     console.error("Error fetching doctor data:", error);
+//     return { paths: [], fallback: "blocking" };
+//   }
+// }
+
+//use serverside function because of we habe to make api request base on token role
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
   try {
-    const slug: string | string[] | undefined = context.params?.slug;
+    const { slug } = context.query;
+    const { token } = context.req.cookies;
 
-    if (!slug) {
-      return {
-        props: {
-          error: "Slug parameter is missing.",
-        },
-      };
+    if (token) {
+      const decode = decodeToken(token);
+
+      if (decode.role === "admin") {
+        const { data } = await axios.get(`${BASE_URL}/update-doctor/${slug}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (data)
+          return {
+            props: {
+              doctor: data,
+            },
+          };
+      }
     }
-    const res = await axios.get(`${BASE_URL}/doctors/${slug}`);
+    const { data } = await axios.get(`${BASE_URL}/doctors/${slug}`);
 
     return {
       props: {
-        doctor: res.data.doctor,
-        timeslots: res.data.timeslots,
+        doctor: data.doctor,
+        timeslots: data.timeslots,
       },
     };
   } catch (error: any) {
@@ -209,23 +271,5 @@ export async function getStaticProps(
           "Error fetching doctor data",
       },
     };
-  }
-}
-
-// Static function for generate page at build time
-export async function getStaticPaths() {
-  try {
-    const res = await axios.get(`${BASE_URL}/doctors`);
-    const doctors: Doctor[] = res.data;
-
-    // Get the paths we want to pre-render based on doctors
-    const paths = doctors.map((doctor) => ({
-      params: { slug: doctor._id },
-    }));
-
-    return { paths, fallback: "blocking" };
-  } catch (error) {
-    console.error("Error fetching doctor data:", error);
-    return { paths: [], fallback: "blocking" };
   }
 }

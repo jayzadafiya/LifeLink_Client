@@ -90,38 +90,25 @@ export const fetchUser: any = createAsyncThunk("user/fatchUser", async () => {
 // Function use update user data
 export const updateUser: any = createAsyncThunk(
   "user/updateUser",
-  async (data: { fromData: User; timeslot?: TimeslotCreated[] }) => {
+  async (fromData: User) => {
     try {
       const token = Cookies.get("token");
 
       if (token) {
         const decodedToken = jwt.decode(token) as PayLoad;
-        let res = null;
 
-        if (decodedToken.role === "patient") {
-          res = await axios.put(
-            `${BASE_URL}/users/${decodedToken.userId}`,
-            data,
-            {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-        } else if (decodedToken.role === "doctor") {
-          res = await axios.put(
-            `${BASE_URL}/doctors/${decodedToken.userId}`,
-            data,
-            {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
-            }
-          );
-        }
+        const { data } = await axios.put(
+          `${BASE_URL}/users/${decodedToken.userId}`,
+          fromData,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
 
-        return { data: res?.data };
+        return data;
       }
     } catch (error: any) {
       const err = error?.response?.data?.message || error?.message;
@@ -211,15 +198,12 @@ const userSlice = createSlice({
         state.loading = true;
       })
       .addCase(updateUser.fulfilled, (state, action) => {
-        state.user = action.payload.data;
+        state.user = action.payload;
         state.loading = false;
         state.error = null;
-        toast.success(
-          `${action.payload.data.role === "patient" ? "Mr. " : "Dr. "}${
-            action.payload.data.name
-          } data get updated succesfully`
-        );
+        toast.success(`Mr.${action.payload.name} data get updated succesfully`);
       })
+
       .addCase(updatePassword.fulfilled, (state, action) => {
         state.accessToken = action.payload.token;
 

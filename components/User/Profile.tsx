@@ -16,9 +16,14 @@ import { patientFormValidation } from "../../utils/formValidation";
 import { RootState, useAppDispatch } from "../../store/store";
 import { User } from "../../interfaces/User";
 import { UserForm } from "../../interfaces/Forms";
-import { PayloadAction } from "@reduxjs/toolkit";
 
-export default function Profile({ user }: { user: User }): React.JSX.Element {
+export default function Profile({
+  user,
+  setTab,
+}: {
+  user: User;
+  setTab: (tab: string) => void;
+}): React.JSX.Element {
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { error, loading } = useSelector((state: RootState) => state.user);
@@ -92,13 +97,9 @@ export default function Profile({ user }: { user: User }): React.JSX.Element {
 
     if (Object.keys(formError).length === 0) {
       try {
-        dispatch(updateUser(formData)).then(
-          (result: PayloadAction<{ data: User }>) => {
-            if (result.payload && result.payload.data) {
-              router.push("/users/profile");
-            }
-          }
-        );
+        dispatch(updateUser(formData));
+
+        setTab("bookings");
       } catch (error: any) {
         const err = error?.response?.data?.message || error?.message;
         toast.error(err);

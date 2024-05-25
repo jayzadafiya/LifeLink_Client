@@ -14,14 +14,14 @@ export default function AdminPage(): React.JSX.Element {
 
   const tabs = ["requests", "cancelled", "approved"];
 
-  const renderItem = (doctor: Partial<Doctor | DonorForm>) => (
-    <DoctorCard key={doctor._id} doctor={doctor as Doctor} />
-  );
-
   useEffect(() => {
     dispatch(setInitialData());
     dispatch(fetchData({ page: 1, type: "admin", status: tab }));
   }, [dispatch, tab]);
+
+  const renderItem = (doctor: Partial<Doctor | DonorForm>) => (
+    <DoctorCard key={doctor._id} doctor={doctor as Doctor} />
+  );
 
   const renderButton = (tabName: string) => (
     <button
