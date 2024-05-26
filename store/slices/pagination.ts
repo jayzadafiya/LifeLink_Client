@@ -38,7 +38,7 @@ export const fetchData: any = createAsyncThunk(
     status,
   }: {
     latlng?: string;
-    formData?: any;
+    formData?: { [key: string]: string };
     page: number;
     type: string;
     status?: string;
@@ -78,9 +78,13 @@ export const fetchData: any = createAsyncThunk(
         data = res.data;
       } else if (type === "doctor") {
         let url = `${BASE_URL}/doctors?page=${page}&limit=1`;
-        if (formData) {
-          url += `&search=${formData}`;
+        if (formData?.name) {
+          url += `&name=${formData.name}`;
         }
+        if (formData?.specialization) {
+          url += `&specialization=${formData.specialization}`;
+        }
+
         const res = await axios.get(url);
 
         data = res.data;

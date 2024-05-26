@@ -1,17 +1,19 @@
 import axios from "axios";
 import Head from "next/head";
+import toast from "react-hot-toast";
 import DoctorCard from "../../components/Doctors/DoctorCard";
 import Testimonial from "../../components/Testimonial/Testimonial";
-import React, { useEffect, useRef } from "react";
-import { useSelector } from "react-redux";
-import { searchDoctor, setDocterList } from "../../store/slices/doctorSlice";
+import Error from "../../components/Error/Error";
+import PaginationComponent from "../../components/Pagination/Pagination";
+import { useEffect, useState } from "react";
 import { BASE_URL } from "../../utils/config";
 import { RootState, useAppDispatch } from "../../store/store";
 import { Doctor } from "../../interfaces/Doctor";
-import Error from "../../components/Error/Error";
 import { DonorForm } from "../../interfaces/Forms";
-import PaginationComponent from "../../components/Pagination/Pagination";
 import { fetchData, setData, setPrevData } from "../../store/slices/pagination";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { useSelector } from "react-redux";
+import { HashLoader } from "react-spinners";
 
 // Interface for components props type
 interface DoctorsProps {
@@ -19,11 +21,21 @@ interface DoctorsProps {
   error?: any;
 }
 
+const genAI = new GoogleGenerativeAI(
+  process.env.NEXT_PUBLIC_GOOGLE_GEMINI_API_KEY || " "
+);
+
 export default function Doctors({
   doctors,
   error,
 }: DoctorsProps): React.JSX.Element {
-  const query = useRef<HTMLInputElement>(null);
+  const { loading } = useSelector((state: RootState) => state.pagination);
+  const [formData, setFormData] = useState({
+    name: "",
+    specialization: "",
+  });
+  const [statement, setStatement] = useState("");
+  const [responeLoading, setResponseLoading] = useState(false);
 
   const dispatch = useAppDispatch();
 
@@ -42,16 +54,51 @@ export default function Doctors({
     return <Error errMessage={error} />;
   }
 
+  const handelInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+
+    setFormData({
+      ...formData,
+      [name]: value,
+    });
+  };
+
   // Function for doctor search
-  const handleSearch = () => {
-    const searchTerm = query.current?.value.trim();
-    if (searchTerm !== "") {
+  const searchData = () => {
+    try {
       dispatch(setPrevData());
 
-      dispatch(fetchData({ formData: searchTerm, page: 1, type: "doctor" }));
-      if (query.current) {
-        query.current.value = "";
+      dispatch(fetchData({ formData, page: 1, type: "doctor" }));
+    } catch (error: any) {
+      const err = error?.response?.data?.message || error?.message;
+      toast.error(err);
+      return null;
+    }
+  };
+
+  const getDoctorSpecialization = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    try {
+      if (statement.trim() !== "") {
+        setResponseLoading(true);
+        const model = genAI.getGenerativeModel({ model: "gemini-pro" });
+        const prompt = `The user describes their health problem as: "${e.target.value}". Which type of doctor should they see?
+      `;
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+
+        setFormData((prev) => ({
+          ...prev,
+          specialization: text.split(" ")[0],
+        }));
+        setResponseLoading(false);
       }
+    } catch (error: any) {
+      const err = error?.response?.data?.message || error?.message;
+      toast.error(err);
+      return null;
     }
   };
 
@@ -64,18 +111,44 @@ export default function Doctors({
       <section className="bg-[#fff9ea]">
         <div className="container text-center">
           <h2 className=" heading">Find a Doctor</h2>
-          <div className="max-w-[578px] mt-[30px] mx-auto bg-[#0866ff2c] rounded-md flex items-center justify-between">
+          <div className=" mt-[30px] mx-auto bg-[#0866ff2c] rounded-md flex flex-col items-center justify-between sm:flex-row">
             <input
-              type="search"
-              className="py-4 px-2 bg-transparent w-full focus:outline-none cursor-pointer placeholder:text-textColor"
-              placeholder="Search Doctor by name or specificatoins"
-              ref={query}
+              type="text"
+              name="name"
+              className="py-4 px-2 bg-transparent w-full focus:outline-none cursor-pointer placeholder:text-textColor border-b-4 sm:border-0 sm:border-r-4"
+              placeholder="Search Doctor by name "
+              value={formData.name}
+              onChange={handelInputChange}
+            />
+            <input
+              type="text"
+              name="specialization"
+              className="py-4 px-2 bg-transparent w-full focus:outline-none cursor-pointer placeholder:text-textColor  border-b-4 sm:border-0 sm:border-r-4"
+              placeholder="Search Doctor by  specificatoins"
+              value={formData.specialization}
+              onChange={handelInputChange}
+            />
+            <input
+              type="text"
+              name="statement"
+              className="py-4 px-2 bg-transparent w-full focus:outline-none cursor-pointer placeholder:text-textColor border-b-4 sm:border-0"
+              placeholder="Write your health problem"
+              value={statement}
+              onChange={(e) => {
+                setStatement(e.target.value);
+              }}
+              onBlur={getDoctorSpecialization}
             />
             <button
-              className="btn mt-0 rounded-r-md rounded-[0px]"
-              onClick={handleSearch}
+              disabled={loading || responeLoading}
+              className="btn mt-0 rounded-b-md sm:rounded-none sm:rounded-r-md rounded-[0px] w-full"
+              onClick={searchData}
             >
-              Search
+              {loading || responeLoading ? (
+                <HashLoader size={25} color="#ffffff" />
+              ) : (
+                "Search"
+              )}
             </button>
           </div>
         </div>

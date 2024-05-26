@@ -278,7 +278,6 @@ export default function Profile({
 
         if (newTimeSlotsData.length > 0) {
           if (doctor?.timeSlots_data && doctor?.timeSlots_data?.length > 0) {
-
             newTimeSlotsData.forEach(async (timeslot) => {
               // Delete timeslot because doctor dont want to get appointment for this time slots
               deleteRequests = await axios.delete(
@@ -437,12 +436,35 @@ export default function Profile({
                 value={formData.specialization}
                 onChange={handleInputChange}
                 onBlur={handleBlur}
-                className="form__input"
+                className="form__input "
               >
                 <option value="">Select</option>
-                <option value="surgon">Surgon</option>
-                <option value="neurologist">Neurologist</option>
+                <option value="allergist">Allergist/Immunologist</option>
+                <option value="anesthesiologist">Anesthesiologist</option>
+                <option value="cardiologist">Cardiologist</option>
                 <option value="dermatologist">Dermatologist</option>
+                <option value="endocrinologist">Endocrinologist</option>
+                <option value="gastroenterologist">Gastroenterologist</option>
+                <option value="hematologist">Hematologist</option>
+                <option value="infectious_disease_specialist">
+                  Infectious Disease Specialist
+                </option>
+                <option value="nephrologist">Nephrologist</option>
+                <option value="neurologist">Neurologist</option>
+                <option value="ob_gyn">
+                  Obstetrician/Gynecologist (OB/GYN)
+                </option>
+                <option value="oncologist">Oncologist</option>
+                <option value="ophthalmologist">Ophthalmologist</option>
+                <option value="orthopedic_surgeon">Orthopedic Surgeon</option>
+                <option value="otolaryngologist">
+                  Otolaryngologist (ENT Specialist)
+                </option>
+                <option value="pediatrician">Pediatrician</option>
+                <option value="psychiatrist">Psychiatrist</option>
+                <option value="pulmonologist">Pulmonologist</option>
+                <option value="rheumatologist">Rheumatologist</option>
+                <option value="urologist">Urologist</option>
               </select>
               {errors.specialization && (
                 <p className="text-red-500 text-md  mb-4">

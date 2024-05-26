@@ -18,14 +18,14 @@ const Login: React.FC = () => {
   const router = useRouter();
   const { loading } = useSelector((state: RootState) => state.user);
 
-  const [formData, setFormDate] = useState<LoginForm>({
+  const [formData, setFormData] = useState<LoginForm>({
     email: "",
     password: "",
   });
   const [errors, setErrors] = useState<Partial<LoginForm>>({});
 
   const handelInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setFormDate({
+    setFormData({
       ...formData,
       [e.target.name]: e.target.value,
     });
