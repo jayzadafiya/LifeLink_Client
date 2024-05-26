@@ -14,19 +14,20 @@ import { Appointment } from "../../interfaces/Doctor";
 
 // Interface for components props type
 interface AppointmentTablePaginationProps {
-  type: string;
+  accessType: string;
+  appointmentType?: string;
   appointments: Appointment[] | undefined;
 }
 
 export default function AppointmentTablePagination({
-  type,
+  accessType,
   appointments,
+  appointmentType,
 }: AppointmentTablePaginationProps): React.JSX.Element {
+  const orderType = appointmentType === "history" ? "desc" : "asc";
   const [page, setPage] = useState<number>(0);
   const [rowsPerPage, setRowsPerPage] = useState<number>(5);
-
-  const [order, setOrder] = useState<"asc" | "desc">("asc");
-  const [orderBy, setOrderBy] = useState<string>("bookingDate");
+  const [order, setOrder] = useState<"asc" | "desc">(orderType);
   const [searchTerm, setSearchTerm] = useState<string>("");
 
   // Function to handle page change
@@ -46,10 +47,8 @@ export default function AppointmentTablePagination({
   };
 
   // Function to handle sorting request
-  const handleRequestSort = (property: string) => {
-    const isAsc = orderBy === property && order === "asc";
-    setOrder(isAsc ? "desc" : "asc");
-    setOrderBy(property);
+  const handleRequestSort = () => {
+    setOrder(order === "asc" ? "desc" : "asc");
   };
 
   // Function to handle search term change
@@ -60,25 +59,17 @@ export default function AppointmentTablePagination({
 
   return (
     <div>
-      {/* <Head>
-        <title>Appointment page</title>
-        <meta
-          name="description"
-          content="User profile setting and appointment data"
-        />
-      </Head> */}
-
       {appointments && appointments.length === 0 && (
         <h2 className="mt-5 text-center  leading-7 text-[20px] font-semibold text-primaryColor">
           {`You did not ${
-            type === "user" ? " book " : " have"
+            accessType === "user" ? " book " : " have"
           } any appointment yet!`}
         </h2>
       )}
 
       {appointments && appointments.length > 0 && (
         <>
-          {type === "user" && (
+          {accessType === "user" && (
             <TextField
               label="Search Doctor"
               variant="outlined"
@@ -92,20 +83,22 @@ export default function AppointmentTablePagination({
           <Table className="w-full text-left text-sm text-gray-500 mt-3">
             <TableHead>
               <TableRow>
-                <TableCell>Doctor Name</TableCell>
+                <TableCell>Doctor Details</TableCell>
                 <TableCell>Status</TableCell>
                 <TableCell>Fees</TableCell>
                 <TableCell>Time</TableCell>
                 <TableCell>
                   <TableSortLabel
-                    active={orderBy === "bookingDate"}
-                    direction={orderBy === "bookingDate" ? order : "asc"}
-                    onClick={() => handleRequestSort("bookingDate")}
+                    active={true}
+                    direction={order}
+                    onClick={handleRequestSort}
                   >
                     Booked For
                   </TableSortLabel>
                 </TableCell>
-                <TableCell>Script</TableCell>
+                {!(
+                  accessType === "doctor" && appointmentType === "history"
+                ) && <TableCell>Script</TableCell>}
               </TableRow>
             </TableHead>
             <TableBody>
@@ -115,7 +108,8 @@ export default function AppointmentTablePagination({
                 rowsPerPage={rowsPerPage}
                 order={order}
                 searchTerm={searchTerm}
-                userType={type}
+                userType={accessType}
+                appointmentType={appointmentType}
               />
             </TableBody>
           </Table>

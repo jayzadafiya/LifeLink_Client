@@ -112,6 +112,9 @@ body {
   animation: slide-down-fade-in 0.3s ease-out forwards;
 }
 
+.low-padding-cell {
+  padding: 4px;
+}
 
 
 @media only screen and (max-width:768px) {

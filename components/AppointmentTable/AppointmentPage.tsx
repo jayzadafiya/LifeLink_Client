@@ -1,5 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";
+import axios from "axios";
+import toast from "react-hot-toast";
 import avatarImg from "../../public/assets/images/avatar-icon.png";
 
 import {
@@ -8,12 +9,16 @@ import {
   formateDate,
   sortedAppointments,
 } from "../../utils/heplerFunction";
-import { TableRow, TableCell } from "@mui/material";
-import { Appointment } from "../../interfaces/Doctor";
-import { FaFilePrescription } from "react-icons/fa6";
-import { useAppDispatch } from "../../store/store";
-import { setAppointmentData } from "../../store/slices/doctorSlice";
+import { useState } from "react";
 import { useRouter } from "next/router";
+import { Appointment } from "../../interfaces/Doctor";
+import { RootState, useAppDispatch } from "../../store/store";
+import { setAppointmentData } from "../../store/slices/doctorSlice";
+import { TableRow, TableCell } from "@mui/material";
+import { FaFilePrescription } from "react-icons/fa6";
+import { GiConfirmed } from "react-icons/gi";
+import { BASE_URL } from "../../utils/config";
+import { useSelector } from "react-redux";
 
 // Interface for components props type
 interface AppointmentPageProps {
@@ -23,6 +28,7 @@ interface AppointmentPageProps {
   order: "asc" | "desc";
   searchTerm: string;
   userType: string;
+  appointmentType?: string;
 }
 
 export default function AppointmentPage({
@@ -32,9 +38,16 @@ export default function AppointmentPage({
   order,
   searchTerm,
   userType,
+  appointmentType,
 }: AppointmentPageProps): React.JSX.Element {
   const dispatch = useAppDispatch();
   const router = useRouter();
+
+  const [statusChanges, setStatusChanges] = useState<{ [key: string]: string }>(
+    {}
+  );
+
+  const { accessToken } = useSelector((state: RootState) => state.user);
 
   const startIndex = page * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
@@ -54,9 +67,52 @@ export default function AppointmentPage({
   }
 
   const handleScriptClick = (item: Appointment) => {
-    dispatch(setAppointmentData(item));
+    if (item.status !== "cancelled") {
+      dispatch(setAppointmentData(item));
 
-    router.push(`/prescription/${item._id}`);
+      router.push(`/prescription/${item._id}`);
+    }
+  };
+
+  const handleAppointmentStatusChange = (id: string, value: string) => {
+    setStatusChanges((prev) => {
+      if (value === "pending") {
+        const newStatusChanges = { ...prev };
+        delete newStatusChanges[id];
+        return newStatusChanges;
+      }
+      return { ...prev, [id]: value };
+    });
+  };
+
+  const handleConfirmBtn = async (id: string) => {
+    try {
+      const confirmed = window.confirm(
+        "Are you sure you want to cancel this appointment?"
+      );
+
+      if (confirmed) {
+        await axios.patch(
+          `${BASE_URL}/refund/${id}`,
+          {},
+          {
+            headers: {
+              Authorization: `Bearer ${accessToken}`,
+            },
+          }
+        );
+
+        setStatusChanges((prev) => {
+          const newStatusChanges = { ...prev };
+          delete newStatusChanges[id];
+          return newStatusChanges;
+        });
+      }
+    } catch (error: any) {
+      const err = error?.response?.data?.message || error?.message;
+      toast.error(err);
+      return null;
+    }
   };
 
   // Render the filtered appointments within the specified range
@@ -98,31 +154,75 @@ export default function AppointmentPage({
             <TableCell>
               {item.status === "pending" && (
                 <div className="flex items-center">
-                  <div className="h-2.5 w-2.5 bg-yellow-500 mr-2"></div>
-                  Pending
+                  {userType === "doctor" && appointmentType !== "history" ? (
+                    <>
+                      <div
+                        className={`p-2 w-[78px] rounded  ${
+                          statusChanges[item._id] === "cancelled"
+                            ? "bg-red-200"
+                            : "bg-yellow-200"
+                        }`}
+                      >
+                        <select
+                          name="mealTime"
+                          className="leading-6 cursor-pointer text-[14px] appearance-none bg-transparent text-center"
+                          onChange={(e) =>
+                            handleAppointmentStatusChange(
+                              item._id,
+                              e.target.value
+                            )
+                          }
+                        >
+                          <option value="pending">Pending</option>
+                          <option value="cancelled">Cancelled</option>
+                        </select>
+                      </div>
+                      {statusChanges[item._id] === "cancelled" && (
+                        <button
+                          type="button"
+                          className="bg-green-500 text-white text-[20px] font-bold ml-2  rounded-full"
+                          onClick={() => handleConfirmBtn(item._id)}
+                        >
+                          <GiConfirmed />
+                        </button>
+                      )}
+                    </>
+                  ) : (
+                    <div className="w-[78px] text-center p-2 bg-yellow-200 rounded">
+                      Pending
+                    </div>
+                  )}
                 </div>
               )}
               {item.status === "complate" && (
                 <div className="flex items-center">
-                  <div className="h-2.5 w-2.5 bg-green-500 mr-2"></div>
-                  Complate
+                  <div className="w-[78px] p-2 bg-green-300 rounded">
+                    Complate
+                  </div>
                 </div>
               )}
               {item.status === "cancelled" && (
                 <div className="flex items-center">
-                  <div className="h-2.5 w-2.5 bg-red-500 mr-2"></div>
-                  Cancelled
+                  <div className="w-[78px] p-2 bg-red-200 rounded">
+                    Cancelled
+                  </div>
                 </div>
               )}
             </TableCell>
             <TableCell>{item.fees}</TableCell>
             <TableCell>{item.time}</TableCell>
             <TableCell>{formateDate(item.bookingDate)}</TableCell>
-            <TableCell>
-              <button onClick={() => handleScriptClick(item)}>
-                <FaFilePrescription className="text-[24px] ml-2" />
-              </button>
-            </TableCell>
+            {!(userType === "doctor" && appointmentType === "history") && (
+              <TableCell>
+                <button
+                  type="submit"
+                  disabled={item.status === "cancelled"}
+                  onClick={() => handleScriptClick(item)}
+                >
+                  <FaFilePrescription className="text-[24px] ml-2" />
+                </button>
+              </TableCell>
+            )}
           </TableRow>
         ))}
     </>

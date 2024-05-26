@@ -119,7 +119,7 @@ export default function Dashboard({
                   Upcomming Appointments
                 </h2>
                 <AppointmentTablePagination
-                  type="doctor"
+                  accessType="doctor"
                   appointments={appointments?.upcoming}
                 />
               </div>
@@ -133,7 +133,8 @@ export default function Dashboard({
                   Appointment History
                 </h2>
                 <AppointmentTablePagination
-                  type="doctor"
+                  accessType="doctor"
+                  appointmentType="history"
                   appointments={appointments?.history}
                 />
               </div>

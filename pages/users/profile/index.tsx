@@ -175,13 +175,14 @@ export default function MyAccount({
             </div>
             <div className={`${tab !== "bookings" ? "hidden" : ""}`}>
               <AppointmentTablePagination
-                type="user"
+                accessType="user"
                 appointments={appointments?.upcoming}
               />
             </div>
             <div className={`${tab !== "history" ? "hidden" : ""}`}>
               <AppointmentTablePagination
-                type="user"
+                accessType="user"
+                appointmentType="history"
                 appointments={appointments?.history}
               />
             </div>
