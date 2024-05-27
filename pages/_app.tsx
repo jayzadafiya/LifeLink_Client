@@ -3,6 +3,7 @@ import Layout from "../components/layout/layout";
 import store from "../store/store";
 import { Provider } from "react-redux";
 import "../styles/globals.css";
+import "../styles/style.css";
 import { AppProps } from "next/app";
 
 export default function App({ Component, pageProps }: AppProps) {

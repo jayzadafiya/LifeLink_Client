@@ -36,7 +36,7 @@ export default function FeedBack({
         <h4 className="text-[20px] leading-[30px] text-headingColor font-bold mb-[30px]">
           All reviews ({totalRating})
         </h4>
-        <div className="w-[750px] h-[600px] overflow-hidden">
+        <div className="w-[750px] min-h-[200px] max-h-[600px] ">
           <AutoSizer>
             {({ width, height }) => (
               <List

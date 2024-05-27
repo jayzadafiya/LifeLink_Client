@@ -365,7 +365,7 @@ export default function Profile({
         <div className="mb-5">
           <p className="form__label">Phone*</p>
           <input
-            type="number"
+            type="text"
             name="phone"
             placeholder="Phone Number"
             className="form__input"

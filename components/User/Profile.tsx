@@ -33,6 +33,7 @@ export default function Profile({
     name: user?.name || "",
     email: user?.email || "",
     photo: user?.photo || "",
+    phone: user?.phone || "",
     gender: user?.gender || "",
     bloodType: user?.bloodType || "",
   });
@@ -140,6 +141,21 @@ export default function Profile({
             aria-readonly
             readOnly
           />
+        </div>
+        <div className="mb-5">
+          <input
+            type="text"
+            placeholder="Phone"
+            name="phone"
+            onBlur={handleBlur}
+            value={formData.phone}
+            onChange={handelInputChange}
+            className="w-full  pr-4 py-3 border-b border-solid border-[#8066ff61] focus:outline-none
+              focus:border-b-primaryColor text-[16 px] leading-7 text-headingColor cursor-pointer "
+          />
+          {errors.phone && (
+            <p className="text-red-500 text-sm mt-1">{errors.phone}</p>
+          )}
         </div>
         <div className="mb-5">
           <input

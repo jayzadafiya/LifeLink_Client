@@ -263,14 +263,33 @@ export const timeslotByDate = (
   timeslots: Timeslots[],
   date: string
 ): Timeslots[] => {
+  let now = new Date();
+
+  // Convert to IST by adding 5 hours and 30 minutes
+  let istOffset = 5.5 * 60 * 60 * 1000; // 5.5 hours in milliseconds
+  let istDate = new Date(now.getTime() + istOffset);
+
   const newTimeslots: Timeslots[] = timeslots.map((slot) =>
     Object.keys(slot).reduce((newSlot, period: string) => {
+      const currentDate = istDate.toISOString().split("T")[0];
+      const currentTime = istDate.toISOString().split("T")[1];
+      console.log(currentDate, currentTime);
+
       console.log(slot, newSlot, period);
       const Slots = slot[period as keyof Timeslots] as SlotData[];
       // Filter out slots that don't include the specified date
       const filteredData: string & SlotData[] = Slots.filter(
-        ({ bookingDate }) => {
-          return !bookingDate.includes(date);
+        ({ time, bookingDate }) => {
+          // Filter out slots if the bookingDate is the specified date
+          // Check if the specified date is included in the booking dates
+          if (bookingDate.includes(date)) {
+            return false;
+          }
+          // Check if the current date is included and the time is before or equal to the current time
+          if (date === currentDate && time <= currentTime) {
+            return false;
+          }
+          return true;
         }
       ) as string & SlotData[];
 

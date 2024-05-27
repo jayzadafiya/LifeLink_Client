@@ -25,33 +25,26 @@ export default function Donate({
   const [showMedicalForm, setShowMedicalForm] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<Partial<DonorForm>>({});
-  const [donorData, setDonorData] = useState<Partial<DonorForm>>(donor ?? {});
 
   const { user, accessToken } = useSelector((state: RootState) => state.user);
 
   const [formData, setFormData] = useState<DonorForm>({
-    dob: "",
-    city: "",
-    phone: "",
-    address: "",
-    weight: 0,
-    disease: "",
-    styling: "",
-    surgery: "",
-    addharCard: donorData.addharCard || "",
-    lastDonationDate: "",
-    _id: donorData?._id || "",
-    name: donorData?.name || "",
-    email: donorData?.email || "",
-    gender: donorData?.gender || "",
-    bloodType: donorData?.bloodType || "",
+    dob: donor?.dob || "",
+    city: donor?.city || "",
+    address: donor?.address || "",
+    weight: donor?.weight || 0,
+    disease: donor?.disease || "",
+    styling: donor?.styling || "",
+    surgery: donor?.surgery || "",
+    addharCard: donor?.addharCard || "",
+    lastDonationDate: donor?.addharCard || "",
+    phone: donor?.phone || user?.phone || "",
+    _id: donor?._id || user?._id || "",
+    name: donor?.name || user?.name || "",
+    email: donor?.email || user?.email || "",
+    gender: donor?.gender || user?.gender || "",
+    bloodType: donor?.bloodType || user?.bloodType || "",
   });
-
-  useEffect(() => {
-    if (!donor && user) {
-      setDonorData(user);
-    }
-  }, []);
 
   if (error) {
     return <Error errMessage={error} />;
@@ -138,7 +131,6 @@ export async function getServerSideProps(
 ): Promise<{ props: Partial<DonateProp> }> {
   try {
     const cookieToken = context.req.cookies.token;
-    const { slug } = context.query;
     const { data } = await axios.get(`${BASE_URL}/donor/profile`, {
       headers: {
         Authorization: `Bearer ${cookieToken}`,

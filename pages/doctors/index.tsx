@@ -93,6 +93,7 @@ export default function Doctors({
           ...prev,
           specialization: text.split(" ")[0],
         }));
+        setStatement("");
         setResponseLoading(false);
       }
     } catch (error: any) {
@@ -141,7 +142,7 @@ export default function Doctors({
             />
             <button
               disabled={loading || responeLoading}
-              className="btn mt-0 rounded-b-md sm:rounded-none sm:rounded-r-md rounded-[0px] w-full"
+              className="btn mt-0 rounded-b-md sm:rounded-none sm:rounded-r-md rounded-[0px] w-full sm:w-fit"
               onClick={searchData}
             >
               {loading || responeLoading ? (
@@ -179,7 +180,7 @@ export default function Doctors({
 // Data fetching Function for get data of Doctors
 export async function getStaticProps(): Promise<{ props: DoctorsProps }> {
   try {
-    const res = await axios.get(`${BASE_URL}/doctors?page=1&limit=1`);
+    const res = await axios.get(`${BASE_URL}/doctors?page=1&limit=8`);
 
     return {
       props: {

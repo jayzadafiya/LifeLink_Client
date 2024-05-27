@@ -59,6 +59,7 @@ export interface UserForm {
   photo: string | null;
   gender: string;
   bloodType: string;
+  phone: string;
 }
 
 export interface DonorForm {

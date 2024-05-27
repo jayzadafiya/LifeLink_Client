@@ -84,7 +84,7 @@ const Login: React.FC = () => {
               value={formData.email}
               onBlur={handleBlur}
               onChange={handelInputChange}
-              className="w-full py-3 border-b border-solid border-[#8066ff61] focus:outline-none
+              className="w-full py-3 border-b border-solid border-[#0066ff61] focus:outline-none
               focus:border-b-primaryColor text-[16 px] leading-7 text-headingColor cursor-pointer "
             />
             {errors.email && (
@@ -99,7 +99,7 @@ const Login: React.FC = () => {
               value={formData.password}
               onBlur={handleBlur}
               onChange={handelInputChange}
-              className="w-full py-3 border-b border-solid border-[#8066ff61] focus:outline-none
+              className="w-full py-3 border-b border-solid border-[#0066ff61] focus:outline-none
               focus:border-b-primaryColor text-[16 px] leading-7 text-headingColor cursor-pointer "
             />
             {errors.password && (

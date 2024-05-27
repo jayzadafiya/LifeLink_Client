@@ -143,7 +143,7 @@ export default function SidePanel({
             }`}
             onClick={handelModel}
           >
-            Book Appoitement
+            Book Appointment
           </button>
         )}
         {isAdmin && (

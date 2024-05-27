@@ -8,6 +8,7 @@ import { BiMenu } from "react-icons/bi";
 import { useSelector } from "react-redux";
 import { capitalize } from "../../utils/heplerFunction";
 import { RootState } from "../../store/store";
+import avtarImg from "../../public/assets/images/patient-avatar.png";
 
 const navLink = [
   {
@@ -33,7 +34,8 @@ export default function Header(): React.JSX.Element {
   const headerRef = useRef<HTMLHeadElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
 
-  const isDFL = router.pathname.startsWith("/drop-for-life");
+  const isDFL = router.pathname.includes("/drop-for-life");
+  const isLogin = ["/login", "/admin/login"].includes(router.pathname);
 
   const { user, accessToken } = useSelector((state: RootState) => state.user);
 
@@ -117,24 +119,26 @@ export default function Header(): React.JSX.Element {
                 <h2 className={`${isDFL && "text-red-950"} font-semibold`}>
                   {capitalize(user.name)}
                 </h2>
-                {user.photo && (
-                  <figure className="w-[35px] h-[35px] rounded-full hidden  md:block lg:block">
-                    <Image
-                      src={user?.photo}
-                      alt=""
-                      className="w-full rounded-full h-[35px]"
-                      width={35}
-                      height={35}
-                    />
-                  </figure>
-                )}
+                <figure className="w-[35px] h-[35px] rounded-full hidden  md:block lg:block">
+                  <Image
+                    src={user?.photo || avtarImg}
+                    alt=""
+                    className="w-full rounded-full h-[35px]"
+                    width={35}
+                    height={35}
+                  />
+                </figure>
               </Link>
             ) : (
-              <Link href="/login">
-                <button className="bg-primaryColor py-2 px-6 text-white font-[600] h-[44px] flex items-center justify-center rounded-[50px]">
-                  Login
-                </button>
-              </Link>
+              <>
+                {!isLogin && (
+                  <Link href="/login">
+                    <button className="bg-primaryColor py-2 px-6 text-white font-[600] h-[44px] flex items-center justify-center rounded-[50px]">
+                      Login
+                    </button>
+                  </Link>
+                )}
+              </>
             )}
             <span className="md:hidden" onClick={toggleMenu}>
               <BiMenu className="w-6 h-6 cursor-pointer"></BiMenu>

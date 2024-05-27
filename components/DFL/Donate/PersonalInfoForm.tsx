@@ -103,7 +103,7 @@ export default function PersonalInfoForm({
               <div>
                 <label htmlFor="phone">Phone Number</label>
                 <input
-                  type="number"
+                  type="text"
                   id="phone"
                   name="phone"
                   autoComplete="mobile"

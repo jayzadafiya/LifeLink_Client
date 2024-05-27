@@ -1,0 +1,84 @@
+ /* model Div style */
+ .modal::backdrop {
+     position: fixed;
+     top: 0;
+     left: 0;
+     z-index: 1;
+     width: 100%;
+     background: rgba(20, 22, 27, 0.8);
+ }
+
+ .modal {
+     position: fixed;
+     left: 50%;
+     top: 50%;
+     transform: translate(-50%, -50%);
+     min-width: 350px;
+     padding: 0;
+     z-index: 9999999;
+     background: linear-gradient(to left, #b9e9ff 20%, #ddf2fc 80%, #e9f3ff);
+     border-radius: 8px;
+     animation: slide-down-fade-in 0.3s ease-out forwards;
+ }
+
+ /* Header  */
+
+ .sticky_header {
+     width: 100% !important;
+     height: 80px !important;
+     line-height: 80px !important;
+     position: sticky !important;
+     top: 0 !important;
+     left: 0 !important;
+     z-index: 9999 !important;
+     background: white !important;
+     box-shadow: 3px 3px -8px 3px #ddd
+ }
+
+
+ .sticky-header-dol {
+     width: 100% !important;
+     height: 80px !important;
+     line-height: 80px !important;
+     position: sticky !important;
+     top: 0 !important;
+     left: 0 !important;
+     z-index: 9999 !important;
+     box-shadow: 3px 3px -8px 3px #ddd !important;
+ }
+
+ /* Home page review slider  */
+ .swiper-pagination-bullet {
+     width: 12px !important;
+     height: 12px !important;
+     border: 1px solid #181a1e !important;
+     opacity: 100% !important;
+     background: #fff !important;
+
+ }
+
+ .swiper-pagination-bullet-active {
+     background: #0867ff !important;
+     border: none !important;
+
+
+ }
+
+ .swiper {
+     padding-bottom: 70px !important;
+ }
+
+ .swiper-slide.swiper-slide-next {
+     background: #0867ff;
+     border-radius: 12px;
+     box-shadow: 0px 10px 70px rgba(0, 103, 255, 0.3) !important;
+ }
+
+ .swiper-slide.swiper-slide-next h4,
+ .swiper-slide.swiper-slide-next p {
+     color: #fff !important;
+ }
+
+ .swiper-pagination {
+     top: 90% !important;
+ }

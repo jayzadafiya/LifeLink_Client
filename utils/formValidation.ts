@@ -271,7 +271,7 @@ export const loginFormvalidation = (
 export const patientFormValidation = (
   formData: UserForm
 ): Partial<UserForm> => {
-  const { email, name, gender, bloodType } = formData;
+  const { email, name, gender, bloodType, phone } = formData;
   const newErrors: Partial<UserForm> = {};
 
   if (!validateRequired(name)) {
@@ -290,6 +290,11 @@ export const patientFormValidation = (
 
   if (!validateRequired(bloodType)) {
     newErrors.bloodType = "Blood Type is required";
+  }
+  if (!validateRequired(phone)) {
+    newErrors.phone = "Phone number is required";
+  } else if (!validatePhone(phone)) {
+    newErrors.phone = "Invalid phone number";
   }
 
   return newErrors;

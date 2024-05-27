@@ -230,7 +230,6 @@ export default function DoctorDetails({
 // }
 
 //use serverside function because of we habe to make api request base on token role
-
 export async function getServerSideProps(context: GetServerSidePropsContext) {
   try {
     const { slug } = context.query;
@@ -255,6 +254,11 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
       }
     }
     const { data } = await axios.get(`${BASE_URL}/doctors/${slug}`);
+    if (!data) {
+      return {
+        notFound: true,
+      };
+    }
 
     return {
       props: {
@@ -264,12 +268,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     };
   } catch (error: any) {
     return {
-      props: {
-        error:
-          error?.response?.data?.message ||
-          error?.message ||
-          "Error fetching doctor data",
-      },
+      notFound: true,
     };
   }
 }

@@ -74,7 +74,7 @@ export default function Dashboard({
                 <div className="flex items-center gap-4 mb-18">
                   <figure className="max-w-[200px] max-h-[200]">
                     <Image
-                      src={doctor?.photo ? doctor.photo : avtarImg}
+                      src={doctor.photo || avtarImg}
                       alt=""
                       width={200}
                       height={200}

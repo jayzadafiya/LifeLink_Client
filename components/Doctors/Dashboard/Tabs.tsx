@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import Model from "../../Timeslots/Model";
 import { logout } from "../../../store/slices/userSlice";
 import { useRouter } from "next/router";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { RootState, useAppDispatch } from "../../../store/store";
 import { useSelector } from "react-redux";
 import { BiMenu } from "react-icons/bi";
@@ -107,16 +107,17 @@ export default function Tabs({ tab, setTab }: TabsProps) {
       return null;
     }
   };
+  const menuRef = useRef<HTMLDivElement>(null);
+  const toggleMenu = () => menuRef.current?.classList?.toggle("show__tab");
 
-  console.log(hasAppointments, appointmentData);
   return (
     <>
       <div>
-        <div>
-          <span className="lg:hidden">
-            <BiMenu className="w-6 h-6 cursor-pointer" />
-          </span>
-          <div className="hidden lg:flex flex-col p-[30px] bg-white shadow-panelShadow items-center h-max rounded-md">
+        <span className="lg:hidden" onClick={toggleMenu}>
+          <BiMenu className="w-6 h-6 cursor-pointer" />
+        </span>
+        <div className="profile_bar" ref={menuRef} onClick={toggleMenu}>
+          <div className=" profile_tab  lg:flex flex-col p-[30px] bg-white shadow-panelShadow items-center h-max rounded-md">
             <button
               onClick={() => setTab("overview")}
               className={`${

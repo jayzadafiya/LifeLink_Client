@@ -49,7 +49,7 @@ export const fetchData: any = createAsyncThunk(
         const token = Cookies.get("token");
 
         if (token) {
-          const url = `${BASE_URL}/admin/doctors?status=${status}&page=${page}&limit=1`;
+          const url = `${BASE_URL}/admin/doctors?status=${status}&page=${page}&limit=8`;
 
           const res = await axios.get(url, {
             headers: {
@@ -61,7 +61,7 @@ export const fetchData: any = createAsyncThunk(
           data = res.data;
         }
       } else if (type === "donor") {
-        let url = `${BASE_URL}/donor?page=${page}&limit=2`;
+        let url = `${BASE_URL}/donor?page=${page}&limit=8`;
 
         if (latlng) {
           url += `&latlog=${latlng}`;
@@ -77,7 +77,7 @@ export const fetchData: any = createAsyncThunk(
 
         data = res.data;
       } else if (type === "doctor") {
-        let url = `${BASE_URL}/doctors?page=${page}&limit=1`;
+        let url = `${BASE_URL}/doctors?page=${page}&limit=8`;
         if (formData?.name) {
           url += `&name=${formData.name}`;
         }
