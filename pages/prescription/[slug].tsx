@@ -29,9 +29,14 @@ export default function Prescription({
   prescriptionData,
 }: PrescritonProps): React.JSX.Element {
   const router = useRouter();
+
+  const pdfRef = useRef<HTMLTableElement>(null);
+
+  const { slug } = router.query;
+
   const { appointmentData } = useSelector((state: RootState) => state.doctor);
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<PrescriptionFormData>({
     symptoms: prescriptionData.symptoms || [""],
     advice: prescriptionData.advice || [""],
     test: prescriptionData.test || [""],
@@ -42,8 +47,7 @@ export default function Prescription({
 
   const [error, setError] = useState<Partial<PrescriptionForm>>({});
   const [role, setRole] = useState<string>("");
-  const pdfRef = useRef<HTMLDivElement>(null);
-  const { slug } = router.query;
+
   const token = Cookies.get("token");
 
   useEffect(() => {
@@ -140,7 +144,7 @@ export default function Prescription({
     const { name, value } = e.target;
     const formErrors = prescriptionFormValidation({
       ...formData,
-      [name]: value,
+      [name]: formData[name as keyof PrescriptionFormData],
     });
     setError((prevErrors) => ({
       ...prevErrors,
@@ -206,16 +210,21 @@ export default function Prescription({
         const imgHeight = canvas.height;
         const ratio = Math.min(pdfWidth / imgWidth, pdfHeight / imgHeight);
 
-        pdf.addImage(imgData, "PNG", -35, 30, 280, imgHeight * ratio + 50);
+        pdf.addImage(imgData, "PNG", 5, 30, 200, imgHeight * ratio + 50);
         pdf.save("prescription.pdf");
       });
+
+      router.replace("/users/profile");
     }
   };
 
   return (
-    <section ref={pdfRef}>
+    <section>
       <div className="container flex justify-center">
-        <table className="min-w-[960px] h-[960px] border border-gray-500 ">
+        <table
+          className="min-w-[960px] h-[960px] border border-gray-500 "
+          ref={pdfRef}
+        >
           <tbody>
             <tr className="h-[15%] border-b">
               <td colSpan={2}>
@@ -274,6 +283,7 @@ export default function Prescription({
                                   type="text"
                                   className="pscForm__input w-full "
                                   value={typeof item === "string" ? item : ""}
+                                  disabled={role !== "doctor"}
                                   placeholder={`Add ${itemName}`}
                                   onChange={(e) =>
                                     handleReuableInputChange(e, itemName, index)
@@ -285,7 +295,12 @@ export default function Prescription({
                                   onClick={(e) =>
                                     deleteItem(e, itemName, index)
                                   }
-                                  className="bg-red-600 p-1 rounded-full  text-white text-[16px] mt-1 mb-1   cursor-pointer "
+                                  disabled={role !== "doctor"}
+                                  className={`${
+                                    role !== "doctor"
+                                      ? "hidden"
+                                      : "bg-red-600 p-1 rounded-full  text-white text-[16px] mt-1 mb-1   cursor-pointer "
+                                  }`}
                                 >
                                   <AiOutlineDelete />
                                 </button>
@@ -296,7 +311,12 @@ export default function Prescription({
                       </div>
                       <div className=" flex my-2 items-center justify-between">
                         <button
-                          className="bg-textColor px-2 rounded text-white h-fit cursor-pointer "
+                          disabled={role !== "doctor"}
+                          className={`${
+                            role !== "doctor"
+                              ? "hidden"
+                              : "bg-textColor px-2 rounded text-white h-fit cursor-pointer "
+                          }`}
                           onClick={() => addItem(itemName)}
                         >
                           +
@@ -328,6 +348,7 @@ export default function Prescription({
                                 name="name"
                                 className="pscForm__input w-full "
                                 value={item.name}
+                                disabled={role !== "doctor"}
                                 placeholder="Medicine Name"
                                 onChange={(e) =>
                                   handleReuableInputChange(e, "medicine", index)
@@ -337,7 +358,12 @@ export default function Prescription({
                             </div>
                             <button
                               onClick={(e) => deleteItem(e, "medicine", index)}
-                              className="bg-red-600 p-1 rounded-full  text-white text-[18px] mt-1 mb-1   cursor-pointer "
+                              disabled={role !== "doctor"}
+                              className={`${
+                                role !== "doctor"
+                                  ? "hidden"
+                                  : "bg-red-600 p-1 rounded-full  text-white text-[18px] mt-1 mb-1   cursor-pointer "
+                              }`}
                             >
                               <AiOutlineDelete />
                             </button>
@@ -347,6 +373,7 @@ export default function Prescription({
                               <select
                                 name="mealTime"
                                 className="pscForm__input w-full  appearance-none  "
+                                disabled={role !== "doctor"}
                                 value={item.mealTime}
                                 onChange={(e) =>
                                   handleReuableInputChange(e, "medicine", index)
@@ -364,6 +391,7 @@ export default function Prescription({
                                 name="dailyTime"
                                 className="pscForm__input  appearance-none border-l-2 w-full text-center"
                                 value={item.dailyTime}
+                                disabled={role !== "doctor"}
                                 onChange={(e) =>
                                   handleReuableInputChange(e, "medicine", index)
                                 }
@@ -385,6 +413,7 @@ export default function Prescription({
                                 type="number"
                                 name="totalMedicine"
                                 className="pscForm__input border-l-2 "
+                                disabled={role !== "doctor"}
                                 value={item.totalMedicine}
                                 placeholder="Total medicine number"
                                 onChange={(e) =>
@@ -399,7 +428,12 @@ export default function Prescription({
                       ))}
                       <button
                         onClick={() => addItem("medicine")}
-                        className="bg-slate-600 p-2 px-5 rounded text-white h-fit cursor-pointer"
+                        disabled={role !== "doctor"}
+                        className={`${
+                          role !== "doctor"
+                            ? "hidden"
+                            : "bg-slate-600 p-2 px-5 rounded text-white h-fit cursor-pointer"
+                        }`}
                       >
                         Add Medicine
                       </button>
@@ -409,6 +443,7 @@ export default function Prescription({
                     {role === "doctor" && (
                       <>
                         <button
+                          disabled={role !== "doctor"}
                           type="submit"
                           onClick={(e) =>
                             handelSubmit(

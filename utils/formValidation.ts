@@ -401,7 +401,8 @@ export const requestFormValidation = (
 // Prescription form validation
 export const prescriptionFormValidation = (formData: PrescriptionFormData) => {
   const { test, medicine, advice, symptoms } = formData;
-
+  console.log(symptoms);
+  console.log(medicine);
   const error: Partial<PrescriptionForm> = {};
 
   if (symptoms.length > 0 && !validateStringArray(symptoms)) {
