@@ -1,14 +1,20 @@
 import axios from "axios";
 import toast from "react-hot-toast";
-import * as crypto from "crypto";
 import { BASE_URL } from "./config";
+import { resizeImage } from "./heplerFunction";
 
 export const uploadImageToCloudinary = async (file: File) => {
   const upload_preset = process.env.NEXT_PUBLIC_UPLOAD_PRESET;
   const cloud_name = process.env.NEXT_PUBLIC_CLOUD_NAME;
   try {
+    const resizedBlob = await resizeImage(file);
+    const resizedFile = new File([resizedBlob], "resized_image.jpg", {
+      type: "image/jpeg",
+    });
+
     const uploadData = new FormData();
-    uploadData.append("file", file);
+    uploadData.append("file", resizedFile);
+    // uploadData.append("file", file);
 
     if (upload_preset && cloud_name) {
       uploadData.append("upload_preset", upload_preset);

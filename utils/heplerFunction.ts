@@ -8,6 +8,7 @@ import {
 } from "../interfaces/Doctor";
 import dayjs from "dayjs";
 import { PayLoad } from "../interfaces/User";
+import { fileSize } from "./config";
 
 /**
  * Format a given date based on the provided configuration.
@@ -340,4 +341,43 @@ export const filteredAppointments = (
   return sortedAppointments.filter((appointment) =>
     appointment.doctor.name.toLowerCase().includes(searchTerm?.toLowerCase())
   );
+};
+
+/**
+ * Resizes an image to 330X330.
+ *
+ * @param {File} file - The image file to be resized.
+ * @returns {Promise<Blob>} A promise that resolves with the resized image as a Blob(Binary Large OBject).
+ */
+export const resizeImage = (file: File): Promise<Blob> => {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const reader = new FileReader();
+
+    reader.onload = (e) => {
+      img.src = e.target?.result as string;
+    };
+
+    img.onload = () => {
+      const canvas = document.createElement("canvas");
+      canvas.width = fileSize;
+      canvas.height = fileSize;
+      const ctx = canvas.getContext("2d");
+      ctx?.drawImage(img, 0, 0, fileSize, fileSize);
+      canvas.toBlob(
+        (blob) => {
+          if (blob) {
+            resolve(blob);
+          } else {
+            reject(new Error("Canvas is empty"));
+          }
+        },
+        "image/jpeg",
+        0.7
+      );
+    };
+
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 };

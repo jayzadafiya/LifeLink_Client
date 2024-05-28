@@ -449,22 +449,18 @@ export default function Profile({
                 <option value="infectious_disease_specialist">
                   Infectious Disease Specialist
                 </option>
-                <option value="nephrologist">Nephrologist</option>
-                <option value="neurologist">Neurologist</option>
-                <option value="ob_gyn">
-                  Obstetrician/Gynecologist (OB/GYN)
-                </option>
-                <option value="oncologist">Oncologist</option>
-                <option value="ophthalmologist">Ophthalmologist</option>
-                <option value="orthopedic_surgeon">Orthopedic Surgeon</option>
-                <option value="otolaryngologist">
-                  Otolaryngologist (ENT Specialist)
-                </option>
-                <option value="pediatrician">Pediatrician</option>
-                <option value="psychiatrist">Psychiatrist</option>
-                <option value="pulmonologist">Pulmonologist</option>
-                <option value="rheumatologist">Rheumatologist</option>
-                <option value="urologist">Urologist</option>
+                <option value="Nephrologist">Nephrologist</option>
+                <option value="Neurologist">Neurologist</option>
+                <option value="Gynecologist">Gynecologist</option>
+                <option value="Oncologist">Oncologist</option>
+                <option value="Ophthalmologist">Ophthalmologist</option>
+                <option value="Orthopedic_surgeon">Orthopedic Surgeon</option>
+                <option value="Otolaryngologist">Otolaryngologist</option>
+                <option value="Pediatrician">Pediatrician</option>
+                <option value="Psychiatrist">Psychiatrist</option>
+                <option value="Pulmonologist">Pulmonologist</option>
+                <option value="Rheumatologist">Rheumatologist</option>
+                <option value="Urologist">Urologist</option>
               </select>
               {errors.specialization && (
                 <p className="text-red-500 text-md  mb-4">

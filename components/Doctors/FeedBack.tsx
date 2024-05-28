@@ -12,7 +12,7 @@ import { useState } from "react";
 import { useSelector } from "react-redux";
 import { Review } from "../../interfaces/Doctor";
 import { RootState } from "../../store/store";
-
+import avtar from "../../public/assets/images/patient-avatar.png";
 // Interface for components props type
 interface FeedBackProps {
   reviews?: Review[];
@@ -67,8 +67,8 @@ export default function FeedBack({
                           <div className="flex gap-3">
                             <figure className="rounded-full ">
                               <Image
-                                src={review?.user?.photo || ""}
-                                alt=""
+                                src={review?.user?.photo || avtar}
+                                alt="User Image"
                                 width={40}
                                 height={40}
                               />

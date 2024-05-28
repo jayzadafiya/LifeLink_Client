@@ -41,7 +41,7 @@ export default function LeftSidebar(): React.JSX.Element {
   return (
     <div className={style.left_container}>
       <form>
-        <div className="form-items">
+        <div className={style.form_items}>
           <label htmlFor="bloodType">BloodType :</label>
           <select
             name="bloodType"
@@ -80,14 +80,18 @@ export default function LeftSidebar(): React.JSX.Element {
             placeholder="Enter city name"
             onChange={handleChange}
           />
+          <button
+            className={style.search_button}
+            type="submit"
+            onClick={handleSearch}
+          >
+            {loading ? (
+              <HashLoader size={15} color="#ffffff" />
+            ) : (
+              "Search Donor"
+            )}
+          </button>
         </div>
-        <button
-          className={style.search_button}
-          type="submit"
-          onClick={handleSearch}
-        >
-          {loading ? <HashLoader size={25} color="#ffffff" /> : "Search Donor"}
-        </button>
       </form>
     </div>
   );

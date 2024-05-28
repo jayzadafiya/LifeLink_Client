@@ -6,6 +6,7 @@ import avatarImg from "../../public/assets/images/doctor-img01.png";
 
 import { BsArrowRight } from "react-icons/bs";
 import { Doctor } from "../../interfaces/Doctor";
+import { capitalize } from "../../utils/heplerFunction";
 
 export default function DoctorCard({
   doctor,
@@ -34,7 +35,7 @@ export default function DoctorCard({
       </div>
 
       <h2 className="text-[14px] leading-[30px] md:text-[20px] lg:text-[26px] lg:leading-9 text-headingColor font-[700]">
-        {name}
+        Dr.{capitalize(name)}
       </h2>
 
       <div className="mt-2 lg:mt-4 flex items-center justify-between flex-wrap">

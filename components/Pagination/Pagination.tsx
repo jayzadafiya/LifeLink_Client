@@ -77,7 +77,7 @@ export default function PaginationComponent({
         >
           <BsArrowLeft />
         </button>
-        {data && data.length !== 0 && (
+        {data && data.length !== 0 && data.length === 8 && (
           <button
             className="btn-pagination hover:content-next"
             onClick={handleNextPage}

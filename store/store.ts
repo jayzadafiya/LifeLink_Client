@@ -3,14 +3,12 @@ import userReducer from "./slices/userSlice";
 import doctorReducer from "./slices/doctorSlice";
 import adminReducer from "./slices/adminSlice";
 import paginationReducer from "./slices/pagination";
-import DFLReducer from "./slices/DFLSlice";
 import { useDispatch } from "react-redux";
 
 const store = configureStore({
   reducer: {
     user: userReducer,
     doctor: doctorReducer,
-    dfl: DFLReducer,
     pagination: paginationReducer,
     admin: adminReducer,
   },
