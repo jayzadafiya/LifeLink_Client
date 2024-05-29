@@ -2,23 +2,27 @@ import Image from "next/image";
 import axios from "axios";
 import toast from "react-hot-toast";
 import avatarImg from "../../public/assets/images/avatar-icon.png";
-
+import io from "socket.io-client";
+import Cookies from "js-cookie";
 import {
   capitalize,
+  decodeToken,
   filteredAppointments,
   formateDate,
   sortedAppointments,
 } from "../../utils/heplerFunction";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { Appointment } from "../../interfaces/Doctor";
-import { RootState, useAppDispatch } from "../../store/store";
+import { useAppDispatch } from "../../store/store";
 import { setAppointmentData } from "../../store/slices/doctorSlice";
 import { TableRow, TableCell } from "@mui/material";
 import { FaFilePrescription } from "react-icons/fa6";
 import { GiConfirmed } from "react-icons/gi";
 import { BASE_URL } from "../../utils/config";
-import { useSelector } from "react-redux";
+import { Socket } from "socket.io-client";
+
+let socket: Socket;
 
 // Interface for components props type
 interface AppointmentPageProps {
@@ -42,21 +46,61 @@ export default function AppointmentPage({
 }: AppointmentPageProps): React.JSX.Element {
   const dispatch = useAppDispatch();
   const router = useRouter();
-
   const [statusChanges, setStatusChanges] = useState<{ [key: string]: string }>(
     {}
   );
+  const [filteredAppointment, setFilteredAppointment] = useState<Appointment[]>(
+    sortedAppointments(appointments, order)
+  );
 
-  const { accessToken } = useSelector((state: RootState) => state.user);
-
+  const token = Cookies.get("token");
   const startIndex = page * rowsPerPage;
   const endIndex = startIndex + rowsPerPage;
 
-  // Condition for set appointment data base on userType
-  let filteredAppointment = sortedAppointments(appointments, order);
-  if (userType !== "doctor") {
-    filteredAppointment = filteredAppointments(filteredAppointment, searchTerm);
-  }
+  useEffect(() => {
+    if (token) {
+      const decode = decodeToken(token);
+
+      if (!socket) {
+        socket = io("http://localhost:3002");
+      }
+
+      socket.on("connect", () => {
+        console.log("Connected to WebSocket server");
+
+        // Identify the client with their ID and role
+        const identificationData = { id: decode.userId, role: decode.role };
+        socket.emit("identify", identificationData);
+      });
+
+      socket.on("newBookingUpdate", (newBookingData: Appointment) => {
+        setFilteredAppointment((prevAppointments) => {
+          return sortedAppointments(
+            [...prevAppointments, newBookingData],
+            order
+          );
+        });
+      });
+
+      return () => {
+        // Clean up the socket listener
+        if (socket) {
+          socket.off("connect");
+          socket.off("newBookingUpdate");
+        }
+      };
+    }
+  }, []);
+
+  useEffect(() => {
+    const result =
+      userType !== "doctor" && searchTerm !== ""
+        ? filteredAppointments(appointments, searchTerm)
+        : appointments;
+
+    setFilteredAppointment(sortedAppointments(result, order));
+  }, [appointments, searchTerm]);
+
   // If search term is not empty and no appointments are found, display a message
   if (searchTerm !== "" && filteredAppointment.length === 0) {
     return (
@@ -97,7 +141,7 @@ export default function AppointmentPage({
           {},
           {
             headers: {
-              Authorization: `Bearer ${accessToken}`,
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -139,8 +183,8 @@ export default function AppointmentPage({
                   <div className="text-base font-semibold">
                     {capitalize(
                       userType === "doctor"
-                        ? item.user?.name
-                        : item.doctor?.name
+                        ? item.user?.name || ""
+                        : item.doctor?.name || ""
                     )}
                   </div>
                   <div className="text-gray-500">
