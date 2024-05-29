@@ -8,6 +8,8 @@ import { DonorForm, RequestMessageForm } from "../../../interfaces/Forms";
 
 import style from "../../../styles/DFL/request.module.scss";
 import { requestFormValidation } from "../../../utils/formValidation";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../store/store";
 
 export default function DonorCard({
   donor,
@@ -25,6 +27,9 @@ export default function DonorCard({
 
   const [formData, setFormData] = useState<RequestMessageForm>(initalForm);
   const [errors, setErrors] = useState<Partial<RequestMessageForm>>({});
+
+  const { role } = useSelector((state: RootState) => state.user);
+
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
@@ -75,7 +80,7 @@ export default function DonorCard({
     const formError = requestFormValidation(formData);
     setErrors(formError);
 
-    if (Object.keys(formError).length === 0) {
+    if (Object.keys(formError).length === 0 && role !== "admin") {
       try {
         await axios.post(`${BASE_URL}/donor/sendSMS`, data);
         setDialogOpen(false);
@@ -109,9 +114,16 @@ export default function DonorCard({
             <strong>Phone:</strong>
             {donor.phone}
           </li>
+          {role === "admin" && (
+            <li>
+              <strong>Last Donat:</strong>
+              {donor.lastDonationDate}
+            </li>
+          )}
         </ul>
         <button
-          className="button"
+          disabled={role === "admin"}
+          className={`${role === "admin" ? "hidden" : "button"}`}
           onClick={() => handleContactDonor(donor.phone)}
         >
           Contact Donor
