@@ -2,11 +2,9 @@ import Image from "next/image";
 import axios from "axios";
 import toast from "react-hot-toast";
 import avatarImg from "../../public/assets/images/avatar-icon.png";
-import io from "socket.io-client";
 import Cookies from "js-cookie";
 import {
   capitalize,
-  decodeToken,
   filteredAppointments,
   formateDate,
   sortedAppointments,
@@ -20,10 +18,7 @@ import { TableRow, TableCell } from "@mui/material";
 import { FaFilePrescription } from "react-icons/fa6";
 import { GiConfirmed } from "react-icons/gi";
 import { BASE_URL } from "../../utils/config";
-import { Socket } from "socket.io-client";
 import { useSocket } from "../../context/SocketContext";
-
-// let socket: Socket;
 
 // Interface for components props type
 interface AppointmentPageProps {
@@ -61,20 +56,6 @@ export default function AppointmentPage({
 
   useEffect(() => {
     if (socket) {
-      // const decode = decodeToken(token);
-
-      // if (!socket) {
-      //   socket = io("http://localhost:3002");
-      // }
-
-      // socket.on("connect", () => {
-      //   console.log("Connected to WebSocket server");
-
-      //   // Identify the client with their ID and role
-      //   const identificationData = { id: decode.userId, role: decode.role };
-      //   socket.emit("identify", identificationData);
-      // });
-
       // Listen for new appointment
       socket.on("newBookingUpdate", (newBookingData: Appointment) => {
         setFilteredAppointment((prevAppointments) => {
@@ -88,11 +69,10 @@ export default function AppointmentPage({
       // Listen for appointment status change
       socket.on(
         "bookingStatus",
-        ({ booking_id, status }: { booking_id: string; status: string }) => {
+        ({ bookingId, status }: { bookingId: string; status: string }) => {
           setFilteredAppointment((prevAppointments) => {
-            console.log(booking_id, status);
             return prevAppointments.map((appointment) =>
-              appointment._id === booking_id
+              appointment._id === bookingId
                 ? { ...appointment, status }
                 : appointment
             ) as Appointment[];
@@ -103,7 +83,6 @@ export default function AppointmentPage({
       return () => {
         // Clean up the socket listener
         if (socket) {
-          socket.off("connect");
           socket.off("newBookingUpdate");
           socket.off("bookingStatus");
         }
