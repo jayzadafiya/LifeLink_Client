@@ -16,7 +16,7 @@ import { Appointment } from "../../interfaces/Doctor";
 interface AppointmentTablePaginationProps {
   accessType: string;
   appointmentType?: string;
-  appointments: Appointment[] | undefined;
+  appointments: Appointment[];
 }
 
 export default function AppointmentTablePagination({

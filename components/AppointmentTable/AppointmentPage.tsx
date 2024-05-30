@@ -73,6 +73,7 @@ export default function AppointmentPage({
         socket.emit("identify", identificationData);
       });
 
+      // Listen for new appointment
       socket.on("newBookingUpdate", (newBookingData: Appointment) => {
         setFilteredAppointment((prevAppointments) => {
           return sortedAppointments(
@@ -82,11 +83,27 @@ export default function AppointmentPage({
         });
       });
 
+      // Listen for appointment status change
+      socket.on(
+        "bookingStatus",
+        ({ booking_id, status }: { booking_id: string; status: string }) => {
+          setFilteredAppointment((prevAppointments) => {
+            console.log(booking_id, status);
+            return prevAppointments.map((appointment) =>
+              appointment._id === booking_id
+                ? { ...appointment, status }
+                : appointment
+            ) as Appointment[];
+          });
+        }
+      );
+
       return () => {
         // Clean up the socket listener
         if (socket) {
           socket.off("connect");
           socket.off("newBookingUpdate");
+          socket.off("bookingStatus");
         }
       };
     }
