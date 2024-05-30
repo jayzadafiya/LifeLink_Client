@@ -21,8 +21,9 @@ import { FaFilePrescription } from "react-icons/fa6";
 import { GiConfirmed } from "react-icons/gi";
 import { BASE_URL } from "../../utils/config";
 import { Socket } from "socket.io-client";
+import { useSocket } from "../../context/SocketContext";
 
-let socket: Socket;
+// let socket: Socket;
 
 // Interface for components props type
 interface AppointmentPageProps {
@@ -46,6 +47,7 @@ export default function AppointmentPage({
 }: AppointmentPageProps): React.JSX.Element {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { socket } = useSocket();
   const [statusChanges, setStatusChanges] = useState<{ [key: string]: string }>(
     {}
   );
@@ -58,20 +60,20 @@ export default function AppointmentPage({
   const endIndex = startIndex + rowsPerPage;
 
   useEffect(() => {
-    if (token) {
-      const decode = decodeToken(token);
+    if (socket) {
+      // const decode = decodeToken(token);
 
-      if (!socket) {
-        socket = io("http://localhost:3002");
-      }
+      // if (!socket) {
+      //   socket = io("http://localhost:3002");
+      // }
 
-      socket.on("connect", () => {
-        console.log("Connected to WebSocket server");
+      // socket.on("connect", () => {
+      //   console.log("Connected to WebSocket server");
 
-        // Identify the client with their ID and role
-        const identificationData = { id: decode.userId, role: decode.role };
-        socket.emit("identify", identificationData);
-      });
+      //   // Identify the client with their ID and role
+      //   const identificationData = { id: decode.userId, role: decode.role };
+      //   socket.emit("identify", identificationData);
+      // });
 
       // Listen for new appointment
       socket.on("newBookingUpdate", (newBookingData: Appointment) => {
@@ -107,7 +109,7 @@ export default function AppointmentPage({
         }
       };
     }
-  }, []);
+  }, [socket]);
 
   useEffect(() => {
     const result =
