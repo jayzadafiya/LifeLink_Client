@@ -5,7 +5,11 @@ import PaginationComponent from "../../components/Pagination/Pagination";
 import { useEffect, useState } from "react";
 import { useAppDispatch } from "../../store/store";
 import { Doctor } from "../../interfaces/Doctor";
-import { fetchData, setInitialData } from "../../store/slices/pagination";
+import {
+  fetchData,
+  setInitialData,
+  setNewData,
+} from "../../store/slices/pagination";
 import { DonorForm } from "../../interfaces/Forms";
 import { useRouter } from "next/router";
 import { logout } from "../../store/slices/userSlice";
@@ -14,6 +18,8 @@ import DonorCard from "../../components/DFL/Request/DonorCard";
 import { MdOutlinePendingActions, MdDoNotDisturbAlt } from "react-icons/md";
 import { FcApproval } from "react-icons/fc";
 import { LuSigma } from "react-icons/lu";
+import toast from "react-hot-toast";
+import { useSocket } from "../../context/SocketContext";
 
 interface AdminReportData {
   updateRequest: number;
@@ -25,6 +31,8 @@ interface AdminReportData {
 export default function AdminPage(): React.JSX.Element {
   const dispatch = useAppDispatch();
   const router = useRouter();
+  const { socket } = useSocket();
+
   const [tab, setTab] = useState<string>("requests");
   const [reportData, setReportData] = useState<AdminReportData>({
     updateRequest: 0,
@@ -34,21 +42,41 @@ export default function AdminPage(): React.JSX.Element {
   });
 
   const token = Cookies.get("token");
-  // Function for get report
-  const fetchReportData = async () => {
-    try {
-      const { data } = await axios.get(`${BASE_URL}/admin/report`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log(data);
-      setReportData(data);
-    } catch (error) {
-      console.error("Error fetching data:", error);
-    }
-  };
+
   useEffect(() => {
+    if (tab === "requests" && socket) {
+      console.log("object");
+      socket.on("updateDoctorToAdmin", (updateData: Partial<Doctor>) => {
+        console.log(updateData);
+        dispatch(setNewData(updateData));
+      });
+
+      return () => {
+        socket.off("updateDoctorToAdmin");
+      };
+    }
+  }, [socket, tab]);
+
+  useEffect(() => {
+    // Function for get report
+
+    const fetchReportData = async () => {
+      try {
+        const { data } = await axios.get(`${BASE_URL}/admin/report`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log(data);
+        setReportData(data);
+      } catch (error: any) {
+        const err = error?.response?.data?.message || error?.message;
+        toast.error(err);
+
+        return null;
+      }
+    };
+
     fetchReportData();
   }, []);
 

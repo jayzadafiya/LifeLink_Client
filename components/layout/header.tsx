@@ -39,23 +39,23 @@ export default function Header(): React.JSX.Element {
 
   const { user, accessToken } = useSelector((state: RootState) => state.user);
 
-  const handleStickyheader = () => {
-    window.addEventListener("scroll", () => {
-      const scrollPosition =
-        document.body.scrollTop || document.documentElement.scrollTop;
-      if (scrollPosition > 80) {
-        headerRef?.current?.classList?.add(
-          `${isDFL ? "sticky-header-dol" : "sticky_header"}`
-        );
-      } else {
-        headerRef?.current?.classList?.remove(
-          `${isDFL ? "sticky-header-dol" : "sticky_header"}`
-        );
-      }
-    });
-  };
-
   useEffect(() => {
+    const handleStickyheader = () => {
+      window.addEventListener("scroll", () => {
+        const scrollPosition =
+          document.body.scrollTop || document.documentElement.scrollTop;
+        if (scrollPosition > 80) {
+          headerRef?.current?.classList?.add(
+            `${isDFL ? "sticky-header-dol" : "sticky_header"}`
+          );
+        } else {
+          headerRef?.current?.classList?.remove(
+            `${isDFL ? "sticky-header-dol" : "sticky_header"}`
+          );
+        }
+      });
+    };
+
     handleStickyheader();
 
     //unmount

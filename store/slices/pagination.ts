@@ -57,7 +57,6 @@ export const fetchData: any = createAsyncThunk(
               Authorization: `Bearer ${token}`,
             },
           });
-          console.log(res.data);
           data = res.data;
         }
       } else if (type === "donor") {
@@ -121,6 +120,33 @@ const paginationSlice = createSlice({
       state.requestData = {};
       state.loading = false;
     },
+    setNewData: (state, action) => {
+      const newData = action.payload;
+
+      // Check if newData already exists in state.data or state.prevData
+      const existingDataIndex = state.data.findIndex(
+        (item) => item._id === newData._id
+      );
+      if (existingDataIndex !== -1) {
+        state.data[existingDataIndex] = newData;
+      } else {
+        const existingPrevDataIndex = state.prevData.findIndex(
+          (item) => item._id === newData._id
+        );
+        if (existingPrevDataIndex !== -1) {
+          // Update existing data in prevData
+          state.prevData[existingPrevDataIndex] = newData;
+        } else {
+          // If data length is 8 push this data to prevData and
+          if (state.data.length === 8) {
+            state.data = [];
+            state.prevData.push(newData);
+            state.currentPage += 1;
+          }
+          state.data.push(newData);
+        }
+      }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -141,6 +167,6 @@ const paginationSlice = createSlice({
   },
 });
 
-export const { getData, setData, setPrevData, setInitialData } =
+export const { getData, setData, setPrevData, setInitialData, setNewData } =
   paginationSlice.actions;
 export default paginationSlice.reducer;
