@@ -8,10 +8,10 @@ import PasswrodUpdate from "../../../components/PasswrodUpdate/PasswrodUpdate";
 import avatarImg from "../../../public/assets/images/patient-avatar.png";
 import Cookies from "js-cookie";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { logout } from "../../../store/slices/userSlice";
-import { capitalize } from "../../../utils/heplerFunction";
+import { capitalize, decodeToken } from "../../../utils/heplerFunction";
 import { BASE_URL } from "../../../utils/config";
 import { User } from "../../../interfaces/User";
 import { Appointment } from "../../../interfaces/Doctor";
@@ -19,6 +19,7 @@ import { GetServerSidePropsContext } from "next";
 import { RootState, useAppDispatch } from "../../../store/store";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
+import { useSocket } from "../../../context/SocketContext";
 
 // Interface for components props type
 interface MyAccountProps {
@@ -33,10 +34,27 @@ export default function MyAccount({
   error,
 }: MyAccountProps): React.JSX.Element {
   const dispatch = useAppDispatch();
-  const { user, accessToken } = useSelector((state: RootState) => state.user);
   const router = useRouter();
+  const { socket } = useSocket();
 
   const [tab, setTab] = useState("bookings");
+
+  const { user, accessToken } = useSelector((state: RootState) => state.user);
+
+  const token = Cookies.get("token");
+
+  useEffect(() => {
+    if (token && socket) {
+      const { userId, role } = decodeToken(token);
+
+      socket.emit("identify", { id: userId, role });
+
+      // Cleanup function to handle identity removal on component unmount or socket change
+      return () => {
+        socket.emit("removeIdentity", { id: userId });
+      };
+    }
+  }, [socket]);
 
   if (!userData || error) {
     return <Error errMessage={error} />;

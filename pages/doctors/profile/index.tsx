@@ -1,6 +1,7 @@
 import axios from "axios";
 import Image from "next/image";
 import Head from "next/head";
+import Cookies from "js-cookie";
 import Error from "../../../components/Error/Error";
 import Tabs from "../../../components/Doctors/Dashboard/Tabs";
 import avtarImg from "../../../public/assets/images/doctor-img01.png";
@@ -13,7 +14,7 @@ import PasswrodUpdate from "../../../components/PasswrodUpdate/PasswrodUpdate";
 import { useEffect, useState } from "react";
 import { FiInfo } from "react-icons/fi";
 import { BASE_URL } from "../../../utils/config";
-import { capitalize } from "../../../utils/heplerFunction";
+import { capitalize, decodeToken } from "../../../utils/heplerFunction";
 import { Appointment, Doctor } from "../../../interfaces/Doctor";
 import { GetServerSidePropsContext } from "next";
 import { useSocket } from "../../../context/SocketContext";
@@ -37,6 +38,8 @@ export default function Dashboard({
 }: DashboardProps): React.JSX.Element {
   const { socket } = useSocket();
 
+  const token = Cookies.get("token");
+
   const [tab, setTab] = useState("overview");
   const [doctor, setDoctor] = useState<Doctor>(initalDoctor);
   const [doctorStatus, setDoctorStatus] = useState<DoctorStatus>({
@@ -45,7 +48,10 @@ export default function Dashboard({
   });
 
   useEffect(() => {
-    if (socket) {
+    if (token && socket) {
+      const { userId, role } = decodeToken(token);
+
+      socket.emit("identify", { id: userId, role });
       // Listen for appointment status change
       socket.on("doctorStatus", ({ message, isApproved }: DoctorStatus) => {
         setDoctorStatus((prevStatus) => ({
@@ -62,10 +68,9 @@ export default function Dashboard({
 
       return () => {
         // Clean up the socket listener
-        if (socket) {
-          socket.off("updateDoctor");
-          socket.off("bookingStatus");
-        }
+        socket.emit("removeIdentity", { id: userId });
+        socket.off("updateDoctor");
+        socket.off("bookingStatus");
       };
     }
   }, [socket]);

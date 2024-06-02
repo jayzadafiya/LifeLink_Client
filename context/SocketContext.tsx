@@ -15,24 +15,14 @@ export const SocketProvider: React.FC<{
 }> = ({ children }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
 
-  const token = Cookies.get("token");
   useEffect(() => {
-    if (token) {
-      const socketInstance = io(SOCKET_URL);
+    const socketInstance = io(SOCKET_URL);
 
-      const { userId, role } = decodeToken(token);
-
-      socketInstance.on("connect", () => {
-        const identificationData = { id: userId, role };
-        socketInstance.emit("identify", identificationData);
-      });
-
-      setSocket(socketInstance);
-      // Cleanup on unmount
-      return () => {
-        socketInstance.disconnect();
-      };
-    }
+    setSocket(socketInstance);
+    // Cleanup on unmount
+    return () => {
+      socketInstance.disconnect();
+    };
   }, []);
 
   return (

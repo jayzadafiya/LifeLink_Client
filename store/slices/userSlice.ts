@@ -6,7 +6,6 @@ import { User } from "../../interfaces/User";
 import { PayLoad } from "../../interfaces/User";
 import { LoginForm } from "../../interfaces/Forms";
 import { BASE_URL } from "../../utils/config";
-import { TimeslotCreated } from "../../interfaces/Doctor";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 
 // Interface for the state of the user slice
@@ -14,7 +13,6 @@ interface UserState {
   user: User | null;
   role: string | null;
   accessToken: string | null;
-  isLogging: boolean;
   loading: boolean;
   error: string | null;
 }
@@ -23,7 +21,6 @@ const initialState: UserState = {
   user: null,
   role: null,
   accessToken: null,
-  isLogging: false,
   loading: false,
   error: null,
 };
@@ -163,7 +160,6 @@ const userSlice = createSlice({
       .addCase(login.fulfilled, (state, action) => {
         state.user = action.payload.data;
         state.accessToken = action.payload.token;
-        state.isLogging = true;
         state.loading = false;
         state.error = null;
 
@@ -184,7 +180,6 @@ const userSlice = createSlice({
         );
       })
       .addCase(login.rejected, (state, action) => {
-        state.isLogging = false;
         state.loading = false;
         state.error = action.error.message;
         toast.error(action.error.message);
@@ -203,7 +198,6 @@ const userSlice = createSlice({
         state.error = null;
         toast.success(`Mr.${action.payload.name} data get updated succesfully`);
       })
-
       .addCase(updatePassword.fulfilled, (state, action) => {
         state.accessToken = action.payload.token;
 

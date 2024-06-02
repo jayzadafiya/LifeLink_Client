@@ -1,25 +1,29 @@
 import axios from "axios";
 import Cookies from "js-cookie";
 import DoctorCard from "../../components/Doctors/DoctorCard";
+import toast from "react-hot-toast";
+import DonorCard from "../../components/DFL/Request/DonorCard";
 import PaginationComponent from "../../components/Pagination/Pagination";
-import { useEffect, useState } from "react";
-import { useAppDispatch } from "../../store/store";
-import { Doctor } from "../../interfaces/Doctor";
 import {
   fetchData,
   setInitialData,
   setNewData,
 } from "../../store/slices/pagination";
+import { useEffect, useState } from "react";
+import { useAppDispatch } from "../../store/store";
+import { Doctor } from "../../interfaces/Doctor";
 import { DonorForm } from "../../interfaces/Forms";
 import { useRouter } from "next/router";
 import { logout } from "../../store/slices/userSlice";
 import { BASE_URL } from "../../utils/config";
-import DonorCard from "../../components/DFL/Request/DonorCard";
-import { MdOutlinePendingActions, MdDoNotDisturbAlt } from "react-icons/md";
 import { FcApproval } from "react-icons/fc";
 import { LuSigma } from "react-icons/lu";
-import toast from "react-hot-toast";
 import { useSocket } from "../../context/SocketContext";
+import { MdOutlinePendingActions, MdDoNotDisturbAlt } from "react-icons/md";
+import { adminLogout } from "../../store/slices/adminSlice";
+import { PayloadAction } from "@reduxjs/toolkit";
+import { Admin } from "../../interfaces/User";
+import { decodeToken } from "../../utils/heplerFunction";
 
 interface AdminReportData {
   updateRequest: number;
@@ -44,18 +48,22 @@ export default function AdminPage(): React.JSX.Element {
   const token = Cookies.get("token");
 
   useEffect(() => {
-    if (tab === "requests" && socket) {
-      console.log("object");
-      socket.on("updateDoctorToAdmin", (updateData: Partial<Doctor>) => {
-        console.log(updateData);
-        dispatch(setNewData(updateData));
+    if (token && socket) {
+      const { userId, role } = decodeToken(token);
+
+      socket.emit("identify", { id: userId, role });
+
+      socket.on("logoutAdmin", () => {
+        dispatch(logout());
+        router.replace("/admin/login");
       });
 
       return () => {
-        socket.off("updateDoctorToAdmin");
+        socket.emit("removeIdentity", { id: userId });
+        socket.off("logoutAdmin");
       };
     }
-  }, [socket, tab]);
+  }, [socket]);
 
   useEffect(() => {
     // Function for get report
@@ -67,7 +75,6 @@ export default function AdminPage(): React.JSX.Element {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(data);
         setReportData(data);
       } catch (error: any) {
         const err = error?.response?.data?.message || error?.message;
@@ -83,11 +90,24 @@ export default function AdminPage(): React.JSX.Element {
   useEffect(() => {
     dispatch(setInitialData());
     dispatch(fetchData({ page: 1, type: "admin", status: tab }));
-  }, [dispatch, tab]);
+
+    if (tab === "requests" && socket) {
+      socket.on("updateDoctorToAdmin", (updateData: Partial<Doctor>) => {
+        dispatch(setNewData(updateData));
+      });
+
+      return () => {
+        socket.off("updateDoctorToAdmin");
+      };
+    }
+  }, [dispatch, socket, tab]);
 
   const handleLogout = () => {
-    dispatch(logout());
-    router.replace("/admin/login");
+    if (token) {
+      dispatch(adminLogout(token)).then((result: PayloadAction<void>) => {
+        router.replace("/admin/login");
+      });
+    }
   };
 
   const renderDoctorCard = (doctor: Partial<Doctor | DonorForm>) => (
