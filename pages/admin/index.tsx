@@ -22,7 +22,6 @@ import { useSocket } from "../../context/SocketContext";
 import { MdOutlinePendingActions, MdDoNotDisturbAlt } from "react-icons/md";
 import { adminLogout } from "../../store/slices/adminSlice";
 import { PayloadAction } from "@reduxjs/toolkit";
-import { Admin } from "../../interfaces/User";
 import { decodeToken } from "../../utils/heplerFunction";
 
 interface AdminReportData {
@@ -33,6 +32,8 @@ interface AdminReportData {
 }
 
 export default function AdminPage(): React.JSX.Element {
+  const token = Cookies.get("token");
+
   const dispatch = useAppDispatch();
   const router = useRouter();
   const { socket } = useSocket();
@@ -44,8 +45,6 @@ export default function AdminPage(): React.JSX.Element {
     cancelledNumber: 0,
     donorsNumber: 0,
   });
-
-  const token = Cookies.get("token");
 
   useEffect(() => {
     if (token && socket) {

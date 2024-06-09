@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import jwt from "jsonwebtoken";
 import toast from "react-hot-toast";
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { LoginForm } from "../../interfaces/Forms";
+import { AdminLoginForm, LoginForm } from "../../interfaces/Forms";
 import { Admin, PayLoad } from "../../interfaces/User";
 import { BASE_URL } from "../../utils/config";
 
@@ -13,6 +13,9 @@ interface AdminState {
   accessToken: string | null;
   isAlreadyLogging: boolean;
   loading: boolean;
+  browser?: string;
+  device?: string;
+  os?: string;
 }
 
 const initialState: AdminState = {
@@ -20,11 +23,14 @@ const initialState: AdminState = {
   accessToken: null,
   isAlreadyLogging: false,
   loading: false,
+  browser: "",
+  device: "",
+  os: "",
 };
 
 export const adminLogin: any = createAsyncThunk(
   "admin/adminLogin",
-  async (formData: LoginForm, { rejectWithValue }) => {
+  async (formData: AdminLoginForm) => {
     try {
       const { data } = await axios.post(
         `${BASE_URL}/auth/admin-login`,
@@ -32,15 +38,7 @@ export const adminLogin: any = createAsyncThunk(
       );
       return data;
     } catch (error: any) {
-      let customError = {
-        message: error.response?.data?.message || "Something went wrong",
-        isAlreadyLogging: false,
-      };
-      if (error.response && error.response.status === 409) {
-        customError.isAlreadyLogging = true;
-      }
-
-      return rejectWithValue(customError);
+      throw new Error(error.response.data.message);
     }
   }
 );
@@ -81,30 +79,39 @@ const adminSlice = createSlice({
         state.loading = true;
       })
       .addCase(adminLogin.fulfilled, (state, action) => {
-        state.admin = action.payload.data;
-        state.accessToken = action.payload.token;
-        state.loading = false;
-        state.isAlreadyLogging =  false;
+        if (action.payload.isAlreadyLogging) {
+          const { browser, device, os } = action.payload.data;
+          state.isAlreadyLogging = true;
+          state.loading = false;
+          state.browser = browser;
+          state.device = device;
+          state.os = os;
+          toast.error("User is already logging in other device");
+        } else {
+          state.admin = action.payload.data;
+          state.accessToken = action.payload.token;
+          state.loading = false;
 
-        const expiresInString = process.env.NEXT_PUBLIC_COOKIE_EXPIRESIN;
+          const expiresInString = process.env.NEXT_PUBLIC_COOKIE_EXPIRESIN;
 
-        if (expiresInString) {
-          const expiresIn = parseInt(expiresInString, 10);
+          if (expiresInString) {
+            const expiresIn = parseInt(expiresInString, 10);
 
-          Cookies.set("token", action.payload.token, {
-            expires: new Date(Date.now() + expiresIn * 24 * 60 * 60 * 1000),
-            secure: true,
-          });
+            Cookies.set("token", action.payload.token, {
+              expires: new Date(Date.now() + expiresIn * 24 * 60 * 60 * 1000),
+              secure: true,
+            });
+          }
+          toast.success("Welcome Sir !!");
         }
-        toast.success("Welcome Sir !!");
       })
       .addCase(adminLogin.rejected, (state, action) => {
         state.loading = false;
-        state.isAlreadyLogging = action.payload?.isAlreadyLogging || false;
-        toast.error(action.payload?.message);
+        toast.error(action.error?.message);
       })
       .addCase(adminLogout.fulfilled, (state) => {
         Cookies.remove("token");
+        state.isAlreadyLogging = false;
         state.admin = null;
         state.accessToken = null;
         toast.success("Come back soon!!!");

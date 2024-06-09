@@ -41,7 +41,15 @@ export interface ValidationErrors {
 export interface LoginForm {
   email: string;
   password: string;
+}
+
+export interface AdminLoginForm {
+  email: string;
+  password: string;
   secretKey?: string;
+  browser?: string;
+  device?: string;
+  os?: string;
 }
 
 export interface SignupForm {

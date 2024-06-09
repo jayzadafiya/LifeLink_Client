@@ -14,11 +14,23 @@ import {
   adminLogin,
   setIsAlreadyLogging,
 } from "../../../store/slices/adminSlice";
+import { GetServerSidePropsContext } from "next";
 
-const Login: React.FC = () => {
+interface LoginProps {
+  browser: string;
+  os: string;
+  device: string;
+}
+
+export default function Login({
+  userAgent,
+}: {
+  userAgent: LoginProps;
+}): React.JSX.Element {
   const dispatch = useAppDispatch();
   const router = useRouter();
-  const { isAlreadyLogging, loading } = useSelector(
+
+  const { isAlreadyLogging, loading, browser, device, os } = useSelector(
     (state: RootState) => state.admin
   );
 
@@ -53,10 +65,17 @@ const Login: React.FC = () => {
 
     if (!loading && Object.keys(formErrors).length === 0) {
       try {
-        dispatch(adminLogin(formData)).then(
-          (result: PayloadAction<{ data: Admin }>) => {
-            if (result.payload && result.payload.data) {
-              router.push("/admin");
+        dispatch(adminLogin({ ...formData, ...userAgent })).then(
+          (
+            result: PayloadAction<{ data: Admin; isAlreadyLogging: boolean }>
+          ) => {
+            console.log(result.payload);
+            if (
+              result.payload &&
+              result.payload.data &&
+              !result.payload.isAlreadyLogging
+            ) {
+              router.replace("/admin");
             }
           }
         );
@@ -75,10 +94,15 @@ const Login: React.FC = () => {
       return null;
     }
 
-    dispatch(adminLogin({ ...formData, secretKey })).then(
-      (result: PayloadAction<{ data: Admin }>) => {
-        if (result.payload && result.payload.data) {
-          router.push("/admin");
+    dispatch(adminLogin({ ...formData, ...userAgent, secretKey })).then(
+      (result: PayloadAction<{ data: Admin; isAlreadyLogging: boolean }>) => {
+        console.log(result.payload);
+        if (
+          result.payload &&
+          result.payload.data &&
+          !result.payload.isAlreadyLogging
+        ) {
+          router.replace("/admin");
         }
       }
     );
@@ -147,10 +171,39 @@ const Login: React.FC = () => {
         <div className="container bg-gray-100 text-textColor mt-[-35px] mb-[-35px] rounded-md p-8 m-w-[200px]">
           <div className="flex flex-col gap-5">
             <p className="font-bold">
-              *Your account is logged in on another device. If you want to
-              change devices, please log out from that device or add a secret
-              key and confirm.
+              *Your account is{" "}
+              <span className="text-blue-700 text-[18px] font-extrabold">
+                logged{" "}
+              </span>
+              in on another device. If you want to change devices, please{" "}
+              <span className="text-red-600 text-[18px] font-extrabold">
+                log out{" "}
+              </span>
+              from that device or add a{" "}
+              <span className="text-green-600 text-[18px] font-extrabold">
+                secret key{" "}
+              </span>
+              and confirm Identity.
             </p>
+
+            <div>
+              <p className="font-bold text-[18px] mb-3">
+                Your device information:
+              </p>
+              <p>
+                <strong>Browser:</strong> {browser}
+              </p>
+              {os && (
+                <p>
+                  <strong>Operating System:</strong> {os}
+                </p>
+              )}
+              {device && (
+                <p>
+                  <strong>Device:</strong> {device}
+                </p>
+              )}
+            </div>
             <div>
               <input
                 type="password"
@@ -180,5 +233,18 @@ const Login: React.FC = () => {
       </Model>
     </>
   );
-};
-export default Login;
+}
+
+export async function getServerSideProps(context: GetServerSidePropsContext) {
+  const { req } = context;
+
+  const browser = context.req.headers["x-forwarded-user-browser"] || "";
+  const device = req.headers["x-forwarded-user-device"] || "";
+  const os = context.req.headers["x-forwarded-user-os"] || "";
+
+  return {
+    props: {
+      userAgent: { browser, device, os },
+    },
+  };
+}

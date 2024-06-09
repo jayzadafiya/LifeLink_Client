@@ -1,9 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, userAgent } from "next/server";
 import jwt from "jsonwebtoken";
 import { PayLoad } from "./interfaces/User";
 
 // This function can be marked `async` if using `await` inside
 export function middleware(request: NextRequest): NextResponse | undefined {
+  const { device, os, browser } = userAgent(request);
   const authToken = request.cookies.get("token")?.value;
   //   return NextResponse.redirect(new URL("/home", request.url));
   const decodedToken = jwt.decode(authToken || "") as PayLoad;
@@ -45,6 +46,22 @@ export function middleware(request: NextRequest): NextResponse | undefined {
     ) {
       return NextResponse.redirect(new URL("/", request.url));
     }
+  }
+  if (request.nextUrl.pathname === "/admin/login") {
+    const browserName = browser.name || "";
+    const deviceModel =
+      device.vendor && device.model ? `${device.vendor} ${device.model}` : "";
+    // console.log(device);
+    const OS = os.name && os.version ? `${os.name}  ${os.version}` : "";
+
+    const response = NextResponse.next();
+
+    // Set data into the request headers
+    response.headers.set("x-forwarded-user-browser", browserName);
+    response.headers.set("x-forwarded-user-device", deviceModel);
+    response.headers.set("x-forwarded-user-os", OS);
+
+    return response;
   }
 
   if (loggedInAdminNotAccess && authToken && decodedToken.role === "admin") {
