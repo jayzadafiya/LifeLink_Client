@@ -10,6 +10,7 @@ import {
   UpdatePasswordForm,
   UserForm,
   ValidationErrors,
+  ContactForm,
 } from "../interfaces/Forms";
 import {
   vaildatePassword,
@@ -401,8 +402,6 @@ export const requestFormValidation = (
 // Prescription form validation
 export const prescriptionFormValidation = (formData: PrescriptionFormData) => {
   const { test, medicine, advice, symptoms } = formData;
-  console.log(symptoms);
-  console.log(medicine);
   const error: Partial<PrescriptionForm> = {};
 
   if (symptoms.length > 0 && !validateStringArray(symptoms)) {
@@ -457,4 +456,26 @@ export const updatePasswordFormvalidation = (
   }
 
   return errors;
+};
+
+export const contactFormValidation = (
+  formData: ContactForm
+): Partial<ContactForm> => {
+  const { email, subject, message } = formData;
+  const newErrors: Partial<ContactForm> = {};
+
+  if (!validateRequired(subject)) {
+    newErrors.subject = "Subject is required";
+  }
+  if (!validateRequired(message)) {
+    newErrors.message = "Message is required";
+  }
+
+  if (!validateRequired(email)) {
+    newErrors.email = "Email is required";
+  } else if (!validateEmail(email)) {
+    newErrors.email = "Invalid email format";
+  }
+
+  return newErrors;
 };

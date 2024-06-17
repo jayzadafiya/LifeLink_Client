@@ -1,5 +1,3 @@
-import { Gender } from "./enums";
-
 export interface DoctorForm {
   name: string;
   email: string;
@@ -113,4 +111,10 @@ export interface UpdatePasswordForm {
   oldPassword: string;
   newPassword: string;
   confirmPassword: string;
+}
+
+export interface ContactForm {
+  email: string;
+  subject: string;
+  message: string;
 }
