@@ -96,7 +96,7 @@ export default function Profile({
     const formError = patientFormValidation(formData);
     setErrors(formError);
 
-    if (Object.keys(formError).length === 0) {
+    if (!loading && Object.keys(formError).length === 0) {
       try {
         dispatch(updateUser(formData));
 
@@ -251,7 +251,7 @@ export default function Profile({
 
         <div className="mt-7">
           <button
-            disabled={loading && true}
+            disabled={loading}
             className="w-full bg-primaryColor text-white text-[18px] leading-[30px] px-4 py-3  rounded-lg "
             type="submit"
           >

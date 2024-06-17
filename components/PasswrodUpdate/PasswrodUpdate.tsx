@@ -50,7 +50,7 @@ export default function PasswrodUpdate(): React.JSX.Element {
     const formError = updatePasswordFormvalidation(formData);
     setErrors(formError);
 
-    if (Object.keys(formError).length === 0) {
+    if (!loading && Object.keys(formError).length === 0) {
       try {
         dispatch(updatePassword(formData)).then(
           (result: PayloadAction<{ token: string }>) => {
@@ -154,7 +154,7 @@ export default function PasswrodUpdate(): React.JSX.Element {
         </div>
         <div className="mt-7">
           <button
-            disabled={loading && true}
+            disabled={loading}
             className="btn w-full rounded-md btn-hover"
             type="submit"
           >

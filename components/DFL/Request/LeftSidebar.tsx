@@ -82,6 +82,7 @@ export default function LeftSidebar(): React.JSX.Element {
           />
           <button
             className={style.search_button}
+            disabled={loading}
             type="submit"
             onClick={handleSearch}
           >

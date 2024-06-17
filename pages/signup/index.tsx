@@ -71,7 +71,7 @@ export default function Signup(): React.JSX.Element {
 
     const formErrors = signupFormvalidation(formData);
     setErrors(formErrors);
-    if (Object.keys(formErrors).length === 0) {
+    if (!loading && Object.keys(formErrors).length === 0) {
       setLoading(true);
       try {
         await axios.post(`${BASE_URL}/auth/signup`, formData);
@@ -248,7 +248,7 @@ export default function Signup(): React.JSX.Element {
 
               <div className="mt-7">
                 <button
-                  disabled={loading && true}
+                  disabled={loading}
                   className="w-full bg-primaryColor text-white text-[18px] leading-[30px] px-4 py-3  rounded-lg "
                   type="submit"
                 >

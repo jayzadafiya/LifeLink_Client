@@ -11,6 +11,7 @@ import axios from "axios";
 import { BASE_URL } from "../../utils/config";
 import toast from "react-hot-toast";
 import { useRouter } from "next/router";
+import { HashLoader } from "react-spinners";
 
 // Interface for components props type
 interface SidePanelProps {
@@ -34,6 +35,7 @@ export default function SidePanel({
 }: SidePanelProps): React.JSX.Element {
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   const [isReject, setIsReject] = useState<boolean>(false);
   const [message, setMessage] = useState<string | undefined>();
 
@@ -43,9 +45,10 @@ export default function SidePanel({
     setOpen((prev) => !prev);
   };
   const handelRejectModel = async () => {
-    if (isReject) {
+    if (!loading && isReject) {
       try {
-        setIsReject((prev) => !prev);
+        setLoading(true);
+        setIsReject(false);
 
         await axios.patch(
           `${BASE_URL}/admin/${doctorId}`,
@@ -58,14 +61,17 @@ export default function SidePanel({
             },
           }
         );
+        setLoading(false);
+
         router.replace("/admin");
       } catch (error: any) {
         const err = error?.response?.data?.message || error?.message;
+        setLoading(false);
         toast.error(err);
         return null;
       }
     } else {
-      setIsReject((prev) => !prev);
+      setIsReject(true);
     }
   };
 
@@ -157,14 +163,23 @@ export default function SidePanel({
               </button>
             )}
             {isReject && (
-              <input
-                type="text"
-                name="message"
-                className="form__input"
-                placeholder="Enter reason for rejection "
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-              />
+              <>
+                <input
+                  type="text"
+                  name="message"
+                  className="form__input mb-5"
+                  placeholder="Enter reason for rejection "
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                />
+
+                <button
+                  className="w-full bg-[#181A1E] p-3 text-[16px] leading-7 rounded-md border-[3px] border-solid border-transparent hover:border-[#181A1E] hover:text-[#181A1E] hover:bg-slate-300 font-bold  text-white cursor-pointer"
+                  onClick={() => setIsReject(false)}
+                >
+                  Cancle
+                </button>
+              </>
             )}
             <button
               className={`${
@@ -172,9 +187,16 @@ export default function SidePanel({
                   ? "hidden"
                   : "btn px-2 w-full rounded-md bg-red-500  hover:border-red-500 hover:border-solid hover:border-[3px] hover:text-red-500 hover:bg-red-100 text-[16px] leading-7 font-bold mt-4"
               }`}
+              disabled={loading}
               onClick={handelRejectModel}
             >
-              {isReject ? "Submit" : "Reject"}
+              {loading ? (
+                <HashLoader size={25} color="#ffffff" />
+              ) : isReject ? (
+                "Submit"
+              ) : (
+                "Reject"
+              )}
             </button>
           </>
         )}

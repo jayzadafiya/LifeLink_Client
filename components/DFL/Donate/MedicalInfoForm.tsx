@@ -142,7 +142,7 @@ export default function MedicalInfoForm({
               </div>
             </div>
           </div>
-          <button type="submit" onClick={onSubmit}>
+          <button type="submit" onClick={onSubmit} disabled={loading}>
             {loading ? <HashLoader size={25} color="#ffffff" /> : "Submit"}
           </button>
         </form>

@@ -46,13 +46,9 @@ export default function Profile({
   doctor: Doctor;
   setTab: (tab: string) => void;
 }) {
-  const dispatch = useAppDispatch();
-  const router = useRouter();
-
-  const { loading, accessToken } = useSelector(
-    (state: RootState) => state.user
-  );
+  const { accessToken } = useSelector((state: RootState) => state.user);
   const [errors, setErrors] = useState<Partial<DoctorForm>>({});
+  const [loading, setLoading] = useState<boolean>(false);
   const [nestedErrors, setNestedErrors] = useState<Partial<ValidationErrors>>(
     {}
   );
@@ -221,10 +217,6 @@ export default function Profile({
     setFormData((prevFormData) => {
       const updateItems = [...(prevFormData[key] as QTE)];
 
-      // (updateItems[index] as Partial<Qualification | TimeSlot | Experience>)[
-      //   name as keyof Partial<Qualification | TimeSlot | Experience>
-      // ] = newValue;
-
       updateItems[index] = {
         ...updateItems[index],
         [name as keyof Partial<Qualification | TimeSlot | Experience>]:
@@ -261,11 +253,12 @@ export default function Profile({
   const updateProfileHandler = async (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>
   ) => {
+    setLoading(true);
     e.preventDefault();
     const formErrors = doctorValidateForm(formData);
     setErrors(formErrors);
 
-    if (Object.keys(formErrors).length === 0) {
+    if (!loading && Object.keys(formErrors).length === 0) {
       try {
         const updatedFormData = { ...formData } as Doctor;
         const newTimeSlotsData = findUpdatedTimeSlots(
@@ -305,22 +298,16 @@ export default function Profile({
           };
         }
 
-        // dispatch(updateUser(data)).then(
-        //   (result: PayloadAction<{ data: Doctor }>) => {
-        //     if (result.payload && result.payload.data) {
-        //       router.push("/doctors/profile");
-        //     }
-        //   }
-        // );
-
         await axios.put(`${BASE_URL}/update-doctor/${doctor._id}`, data, {
           headers: {
             Authorization: `Bearer ${accessToken}`,
           },
         });
+        setLoading(false);
         toast.success(`Update request send succefully`);
         setTab("overview");
       } catch (error: any) {
+        setLoading(false);
         const err = error?.response?.data?.message || error?.message;
         toast.error(err);
         return null;
@@ -909,6 +896,7 @@ export default function Profile({
           <button
             type="submit"
             onClick={updateProfileHandler}
+            disabled={loading}
             className="bg-primaryColor text-white text-[18px] leading-[30px] w-full py-3 px-4 rounded-lg"
           >
             {loading ? (

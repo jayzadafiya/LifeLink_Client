@@ -81,7 +81,7 @@ export default function Donate({
     const formError = donorFormValidation(formData);
     setErrors(formError);
 
-    if (Object.keys(formError).length === 0) {
+    if (!loading && Object.keys(formError).length === 0) {
       try {
         setLoading(true);
         await axios.put(`${BASE_URL}/donor`, formData, {

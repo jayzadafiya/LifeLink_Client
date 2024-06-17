@@ -66,8 +66,7 @@ export default function AdminPage(): React.JSX.Element {
 
   useEffect(() => {
     // Function for get report
-
-    const fetchReportData = async () => {
+    (async () => {
       try {
         const { data } = await axios.get(`${BASE_URL}/admin/report`, {
           headers: {
@@ -81,9 +80,7 @@ export default function AdminPage(): React.JSX.Element {
 
         return null;
       }
-    };
-
-    fetchReportData();
+    })();
   }, []);
 
   useEffect(() => {

@@ -110,6 +110,7 @@ const Login: React.FC = () => {
             <button
               className="w-full bg-primaryColor text-white text-[18px] leading-[30px] px-4 py-3  rounded-lg "
               type="submit"
+              disabled={loading}
             >
               {loading ? <HashLoader size={25} color="#ffffff" /> : "Login"}
             </button>
