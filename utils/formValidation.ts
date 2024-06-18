@@ -313,7 +313,6 @@ export const donorFormValidation = (
     phone,
     address,
     city,
-    addharCard,
     dob,
     lastDonationDate,
     weight,
@@ -350,12 +349,6 @@ export const donorFormValidation = (
 
   if (!validatePhone(phone)) {
     newErrors.phone = "Invalid phone number";
-  }
-
-  if (!validateRequired(addharCard)) {
-    newErrors.addharCard = "Addhar card number isrequierd";
-  } else if (addharCard && addharCard.trim().length !== 12) {
-    newErrors.addharCard = "Addhar card nummber length must be 12";
   }
 
   if (!validateRequired(dob)) {

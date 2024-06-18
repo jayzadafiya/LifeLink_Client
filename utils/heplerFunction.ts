@@ -176,7 +176,7 @@ const validateTimeslot = (
   const endTime = timeToMinutes(end);
 
   if (startMinutes < startTime || endMinutes > endTime) {
-    throw new Error("not valid");
+    throw new Error("Invalid time slot");
   }
 };
 

@@ -118,7 +118,6 @@ export default function Profile({
         const file = files[0];
 
         const { url } = await uploadImageToCloudinary(file);
-        console.log(fileName, url);
         setFormData({ ...formData, [fileName]: url });
       }
     }
@@ -134,7 +133,6 @@ export default function Profile({
       setFormData({ ...formData, [fileName]: "" });
     }
   };
-  console.log(formData);
   //reusable function for adding  item
   const addItem = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,

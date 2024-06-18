@@ -12,6 +12,7 @@ import { RootState } from "../../../store/store";
 import { DonorForm } from "../../../interfaces/Forms";
 import { GetServerSidePropsContext } from "next";
 import Error from "../../../components/Error/Error";
+import { useRouter } from "next/router";
 
 interface DonateProp {
   donor: DonorForm;
@@ -22,6 +23,7 @@ export default function Donate({
   donor,
   error,
 }: Partial<DonateProp>): React.JSX.Element {
+  const router = useRouter();
   const [showMedicalForm, setShowMedicalForm] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [errors, setErrors] = useState<Partial<DonorForm>>({});
@@ -92,7 +94,7 @@ export default function Donate({
         });
 
         toast.success("Thank you so much for become donor");
-
+        router.push("/drop-for-life");
         setLoading(false);
       } catch (error: any) {
         const err = error?.response?.data?.message || error?.message;

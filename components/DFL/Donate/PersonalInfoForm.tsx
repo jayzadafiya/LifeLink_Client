@@ -78,7 +78,6 @@ export default function PersonalInfoForm({
                   onBlur={onBlur}
                   onChange={handleChange}
                 />
-                {errors.addharCard && <p>{errors.addharCard}</p>}
               </div>
             </div>
 

@@ -83,7 +83,7 @@ export interface DonorForm {
   styling?: string;
   surgery?: string;
   bloodType: string;
-  addharCard: string;
+  addharCard?: string;
   lastDonationDate?: string;
 }
 
