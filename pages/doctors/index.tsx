@@ -97,10 +97,13 @@ export default function Doctors({
         setResponseLoading(false);
       }
     } catch (error: any) {
+      setResponseLoading(false);
+
       const err = error?.response?.data?.message || error?.message;
       toast.error(err);
       return null;
     }
+    setResponseLoading(false);
   };
 
   return (

@@ -26,7 +26,6 @@ interface AppointmentData {
 export default function Tabs({ tab, setTab }: TabsProps) {
   const dispatch = useAppDispatch();
 
-  const [hasAppointments, setHasAppointments] = useState<boolean>(false);
   const [appointmentData, setAppointmentData] = useState<AppointmentData[]>([]);
   const [dialogOpen, setDialogOpen] = useState<boolean>(false);
 
@@ -68,7 +67,6 @@ export default function Tabs({ tab, setTab }: TabsProps) {
             return null;
           }
           setDialogOpen(data.hasBookings);
-          setHasAppointments(data.hasBookings);
           setAppointmentData(data.bookingData);
         }
       } else {

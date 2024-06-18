@@ -167,6 +167,7 @@ export default function DoctorDetails({
                   isAdmin={isAdmin}
                   doctorId={doctor._id}
                   status={doctor.isApproved}
+                  documentLink={doctor.document}
                 />
               </div>
             </div>

@@ -101,6 +101,7 @@ export default function Donate({
         return null;
       }
     }
+    setLoading(false);
   };
   return (
     <>

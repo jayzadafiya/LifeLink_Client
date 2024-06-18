@@ -58,6 +58,7 @@ export default function FeedbackForm() {
     ratingRef.current = 0;
     if (reviewTextRef.current) reviewTextRef.current.value = "";
     setHover(0);
+    setLoading(false);
   };
 
   return (

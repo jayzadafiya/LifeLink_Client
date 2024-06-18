@@ -55,6 +55,7 @@ export default function Contact(): React.JSX.Element {
         return null;
       }
     }
+    setLoading(false);
   };
   return (
     <section>

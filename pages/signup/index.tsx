@@ -88,6 +88,7 @@ export default function Signup(): React.JSX.Element {
         return null;
       }
     }
+    setLoading(false);
   };
 
   return (

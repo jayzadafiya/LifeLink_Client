@@ -22,6 +22,7 @@ interface SidePanelProps {
   isAdmin: boolean;
   doctorId: string | undefined;
   status?: string;
+  documentLink?: string;
 }
 
 export default function SidePanel({
@@ -32,6 +33,7 @@ export default function SidePanel({
   isAdmin,
   doctorId,
   status,
+  documentLink,
 }: SidePanelProps): React.JSX.Element {
   const router = useRouter();
   const [open, setOpen] = useState<boolean>(false);
@@ -70,6 +72,7 @@ export default function SidePanel({
         toast.error(err);
         return null;
       }
+      setLoading(false);
     } else {
       setIsReject(true);
     }
@@ -154,6 +157,18 @@ export default function SidePanel({
         )}
         {isAdmin && (
           <>
+            {!isReject && status !== "approved" && (
+              <a href={documentLink} target="_blank">
+                <button
+                  className="btn w-full px-2  rounded-md bg-blue-500
+                hover:border-blue-500 hover:border-solid hover:border-[3px]
+                hover:text-blue-500 hover:bg-blue-100 font-bold mt-4 text-[16px]
+                leading-7"
+                >
+                  View Document
+                </button>
+              </a>
+            )}
             {!isReject && status !== "approved" && (
               <button
                 className="btn px-2 w-full rounded-md bg-green-500  hover:border-green-500 hover:border-solid hover:border-[3px] hover:text-green-500 hover:bg-green-100 font-bold mt-4 text-[16px] leading-7"

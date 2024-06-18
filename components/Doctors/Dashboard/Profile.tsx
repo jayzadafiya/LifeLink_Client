@@ -38,6 +38,7 @@ import { HashLoader } from "react-spinners";
 import { AiOutlineDelete } from "react-icons/ai";
 import { RootState, useAppDispatch } from "../../../store/store";
 import { BASE_URL } from "../../../utils/config";
+import { isMiddlewareFilename } from "next/dist/build/utils";
 
 export default function Profile({
   doctor,
@@ -72,6 +73,7 @@ export default function Profile({
     ],
     phone: doctor?.phone || "",
     fees: doctor?.fees || 0,
+    document: doctor?.document || "",
   });
 
   const handleInputChange = (
@@ -105,6 +107,7 @@ export default function Profile({
     e:
       | React.ChangeEvent<HTMLInputElement>
       | React.MouseEvent<HTMLButtonElement>,
+    fileName: string,
     type: string
   ) => {
     e.preventDefault();
@@ -114,20 +117,24 @@ export default function Profile({
       if (files && files.length > 0) {
         const file = files[0];
 
-        const { url, public_id } = await uploadImageToCloudinary(file);
-        setFormData({ ...formData, photo: url });
+        const { url } = await uploadImageToCloudinary(file);
+        console.log(fileName, url);
+        setFormData({ ...formData, [fileName]: url });
       }
     }
 
     if (type !== "input") {
-      if (formData.photo) await deleteImageFromCloudinary(formData.photo);
+      if (formData[fileName as keyof Doctor])
+        await deleteImageFromCloudinary(
+          formData[fileName as keyof Doctor] as string
+        );
     }
 
     if (type === "remove") {
-      setFormData({ ...formData, photo: "" });
+      setFormData({ ...formData, [fileName]: "" });
     }
   };
-
+  console.log(formData);
   //reusable function for adding  item
   const addItem = (
     e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -313,6 +320,7 @@ export default function Profile({
         return null;
       }
     }
+    setLoading(false);
   };
 
   return (
@@ -840,56 +848,116 @@ export default function Profile({
             <p className="text-red-500 text-md  mb-4">{errors.about}</p>
           )}
         </div>
-        <div className="mb-5 flex items-center gap-3">
-          {formData.photo && (
-            <figure className="w-[68px] h-[68px] rounded-full border-2 border-solid border-primaryColor flex items-center justify-center cursor-pointer ">
-              <input
-                type="file"
-                name="photo"
-                id="customFile"
-                onChange={(e) => handleFileInputChange(e, "edit")}
-                accept=".jpg , .png"
-                className="absolute top-0 left-0 w-full opacity-0 cursor-pointer"
-              />
-              <label htmlFor="customFile" className="">
-                <Image
-                  src={formData.photo}
-                  alt=""
-                  className="rounded-full w-[68px] h-[68px]"
-                  height={68}
-                  width={68}
-                />
-              </label>
-            </figure>
-          )}
 
-          <div className="relative w-[138px] h-[58px]">
-            {formData.photo ? (
-              <button
-                type="submit"
-                onClick={(e) => handleFileInputChange(e, "remove")}
-                className="h-full flex items-center px-[1.5rem] py-[0.375rem] text-[15px] leading-6 overflow-hidden bg-[#ff000046] text-headingColor font-semibold rounded-lg truncate cursor-pointer"
-              >
-                Remove Photo
-              </button>
-            ) : (
-              <>
+        <div className="flex items-center justify-between ">
+          <div className="mb-5 flex items-center gap-3">
+            {formData.photo && (
+              <figure className="w-[68px] h-[68px] rounded-full border-2 border-solid border-primaryColor flex items-center justify-center cursor-pointer ">
                 <input
                   type="file"
                   name="photo"
                   id="customFile"
-                  onChange={(e) => handleFileInputChange(e, "input")}
+                  onChange={(e) => handleFileInputChange(e, "photo", "edit")}
                   accept=".jpg , .png"
                   className="absolute top-0 left-0 w-full opacity-0 cursor-pointer"
                 />
-                <label
-                  htmlFor="customFile"
-                  className="absolute  top-0 left-0 w-full h-full flex items-center px-[1.5rem] py-[0.375rem] text-[15px] leading-6 overflow-hidden bg-[#0066ff46] text-headingColor font-semibold rounded-lg truncate cursor-pointer"
-                >
-                  Upload Photo
+                <label htmlFor="customFile" className="">
+                  <Image
+                    src={formData.photo}
+                    alt=""
+                    className="rounded-full w-[68px] h-[68px]"
+                    height={68}
+                    width={68}
+                  />
                 </label>
-              </>
+              </figure>
             )}
+
+            <div className="relative w-[138px] h-[58px]">
+              {formData.photo ? (
+                <button
+                  type="submit"
+                  onClick={(e) => handleFileInputChange(e, "photo", "remove")}
+                  className="h-full flex items-center px-[1.5rem] py-[0.375rem] text-[15px] leading-6 overflow-hidden bg-[#ff000046] text-headingColor font-semibold rounded-lg truncate cursor-pointer"
+                >
+                  Remove Photo
+                </button>
+              ) : (
+                <>
+                  <input
+                    type="file"
+                    name="photo"
+                    id="customFile"
+                    onChange={(e) => handleFileInputChange(e, "photo", "input")}
+                    accept=".jpg , .png"
+                    className="absolute top-0 left-0 w-full opacity-0 cursor-pointer"
+                  />
+                  <label
+                    htmlFor="customFile"
+                    className="absolute  top-0 left-0 w-full h-full flex items-center px-[1.5rem] py-[0.375rem] text-[15px] leading-6 overflow-hidden bg-[#0066ff46] text-headingColor font-semibold rounded-lg truncate cursor-pointer"
+                  >
+                    Upload Photo
+                  </label>
+                </>
+              )}
+            </div>
+          </div>
+
+          <div className="mb-5 flex items-center gap-3">
+            {formData.document && (
+              <figure className="w-[68px] h-[68px] rounded-full border-2 border-solid border-primaryColor flex items-center justify-center cursor-pointer ">
+                <input
+                  type="file"
+                  name="document"
+                  id="customFile"
+                  onChange={(e) => handleFileInputChange(e, "document", "edit")}
+                  accept=".jpg , .png"
+                  className="absolute top-0 left-0 w-full opacity-0 cursor-pointer"
+                />
+                <label htmlFor="customFile" className="">
+                  <Image
+                    src={formData.document}
+                    alt=""
+                    className="rounded-full w-[68px] h-[68px]"
+                    height={68}
+                    width={68}
+                  />
+                </label>
+              </figure>
+            )}
+
+            <div className=" h-[58px]">
+              {formData.document ? (
+                <button
+                  type="submit"
+                  onClick={(e) =>
+                    handleFileInputChange(e, "document", "remove")
+                  }
+                  className="h-full flex items-center px-[1.5rem] py-[0.375rem] text-[15px] leading-6 overflow-hidden bg-[#ff000046] text-headingColor font-semibold rounded-lg truncate cursor-pointer"
+                >
+                  Remove document
+                </button>
+              ) : (
+                <>
+                  <input
+                    type="file"
+                    name="document"
+                    id="documentFile"
+                    onChange={(e) =>
+                      handleFileInputChange(e, "document", "input")
+                    }
+                    accept=".jpg , .png"
+                    className="absolute top-0 left-0 w-full opacity-0 cursor-pointer"
+                  />
+                  <label
+                    htmlFor="documentFile"
+                    className="w-full  h-full flex items-center px-[1.5rem] py-[0.375rem] text-[15px] leading-6  bg-[#0066ff46] text-headingColor font-semibold rounded-lg truncate cursor-pointer"
+                  >
+                    Upload Document
+                  </label>
+                </>
+              )}
+            </div>
           </div>
         </div>
         <div className="mt-7">
