@@ -8,12 +8,15 @@ export default function Calander({
 }: {
   onChange: (newDate: string) => void;
 }): React.JSX.Element {
+  const today = dayjs(new Date());
+  const nextMonthSameDate = today.add(1, "month");
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <DateCalendar
         showDaysOutsideCurrentMonth
         fixedWeekNumber={5}
-        minDate={dayjs(new Date())}
+        minDate={today}
+        maxDate={nextMonthSameDate}
         onChange={onChange}
       />
     </LocalizationProvider>

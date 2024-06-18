@@ -99,7 +99,6 @@ export const createTimeSlot = (slots: TimeSlot[]): TimeslotCreated[] => {
 
     timeSlots.push({ [slot]: generaterSLots });
   });
-  console.log(timeSlots);
 
   return timeSlots;
 };
@@ -274,9 +273,7 @@ export const timeslotByDate = (
     Object.keys(slot).reduce((newSlot, period: string) => {
       const currentDate = istDate.toISOString().split("T")[0];
       const currentTime = istDate.toISOString().split("T")[1];
-      console.log(currentDate, currentTime);
 
-      console.log(slot, newSlot, period);
       const Slots = slot[period as keyof Timeslots] as SlotData[];
       // Filter out slots that don't include the specified date
       const filteredData: string & SlotData[] = Slots.filter(

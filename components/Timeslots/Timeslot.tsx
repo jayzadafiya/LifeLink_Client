@@ -76,7 +76,6 @@ const Timeslot = React.memo(
             },
           }
         );
-        console.log(session.data);
         if (session.data.url) {
           router.push(session.data.url);
         }

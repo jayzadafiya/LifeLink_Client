@@ -69,7 +69,6 @@ export default function Login({
           (
             result: PayloadAction<{ data: Admin; isAlreadyLogging: boolean }>
           ) => {
-            console.log(result.payload);
             if (
               result.payload &&
               result.payload.data &&
@@ -96,7 +95,6 @@ export default function Login({
 
     dispatch(adminLogin({ ...formData, ...userAgent, secretKey })).then(
       (result: PayloadAction<{ data: Admin; isAlreadyLogging: boolean }>) => {
-        console.log(result.payload);
         if (
           result.payload &&
           result.payload.data &&

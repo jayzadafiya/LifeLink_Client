@@ -51,7 +51,6 @@ export function middleware(request: NextRequest): NextResponse | undefined {
     const browserName = browser.name || "";
     const deviceModel =
       device.vendor && device.model ? `${device.vendor} ${device.model}` : "";
-    // console.log(device);
     const OS = os.name && os.version ? `${os.name}  ${os.version}` : "";
 
     const response = NextResponse.next();
